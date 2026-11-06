@@ -90,7 +90,7 @@
   /* Hover summary, streamed in like a chat reply */
   .summary {
     margin-top: auto;
-    padding: 24px 0 22px;
+    padding: 24px 0 46px;
     max-width: 27em;
     pointer-events: none;
     opacity: 0;
@@ -461,6 +461,65 @@
     .card, .article, .overlay { transition-duration: .01s !important; }
     .card { transform: none; }
   }
+
+  /* ---------- Page peel ----------
+     The top-right corner of the page is folded back. The square's diagonal is the crease: above it
+     lies what's under the page (Rain on Glass, from Phenomenon), below it the folded flap. Hovering
+     peels the corner further back. */
+  @property --peel { syntax: "<length>"; inherits: true; initial-value: 56px; }
+  .peel {
+    --peel: 56px;
+    position: fixed; top: 0; right: 0; z-index: 40;
+    width: var(--peel); height: var(--peel);
+    transition: --peel .8s var(--ease);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .peel:hover, .peel:focus-visible { --peel: 230px; }
+  .peel:focus-visible { outline: none; }
+  .peel-scene {   /* under the page: the triangle the corner has lifted from */
+    position: absolute; inset: 0;
+    clip-path: polygon(0 0, 100% 0, 100% 100%);
+    overflow: hidden;
+    background: #0b0d12;
+  }
+  .peel-scene img, .peel-scene iframe {   /* pinned to the corner, so peeling further uncovers more of the same view */
+    position: absolute; top: 0; right: 0;
+    border: 0; pointer-events: none;
+  }
+  .peel-scene img { width: 400px; height: 250px; object-fit: cover; }
+  .peel-scene iframe {   /* the live piece, framed on the street lights; its lettered name sits off to the right, out of view */
+    top: -170px; right: -230px; width: 760px; height: 480px;
+    opacity: 0; transition: opacity .6s;
+  }
+  .peel-scene iframe.ready { opacity: 1; }
+  .peel-flap {   /* the corner folded back, casting its shadow onto the page */
+    position: absolute; inset: 0;
+    pointer-events: none;
+    filter: drop-shadow(-4px 6px 7px rgba(0, 0, 0, .55)) drop-shadow(-1px 1px 1px rgba(0, 0, 0, .45));
+  }
+  .peel-flap::before {   /* the underside of the page: lit along the crease, darker toward its tip */
+    content: ""; position: absolute; inset: 0;
+    clip-path: polygon(0 0, 100% 100%, 0 100%);
+    background: linear-gradient(to bottom left, #5c5d64 50%, #3c3d43 57%, #27282d 78%, #2f3035 100%);
+  }
+  @media (hover: none) { .peel { --peel: 46px; } }
+  @media (prefers-reduced-motion: reduce) { .peel { transition: none; } }
+
+  /* The demo the peel opens: Rain on Glass, full screen and live (drag to wipe the glass) */
+  .demo {
+    position: fixed; inset: 0; z-index: 60;
+    background: #07090d;
+    overflow: hidden;
+    opacity: 0; visibility: hidden;
+    transition: opacity .5s var(--ease), visibility 0s .5s;
+  }
+  .demo.open { opacity: 1; visibility: visible; transition: opacity .5s var(--ease); }
+  .demo iframe {   /* runs 120px past the right edge, so the piece's own name tab sits out of view */
+    position: absolute; top: 0; left: 0;
+    width: calc(100% + 120px); height: 100%;
+    border: 0;
+  }
+
 </style>
 </head>
 <body>
@@ -499,6 +558,15 @@
 </div>
 
 <div class="cursor-label" id="cursorLabel" aria-hidden="true"></div>
+
+<a class="peel" id="peel" href="https://akatori-design.github.io/Phenomenon/works/rain-on-glass/" target="_blank" rel="noopener" aria-label="Peek under the page: Rain on Glass, from Phenomenon">
+  <span class="peel-scene"><img src="images/phenomenon/rain-on-glass.jpg" alt=""></span>
+  <span class="peel-flap"></span>
+</a>
+
+<div class="demo" id="demo" role="dialog" aria-modal="true" aria-label="Rain on Glass, from Phenomenon">
+  <button class="close" id="demoClose" type="button">Close ✕</button>
+</div>
 
 <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="articleTitle">
   <div class="progress" id="progress"></div>
@@ -1855,6 +1923,65 @@ document.querySelectorAll("[data-page]").forEach(a => a.addEventListener("click"
 if (location.hash) {
   const id = location.hash.slice(1);
   PAGES.some(p => p.id === id) ? openPage(id) : openPost(id);
+}
+
+/* ---------------------------------------------------------------
+   Page peel: the live Rain on Glass loads only while the corner is
+   open, and unloads a few seconds after it closes; at rest it's a still
+---------------------------------------------------------------- */
+{
+  const peel = document.getElementById("peel"), scene = peel.querySelector(".peel-scene");
+  let frame = null, unload = 0;
+  const open = () => {
+    clearTimeout(unload);
+    if (frame) return;
+    frame = document.createElement("iframe");
+    frame.src = peel.href;
+    frame.title = "Rain on Glass, from Phenomenon";
+    frame.tabIndex = -1;
+    frame.setAttribute("aria-hidden", "true");
+    frame.addEventListener("load", function () { this.classList.add("ready"); }, { once: true });
+    scene.appendChild(frame);
+  };
+  const close = () => {
+    clearTimeout(unload);
+    unload = setTimeout(() => { frame?.remove(); frame = null; }, 6000);
+  };
+  peel.addEventListener("pointerenter", open);
+  peel.addEventListener("focus", open);
+  peel.addEventListener("pointerleave", close);
+  peel.addEventListener("blur", close);
+
+  // Clicking the peel opens the piece full screen, live, with its own close button; it unloads on close
+  const demo = document.getElementById("demo"), demoClose = document.getElementById("demoClose");
+  let demoFrame = null, demoFrom = null, demoGone = 0;
+  const openDemo = () => {
+    clearTimeout(demoGone);
+    if (!demoFrame) {
+      demoFrame = document.createElement("iframe");
+      demoFrame.src = peel.href;
+      demoFrame.title = "Rain on Glass, from Phenomenon";
+      demo.prepend(demoFrame);
+    }
+    demoFrom = document.activeElement;
+    demo.classList.add("open");
+    document.body.classList.add("locked");
+    demoClose.focus({ preventScroll: true });
+  };
+  const closeDemo = () => {
+    if (!demo.classList.contains("open")) return;
+    demo.classList.remove("open");
+    document.body.classList.remove("locked");
+    demoGone = setTimeout(() => { demoFrame?.remove(); demoFrame = null; }, 600);   // after the fade
+    demoFrom?.focus?.({ preventScroll: true });
+  };
+  peel.addEventListener("click", e => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;   // a modified click still opens a new tab
+    e.preventDefault();
+    openDemo();
+  });
+  demoClose.addEventListener("click", closeDemo);
+  addEventListener("keydown", e => { if (e.key === "Escape") closeDemo(); });
 }
 </script>
 </body>
