@@ -462,6 +462,186 @@
     .card { transform: none; }
   }
 
+  /* ---------- Cassette deck ----------
+     A small tape deck in the rain view: brushed metal, a glass window over the cassette, a volume
+     knob, and piano keys that press down and latch. The reels roll while the tape moves. Drag it
+     by its metal body. */
+  .deck {
+    position: absolute; left: 24px; bottom: 24px; z-index: 2;
+    width: min(220px, calc(100% - 48px));
+    padding: 8px 8px 0;
+    border-radius: 9px;
+    color: #1d1d1f;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.004 .9' numOctaves='2' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23b)'/%3E%3C/svg%3E"),
+      linear-gradient(180deg, #efefec 0%, #d9d9d5 46%, #c4c4c0 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .95), inset 0 -1px 0 rgba(0, 0, 0, .3),
+      0 0 0 1px #0a0a0b, 0 22px 34px -14px rgba(0, 0, 0, .85), 0 2px 3px rgba(0, 0, 0, .5);
+    cursor: grab;
+    touch-action: none;
+    user-select: none; -webkit-user-select: none;
+    transition: transform .08s;
+  }
+  .deck.jolt { transform: translateY(1px); }   /* a key going down shakes the whole deck a hair */
+  .deck.dragging {   /* lifted: a deeper shadow */
+    cursor: grabbing; transition: none;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .95), inset 0 -1px 0 rgba(0, 0, 0, .3),
+      0 0 0 1px #0a0a0b, 0 30px 44px -14px rgba(0, 0, 0, .9), 0 3px 5px rgba(0, 0, 0, .5);
+  }
+  .deck-door {   /* the window: a recessed metal frame round the holder; the cassette slides out through its top */
+    position: relative;
+    padding: 6px;
+    border-radius: 5px;
+    background: linear-gradient(180deg, #b9b9b5, #d7d7d3);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, .45), inset 0 -1px 0 rgba(255, 255, 255, .75);
+    overflow: hidden;
+    cursor: default;
+  }
+  .deck-door::before {   /* the empty holder, seen once the cassette is out */
+    content: ""; position: absolute; inset: 6px;
+    border-radius: 3px;
+    background: linear-gradient(180deg, #0b0b0c, #19191b);
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, .9);
+  }
+  .deck.ejected .deck-door { cursor: pointer; }
+  .cassette {
+    position: relative;
+    padding: 4px 5px 2px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #232326, #161618);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08), 0 1px 2px rgba(0, 0, 0, .6);
+    transition: transform .42s cubic-bezier(.3, 1.25, .5, 1);   /* sliding back in, it seats with a small bounce */
+  }
+  .deck.ejected .cassette {   /* out: it slides up and away through the top of the window */
+    transform: translateY(-118%);
+    transition: transform .6s cubic-bezier(.55, 0, .25, 1);
+  }
+  .cs-label {
+    display: flex; align-items: center; gap: 5px;
+    padding: 2px 5px 2px 2px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #f5f1e7, #e6dfcf);
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .12);
+    font-size: 8.5px; line-height: 1.2; color: #232323;
+  }
+  .cs-side {
+    display: grid; place-items: center;
+    width: 11px; height: 11px; border-radius: 2px;
+    background: #1e1e20; color: #f2f0ea;
+    font-size: 7.5px; font-weight: 600;
+  }
+  .cs-title { flex: 1; font-weight: 500; letter-spacing: -.005em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cs-len { font-size: 7.5px; color: #8a2c22; font-weight: 600; letter-spacing: .02em; }
+  .cs-reels { display: block; width: 100%; height: auto; margin-top: 2px; }
+  .deck-glass {   /* tinted glass with a raking reflection, over the holder whether or not a tape is in it */
+    position: absolute; inset: 6px;
+    border-radius: 3px;
+    pointer-events: none;
+    background:
+      linear-gradient(162deg, rgba(255, 255, 255, .22) 0%, rgba(255, 255, 255, .06) 30%, rgba(255, 255, 255, 0) 31%, rgba(255, 255, 255, 0) 64%, rgba(255, 255, 255, .07) 65%, rgba(255, 255, 255, 0) 80%),
+      rgba(40, 46, 52, .12);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .25);
+  }
+  .deck-mid {
+    display: flex; align-items: center; gap: 7px;
+    padding: 7px 1px 6px;
+  }
+  .deck-grille {   /* the little speaker: a grid of holes in a raised square */
+    width: 20px; height: 20px; border-radius: 3px;
+    background:
+      radial-gradient(circle, #2b2b2e .9px, transparent 1.15px) 1px 1px / 3.5px 3.5px,
+      linear-gradient(180deg, #e3e3df, #c7c7c3);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 0 0 1px rgba(0, 0, 0, .28), 0 1px 2px rgba(0, 0, 0, .35);
+  }
+  .deck-lamp {   /* lit while the motor runs */
+    width: 5px; height: 5px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #6b2a24, #2c1110);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .6), 0 1px 0 rgba(255, 255, 255, .7);
+    transition: background .2s, box-shadow .2s;
+  }
+  .deck.running .deck-lamp {
+    background: radial-gradient(circle at 35% 35%, #ffb2a2, #ef3b2b 55%, #a51c12);
+    box-shadow: 0 0 6px 1px rgba(255, 70, 50, .55), 0 1px 0 rgba(255, 255, 255, .7);
+  }
+  .deck-vol { display: flex; align-items: center; gap: 4px; }
+  .deck-vol i, .deck-counter i { font-size: 8px; font-weight: 700; font-style: italic; letter-spacing: .03em; }
+  .deck-knob {   /* a knurled metal knob with a pointer line; turned by dragging, scrolling or the arrow keys */
+    --turn: 0deg;
+    position: relative;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: repeating-conic-gradient(#d8d8d4 0 5deg, #8e8e8a 5deg 10deg);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, .5), 0 2px 3px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .6);
+    transform: rotate(var(--turn));
+    cursor: ns-resize;
+    touch-action: none;
+  }
+  .deck-knob::before {   /* its polished cap */
+    content: ""; position: absolute; inset: 3px; border-radius: 50%;
+    background: radial-gradient(circle at 38% 30%, #fbfbf9, #cfcfcb 45%, #9d9d99 100%);
+    box-shadow: inset 0 -1px 1px rgba(0, 0, 0, .3), 0 0 0 .5px rgba(0, 0, 0, .3);
+  }
+  .deck-knob::after {   /* the pointer */
+    content: ""; position: absolute; left: 50%; top: 4px;
+    width: 2px; height: 6px; margin-left: -1px; border-radius: 1px;
+    background: #1d1d1f;
+  }
+  .deck-knob:focus-visible { outline: 1px solid #555; outline-offset: 3px; }
+  .deck-counter { margin-left: auto; display: flex; align-items: center; gap: 5px; }
+  .deck-counter b {
+    padding: 2px 7px 1px; border-radius: 4px;
+    background: linear-gradient(180deg, #1b1b1d, #0b0b0c);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, .8), 0 1px 0 rgba(255, 255, 255, .8);
+    color: #f3f3f0; font-weight: 500; font-size: 11px; letter-spacing: .06em;
+    font-variant-numeric: tabular-nums;
+  }
+  .deck-labels {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px;
+    padding: 0 3px 4px;
+    text-align: center;
+    font-size: 7.5px; font-weight: 700; letter-spacing: .04em;
+  }
+  .deck-well {   /* the dark slot the keys sit in */
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px;
+    margin: 0 -8px;
+    padding: 0 11px 8px;
+    border-radius: 0 0 9px 9px;
+    background: linear-gradient(180deg, #0c0c0d, #1a1a1c);
+    box-shadow: inset 0 3px 4px rgba(0, 0, 0, .9);
+  }
+  .key {
+    position: relative;
+    height: 40px;
+    padding: 0; border: 0; background: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .key:focus-visible { outline: 1px solid #888; outline-offset: 2px; }
+  .key .cap {   /* a block: a lit top, a darker front face with three grip dots, and its shadow in the well */
+    position: absolute; inset: 0 0 3px;
+    border-radius: 2px 2px 3px 3px;
+    background: linear-gradient(180deg, #67676b 0%, #4a4a4e 9%, #3c3c40 58%, #2e2e31 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .22), inset 0 -10px 0 rgba(0, 0, 0, .28), inset 1px 0 0 rgba(255, 255, 255, .05),
+      0 3px 0 #141416, 0 5px 6px rgba(0, 0, 0, .7);
+    transition: transform .07s cubic-bezier(.3, 0, .6, 1), box-shadow .07s, filter .07s;
+  }
+  .key .cap::after {
+    content: ""; position: absolute; left: 50%; bottom: 3px;
+    width: 16px; height: 3px; transform: translateX(-50%);
+    background: radial-gradient(circle, rgba(255, 255, 255, .26) 1px, transparent 1.3px) 0 0 / 5.33px 3px repeat-x;
+  }
+  .key-eject .cap { background: linear-gradient(180deg, #47474b 0%, #2c2c2f 9%, #222225 58%, #18181a 100%); }   /* set apart: a darker key */
+  .key.down .cap, .key[aria-pressed="true"] .cap {   /* pressed: it sinks into the well and its shadow closes up */
+    transform: translateY(3px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .12), inset 0 -10px 0 rgba(0, 0, 0, .32), inset 1px 0 0 rgba(255, 255, 255, .03),
+      0 0 0 #141416, 0 1px 2px rgba(0, 0, 0, .8);
+    filter: brightness(.9);
+  }
+  .key[aria-pressed="true"]:not(.down) .cap { transform: translateY(2px); }   /* a latched key rests a touch higher than one held down */
+
   /* ---------- Page peel ----------
      The top-right corner of the page is folded back. The square's diagonal is the crease: above it
      lies what's under the page (Rain on Glass, from Phenomenon), below it the folded flap. Hovering
@@ -471,10 +651,10 @@
     --peel: 56px;
     position: fixed; top: 0; right: 0; z-index: 40;
     width: var(--peel); height: var(--peel);
-    transition: --peel .8s var(--ease);
+    transition: --peel 1.3s cubic-bezier(.3, .7, .2, 1);   /* a slow, soft lift */
     -webkit-tap-highlight-color: transparent;
   }
-  .peel:hover, .peel:focus-visible { --peel: 230px; }
+  .peel:hover, .peel:focus-visible { --peel: 80px; }   /* just a stir of the corner */
   .peel:focus-visible { outline: none; }
   .peel-scene {   /* under the page: the triangle the corner has lifted from */
     position: absolute; inset: 0;
@@ -482,13 +662,16 @@
     overflow: hidden;
     background: #0b0d12;
   }
-  .peel-scene img, .peel-scene iframe {   /* pinned to the corner, so peeling further uncovers more of the same view */
-    position: absolute; top: 0; right: 0;
+  .peel-scene img, .peel-scene iframe {   /* pinned to the corner, so peeling further uncovers more of the same view: */
+    position: absolute;                    /* the trees, with the piece's lettered name off to the right, out of view */
+    top: -170px; right: -230px; width: 760px; height: 480px;
     border: 0; pointer-events: none;
   }
-  .peel-scene img { width: 400px; height: 250px; object-fit: cover; }
-  .peel-scene iframe {   /* the live piece, framed on the street lights; its lettered name sits off to the right, out of view */
-    top: -170px; right: -230px; width: 760px; height: 480px;
+  .peel-scene img {   /* the clip's first frame, placed as the piece places it, softened as if seen through wet glass */
+    object-fit: cover; object-position: left bottom;
+    filter: blur(1.5px) saturate(.85) brightness(.92);
+  }
+  .peel-scene iframe {
     opacity: 0; transition: opacity .6s;
   }
   .peel-scene iframe.ready { opacity: 1; }
@@ -505,15 +688,38 @@
   @media (hover: none) { .peel { --peel: 46px; } }
   @media (prefers-reduced-motion: reduce) { .peel { transition: none; } }
 
-  /* The demo the peel opens: Rain on Glass, full screen and live (drag to wipe the glass) */
-  .demo {
+  /* The demo the peel opens: Rain on Glass, full screen and live (drag to wipe the glass).
+     Clicking peels the whole page away: the same fold, carried on until it has crossed the screen.
+     --p is the fold's size, shared by the uncovered triangle (.demo) and the flap riding its edge. */
+  @property --p { syntax: "<length>"; inherits: true; initial-value: 0px; }
+  .demo-stage {
+    --p: 0px;
     position: fixed; inset: 0; z-index: 60;
+    pointer-events: none;
+    transition: --p .7s cubic-bezier(.4, .1, .2, 1);   /* swift: off at once, settling as the page clears */
+  }
+  .demo-stage.open { --p: calc(100vw + 100vh + 60px); pointer-events: auto; }   /* just far enough that the crease has left the screen */
+  .demo {
+    position: absolute; inset: 0;
     background: #07090d;
     overflow: hidden;
-    opacity: 0; visibility: hidden;
-    transition: opacity .5s var(--ease), visibility 0s .5s;
+    visibility: hidden;
+    clip-path: polygon(calc(100% - var(--p)) 0, 100% 0, 100% var(--p));
   }
-  .demo.open { opacity: 1; visibility: visible; transition: opacity .5s var(--ease); }
+  .demo-stage.active .demo { visibility: visible; }
+  .demo-flap {
+    position: absolute; top: 0; right: 0;
+    width: var(--p); height: var(--p);
+    pointer-events: none;
+    filter: drop-shadow(-6px 9px 12px rgba(0, 0, 0, .55)) drop-shadow(-1px 1px 1px rgba(0, 0, 0, .45));
+  }
+  .demo-flap::before {
+    content: ""; position: absolute; inset: 0;
+    clip-path: polygon(0 0, 100% 100%, 0 100%);
+    background: linear-gradient(to bottom left, #5c5d64 50%, #3c3d43 51.5%, #27282d 56%, #2f3035 100%);
+  }
+  .peel.gone { visibility: hidden; }   /* the corner has become the page being peeled */
+  @media (prefers-reduced-motion: reduce) { .demo-stage { transition: none; } }
   .demo iframe {   /* runs 120px past the right edge, so the piece's own name tab sits out of view */
     position: absolute; top: 0; left: 0;
     width: calc(100% + 120px); height: 100%;
@@ -560,12 +766,59 @@
 <div class="cursor-label" id="cursorLabel" aria-hidden="true"></div>
 
 <a class="peel" id="peel" href="https://akatori-design.github.io/Phenomenon/works/rain-on-glass/" target="_blank" rel="noopener" aria-label="Peek under the page: Rain on Glass, from Phenomenon">
-  <span class="peel-scene"><img src="images/phenomenon/rain-on-glass.jpg" alt=""></span>
+  <span class="peel-scene"><img src="images/phenomenon/meadow.jpg" alt=""></span>
   <span class="peel-flap"></span>
 </a>
 
-<div class="demo" id="demo" role="dialog" aria-modal="true" aria-label="Rain on Glass, from Phenomenon">
-  <button class="close" id="demoClose" type="button">Close ✕</button>
+<div class="demo-stage" id="demoStage">
+  <div class="demo" id="demo" role="dialog" aria-modal="true" aria-label="Rain on Glass, from Phenomenon">
+    <button class="close" id="demoClose" type="button">Close ✕</button>
+    <div class="deck" id="deck" role="group" aria-label="Cassette player">
+      <div class="deck-door" id="deckDoor">
+        <div class="cassette">
+          <div class="cs-label"><span class="cs-side">A</span><span class="cs-title">Feel it or Don't</span><span class="cs-len">3:35</span></div>
+          <svg class="cs-reels" viewBox="0 0 200 66" aria-hidden="true">
+            <defs>
+              <radialGradient id="csPack">
+                <stop offset="0" stop-color="#4a3428"/><stop offset=".55" stop-color="#2e2019"/>
+                <stop offset=".9" stop-color="#3f2c22"/><stop offset="1" stop-color="#1b120d"/>
+              </radialGradient>
+              <g id="csHub">
+                <circle r="9.4" fill="#e6e3dc"/><circle r="9.4" fill="none" stroke="#9c9a94" stroke-width=".6"/>
+                <circle r="6.6" fill="#141416"/>
+                <g fill="#e6e3dc"><rect x="-1" y="-6.9" width="2" height="2.6"/><rect x="-1" y="-6.9" width="2" height="2.6" transform="rotate(60)"/><rect x="-1" y="-6.9" width="2" height="2.6" transform="rotate(120)"/><rect x="-1" y="-6.9" width="2" height="2.6" transform="rotate(180)"/><rect x="-1" y="-6.9" width="2" height="2.6" transform="rotate(240)"/><rect x="-1" y="-6.9" width="2" height="2.6" transform="rotate(300)"/></g>
+              </g>
+            </defs>
+            <rect x="28" y="7" width="144" height="50" rx="25" fill="#0b0b0c" stroke="#303033" stroke-width="1.2"/>
+            <circle id="packL" cx="62" cy="32" r="24" fill="url(#csPack)"/>
+            <circle id="packR" cx="138" cy="32" r="9" fill="url(#csPack)"/>
+            <rect x="84" y="19" width="32" height="26" rx="2" fill="rgba(255,255,255,.035)" stroke="rgba(255,255,255,.16)" stroke-width=".8"/>
+            <path d="M93 34h11m-3-3 3 3-3 3" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1"/>
+            <g id="reelL" transform="rotate(0 62 32)"><use href="#csHub" x="62" y="32"/></g>
+            <g id="reelR" transform="rotate(0 138 32)"><use href="#csHub" x="138" y="32"/></g>
+            <text x="100" y="64" text-anchor="middle" font-size="4.6" letter-spacing=".4" fill="#77777b">NORMAL BIAS · 120µs EQ</text>
+            <circle cx="9" cy="58" r="2.2" fill="#2a2a2d"/><circle cx="191" cy="58" r="2.2" fill="#2a2a2d"/>
+          </svg>
+        </div>
+        <span class="deck-glass" aria-hidden="true"></span>
+      </div>
+      <div class="deck-mid">
+        <span class="deck-grille" aria-hidden="true"></span>
+        <span class="deck-lamp" aria-hidden="true"></span>
+        <span class="deck-vol"><i aria-hidden="true">VOL</i><span class="deck-knob" id="deckKnob" role="slider" tabindex="0" aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="40"></span></span>
+        <span class="deck-counter"><i>DUR</i><b id="deckDur">00:00</b></span>
+      </div>
+      <div class="deck-labels" aria-hidden="true"><span>PLAY</span><span>STOP</span><span>REW</span><span>FF</span><span>EJECT</span></div>
+      <div class="deck-well">
+        <button class="key" type="button" data-act="play" aria-label="Play" aria-pressed="false"><span class="cap"></span></button>
+        <button class="key" type="button" data-act="stop" aria-label="Stop"><span class="cap"></span></button>
+        <button class="key" type="button" data-act="rew" aria-label="Rewind" aria-pressed="false"><span class="cap"></span></button>
+        <button class="key" type="button" data-act="ff" aria-label="Fast forward" aria-pressed="false"><span class="cap"></span></button>
+        <button class="key key-eject" type="button" data-act="eject" aria-label="Eject"><span class="cap"></span></button>
+      </div>
+    </div>
+  </div>
+  <div class="demo-flap" aria-hidden="true"></div>
 </div>
 
 <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="articleTitle">
@@ -1926,6 +2179,324 @@ if (location.hash) {
 }
 
 /* ---------------------------------------------------------------
+   Cassette deck: the tape is "Feel it or Don't", and it plays as the
+   rain view opens. PLAY latches down until STOP (or the end of the
+   tape) releases it. REW and FF latch on a tap and wind until STOP;
+   held down, they wind only while held, squeaking, and the deck goes
+   back to what it was doing. EJECT slides the cassette out of the
+   window. Both reels pass the same tape, so the smaller pack always
+   turns faster, and the motor spools up and brakes with inertia.
+---------------------------------------------------------------- */
+(() => {   // its own scope: names like tick, start and stop stay out of the page's global scope
+  const deck = document.getElementById("deck"), door = document.getElementById("deckDoor"), counter = document.getElementById("deckDur");
+  const keys = Object.fromEntries([...deck.querySelectorAll(".key")].map(k => [k.dataset.act, k]));
+  const reelL = document.getElementById("reelL"), reelR = document.getElementById("reelR");
+  const packL = document.getElementById("packL"), packR = document.getElementById("packR");
+  const song = new Audio("audio/feel-it-or-dont.m4a");
+  song.preload = "auto";
+  const knob = document.getElementById("deckKnob");
+  const FAST = 14;              // rewind and fast forward run at 14x
+  const HUB = 9.4, FULL = 24;   // reel radius when empty and when holding the whole tape (svg units)
+  const SPIN = 32;              // tape speed at play, in svg units a second
+  const HOLD = 280;             // ms: a REW/FF press longer than this winds only while held
+  let length = 215.5, pos = 0, speed = 0, target = 0, mode = "stop", ejected = false;
+  let angL = 0, angR = 0, raf = 0, last = 0, held = null;
+  song.addEventListener("loadedmetadata", () => { if (isFinite(song.duration)) length = song.duration; });
+  song.addEventListener("ended", () => { if (mode === "play") { pos = length; stop(true); } });
+
+  const packs = () => {
+    const f = Math.min(1, pos / length), span = FULL * FULL - HUB * HUB;
+    return [Math.sqrt(HUB * HUB + span * (1 - f)), Math.sqrt(HUB * HUB + span * f)];
+  };
+  const clock = s => String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(Math.floor(s % 60)).padStart(2, "0");
+  function draw() {
+    const [rl, rr] = packs();
+    packL.setAttribute("r", rl.toFixed(2));
+    packR.setAttribute("r", rr.toFixed(2));
+    reelL.setAttribute("transform", `rotate(${(angL % 360).toFixed(1)} 62 32)`);
+    reelR.setAttribute("transform", `rotate(${(angR % 360).toFixed(1)} 138 32)`);
+    counter.textContent = clock(pos);
+  }
+
+  // ---- the mechanism's sounds, each key its own: hard plastic keys over a steel mechanism,
+  // like an old Walkman. Every sound is layered from a sharp plastic tick, a mid clack, the hollow
+  // ring of the shell and a low thunk of the mechanism, through one bus with a compressor so it can
+  // be loud without cracking. ----
+  let bus = null;
+  const ac = () => {
+    audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+    if (audio.state === "suspended") audio.resume();
+    if (!bus) {
+      const comp = audio.createDynamicsCompressor();
+      comp.threshold.value = -20; comp.knee.value = 4; comp.ratio.value = 8; comp.attack.value = .001; comp.release.value = .06;
+      bus = audio.createGain(); bus.gain.value = 4;
+      bus.connect(comp).connect(audio.destination);
+    }
+    return audio;
+  };
+  // a burst of filtered noise, fading out (shape: how fast)
+  function noise(t, dur, type, f, q, gain, shape = 6) {
+    const a = ac(), len = Math.max(1, Math.floor(a.sampleRate * dur)), buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len) ** shape;
+    const src = a.createBufferSource(), flt = a.createBiquadFilter(), g = a.createGain();
+    src.buffer = buf; flt.type = type; flt.frequency.value = f; flt.Q.value = q; g.gain.value = gain;
+    src.connect(flt).connect(g).connect(bus);
+    src.start(a.currentTime + t);
+  }
+  // a low knock of the mechanism: a sine dropping in pitch as it dies away
+  function knock(t, f0, f1, dur, gain) {
+    const a = ac(), t0 = a.currentTime + t, o = a.createOscillator(), g = a.createGain();
+    o.frequency.setValueAtTime(f0, t0); o.frequency.exponentialRampToValueAtTime(f1, t0 + dur);
+    g.gain.setValueAtTime(gain, t0); g.gain.exponentialRampToValueAtTime(.001, t0 + dur);
+    o.connect(g).connect(bus);
+    o.start(t0); o.stop(t0 + dur + .02);
+  }
+  // the parts of a clunk: the key's edge, the plastic chassis resonating low, and the dull thud of
+  // the mechanism, all muffled; a real deck goes "ka-chunk", the second impact as the mechanism engages
+  const edge = (t, g = .45) => noise(t, .012, "bandpass", 1150, 1.4, g, 5);                    // the key's edge, softened
+  const body = (t, g = .8, f = 230, dur = .09) => noise(t, dur, "bandpass", f, 3.2, g * 2.2, 3);   // the chassis, low and hollow
+  const thud = (t, g = .8) => { noise(t, .045, "lowpass", 480, .7, g, 4); knock(t, 88, 44, .1, g); };   // the mechanism landing
+  // Recorded from a real deck: PLAY's press and the eject. Decoded as the page loads (an offline
+  // context needs no click), each started just before its first sound so it lands with the key.
+  const RECORDED = { play: ["audio/cassette-play.mp3", .18], eject: ["audio/cassette-eject.mp3", .13] };
+  const recorded = {};
+  try {
+    const decoder = new OfflineAudioContext(1, 1, 48000);
+    for (const [name, [url]] of Object.entries(RECORDED)) {
+      fetch(url).then(r => r.arrayBuffer()).then(ab => decoder.decodeAudioData(ab)).then(buf => { recorded[name] = buf; }).catch(() => {});
+    }
+  } catch (e) {}
+  function playRecorded(name, gain = 1.3) {
+    if (!recorded[name]) return false;   // not ready (or failed): the synthesized sound stands in
+    const a = ac(), src = a.createBufferSource(), g = a.createGain();
+    src.buffer = recorded[name]; g.gain.value = gain;
+    src.connect(g).connect(a.destination);
+    src.start(0, RECORDED[name][1]);
+    return true;
+  }
+  const sfx = {
+    press() { edge(0); body(0, .8, 250); thud(.004, .75); },
+    lift() { edge(0, .25); body(0, .4, 330, .05); },
+    // a key press (PLAY, STOP, REW, FF): the recorded button; failing that, a firm ka-chunk
+    play() { if (!playRecorded("play")) { edge(0, .55); body(0, 1, 210); thud(0, 1); body(.058, .75, 320, .07); thud(.058, .6); edge(.058, .3); } },
+    // STOP: the latched key is released and springs back up, bouncing once
+    release() { edge(0, .5); body(0, .85, 290); thud(.008, .75); body(.05, .4, 250, .06); thud(.05, .35); },
+    // EJECT: the recorded eject; failing that, a clunk, a muffled rasp as the cassette slides up, and a stop
+    open() { if (!playRecorded("eject")) { edge(0, .5); body(0, .9, 190, .14); thud(0, .9); noise(.03, .45, "bandpass", 900, 1.2, .3, 1.4); body(.5, .7, 210); thud(.5, .8); } },
+    // and back in: it seats with a thud and the holder clunks shut
+    close() { body(0, 1, 190); thud(0, 1); edge(.045, .4); body(.045, .55, 340, .06); thud(.045, .4); },
+    // the volume knob's detents
+    detent() { noise(0, .004, "highpass", 4200, .7, .22, 8); },
+  };
+
+  // ---- the tape's own sounds: a soft hiss while playing; winding whirs and squeaks ----
+  let tape = null;
+  function tapeSound() {
+    if (tape) return tape;
+    try {
+      const a = ac(), len = a.sampleRate * 2, buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
+      let b = 0;
+      for (let i = 0; i < len; i++) { b = .97 * b + .03 * (Math.random() * 2 - 1); d[i] = b * 4 + (Math.random() * 2 - 1) * .3; }
+      const src = a.createBufferSource(); src.buffer = buf; src.loop = true;
+      const hissF = a.createBiquadFilter(); hissF.type = "highpass"; hissF.frequency.value = 2600;
+      const hiss = a.createGain(); hiss.gain.value = 0;
+      const whirF = a.createBiquadFilter(); whirF.type = "bandpass"; whirF.Q.value = 2.2; whirF.frequency.value = 500;
+      const whir = a.createGain(); whir.gain.value = 0;
+      const motor = a.createOscillator(); motor.type = "triangle"; motor.frequency.value = 60;
+      const motorG = a.createGain(); motorG.gain.value = 0;
+      // the squeak: tape dragging over the guides, a thin tone that wavers and chirps
+      const squeak = a.createOscillator(); squeak.type = "triangle"; squeak.frequency.value = 1400;
+      const squeakF = a.createBiquadFilter(); squeakF.type = "bandpass"; squeakF.Q.value = 5; squeakF.frequency.value = 1600;
+      const squeakG = a.createGain(); squeakG.gain.value = 0;
+      src.connect(hissF).connect(hiss).connect(a.destination);
+      src.connect(whirF).connect(whir).connect(a.destination);
+      motor.connect(motorG).connect(a.destination);
+      squeak.connect(squeakF).connect(squeakG).connect(a.destination);
+      src.start(); motor.start(); squeak.start();
+      tape = { hiss, whir, whirF, motor, motorG, squeak, squeakF, squeakG };
+    } catch (e) { tape = false; }
+    return tape;
+  }
+  function soundFor(s, rl, rr) {
+    if (!tape) return;
+    const t = audio.currentTime, a = Math.abs(s), wind = Math.max(0, Math.min(1, (a - 1.3) / (FAST - 1.3)));
+    const fast = HUB / Math.min(rl, rr);   // the near-empty reel spins fastest, and everything rises with it
+    tape.hiss.gain.setTargetAtTime(.006 * Math.min(1, a) * (1 - wind), t, .04);
+    tape.whir.gain.setTargetAtTime(.18 * wind, t, .05);
+    tape.whirF.frequency.setTargetAtTime(380 + 1500 * wind * fast, t, .05);
+    tape.motor.frequency.setTargetAtTime(52 + 70 * wind, t, .05);
+    tape.motorG.gain.setTargetAtTime(a > .02 ? .008 + .04 * wind : 0, t, .05);
+    const f = (1100 + 1300 * wind * fast) * (1 + (Math.random() - .5) * .35);   // it wavers from frame to frame
+    tape.squeak.frequency.setTargetAtTime(f, t, .012);
+    tape.squeakF.frequency.setTargetAtTime(f * 1.1, t, .02);
+    tape.squeakG.gain.setTargetAtTime(wind > .02 ? .09 * Math.min(1, wind * 3) * (.45 + .55 * Math.random()) : 0, t, .015);
+  }
+  const jolt = () => { deck.classList.add("jolt"); setTimeout(() => deck.classList.remove("jolt"), 70); };
+
+  // ---- transport ----
+  function tick(now) {
+    const dt = Math.min(.05, (now - last) / 1000); last = now;
+    speed += (target - speed) * Math.min(1, (target === 0 ? 12 : Math.abs(target) > 1 ? 3 : 8) * dt);   // brakes fast, spools up to winding speed slower
+    if (mode === "play" && !song.paused) pos = song.currentTime;   // the song is the tape
+    else pos = Math.min(length, Math.max(0, pos + speed * dt));
+    const [rl, rr] = packs(), turn = SPIN * speed * dt * 57.2958;
+    angL += turn / rl; angR += turn / rr;
+    draw();
+    soundFor(speed, rl, rr);
+    if ((target < 0 && pos <= 0) || (target > 1 && pos >= length)) stop(true);   // the end of the tape: the key springs up
+    if (Math.abs(speed) > .003 || target !== 0) raf = requestAnimationFrame(tick);
+    else { speed = 0; raf = 0; soundFor(0, ...packs()); }
+  }
+  const run = () => { if (!raf) { last = performance.now(); raf = requestAnimationFrame(tick); } };
+
+  function latch(act) {
+    for (const a of ["play", "rew", "ff"]) keys[a].setAttribute("aria-pressed", String(a === act));
+    deck.classList.toggle("running", act !== null);
+  }
+  function stop(auto) {
+    if (mode === "stop") return false;
+    mode = "stop"; target = 0;
+    song.pause();
+    latch(null);
+    if (auto) sfx.release();
+    run();
+    return true;
+  }
+  function start(act) {
+    if (ejected || mode === act) return false;
+    if (act === "play" && pos >= length - .2) return false;   // nothing left to play
+    if (act === "ff" && pos >= length) return false;
+    if (act === "rew" && pos <= 0) return false;
+    tapeSound();
+    mode = act; target = act === "play" ? 1 : act === "ff" ? FAST : -FAST;
+    latch(act);
+    if (act === "play") {
+      song.currentTime = Math.min(pos, length);
+      song.play().catch(() => { if (mode === "play") stop(); });
+    } else song.pause();   // the heads lift off the tape while it winds
+    run();
+    return true;
+  }
+  function eject() {
+    if (stop()) { sfx.release(); return; }   // a running deck stops first; the next press opens it
+    ejected = !ejected;
+    deck.classList.toggle("ejected", ejected);
+    ejected ? sfx.open() : sfx.close();
+  }
+
+  // ---- the keys ----
+  const down = (name, key) => {
+    key.classList.add("down");
+    jolt();
+    // every key but EJECT sounds the recorded button press; EJECT has its own recording
+    if (name === "play") { start("play"); sfx.play(); }
+    else if (name === "stop") { stop(); sfx.play(); }
+    else if (name === "eject") eject();
+    else {   // REW / FF
+      sfx.play();
+      held = { name, at: performance.now(), prev: mode };
+      start(name);
+    }
+  };
+  const up = (name, key) => {
+    if (!key.classList.contains("down")) return;
+    key.classList.remove("down");
+    if (held && held.name === name) {
+      const long = performance.now() - held.at > HOLD, prev = held.prev;
+      held = null;
+      if (long && mode === name) {   // held: let go and the deck goes back to what it was doing
+        if (prev === "play") { mode = "stop"; start("play"); } else stop();
+      }
+    }
+    if (key.getAttribute("aria-pressed") !== "true") sfx.lift();
+  };
+  for (const [name, key] of Object.entries(keys)) {
+    key.addEventListener("pointerdown", e => {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      key.setPointerCapture(e.pointerId);
+      down(name, key);
+    });
+    key.addEventListener("pointerup", () => up(name, key));
+    key.addEventListener("pointercancel", () => up(name, key));
+    key.addEventListener("keydown", e => {
+      if ((e.key === "Enter" || e.key === " ") && !e.repeat) { e.preventDefault(); down(name, key); }
+    });
+    key.addEventListener("keyup", e => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); up(name, key); }
+    });
+  }
+  door.addEventListener("click", () => { if (ejected) eject(); });   // click the empty holder to slide the tape back in
+  draw();
+
+  // ---- the volume knob: quiet by default, turned through 270 degrees, clicking through detents ----
+  let vol = .4;
+  try { const v = parseFloat(localStorage.getItem("deck-volume")); if (v >= 0 && v <= 1) vol = v; } catch (e) {}
+  function setVol(v, sound) {
+    v = Math.min(1, Math.max(0, v));
+    if (sound && Math.floor(v * 20) !== Math.floor(vol * 20)) sfx.detent();   // a detent every 5%
+    vol = v;
+    song.volume = vol * vol;   // the knob's travel follows loudness, so its middle is half as loud, not a quarter
+    knob.style.setProperty("--turn", (vol * 270 - 135).toFixed(1) + "deg");
+    knob.setAttribute("aria-valuenow", String(Math.round(vol * 100)));
+    try { localStorage.setItem("deck-volume", vol.toFixed(2)); } catch (e) {}
+  }
+  setVol(vol);
+  let turning = null;
+  knob.addEventListener("pointerdown", e => {
+    if (e.button !== 0) return;
+    e.preventDefault(); e.stopPropagation();
+    knob.setPointerCapture(e.pointerId);
+    turning = { y: e.clientY, x: e.clientX, v: vol };
+  });
+  knob.addEventListener("pointermove", e => {
+    if (turning) setVol(turning.v + ((turning.y - e.clientY) + (e.clientX - turning.x)) / 150, true);   // up or right turns it up
+  });
+  const letGo = () => { turning = null; };
+  knob.addEventListener("pointerup", letGo);
+  knob.addEventListener("pointercancel", letGo);
+  knob.addEventListener("wheel", e => { e.preventDefault(); setVol(vol - Math.sign(e.deltaY) * .05, true); }, { passive: false });
+  knob.addEventListener("keydown", e => {
+    const step = { ArrowUp: .05, ArrowRight: .05, ArrowDown: -.05, ArrowLeft: -.05, PageUp: .2, PageDown: -.2 }[e.key];
+    if (step) { e.preventDefault(); setVol(vol + step, true); }
+    else if (e.key === "Home") { e.preventDefault(); setVol(0, true); }
+    else if (e.key === "End") { e.preventDefault(); setVol(1, true); }
+  });
+
+  // Drag the deck by its metal body (the keys, knob and window keep their own jobs); it stays on screen.
+  let grab = null;
+  deck.addEventListener("pointerdown", e => {
+    if (e.button !== 0 || e.target.closest(".key, .deck-door, .deck-knob")) return;
+    const r = deck.getBoundingClientRect(), box = deck.offsetParent.getBoundingClientRect();
+    grab = { dx: e.clientX - r.left, dy: e.clientY - r.top, box };
+    deck.style.left = r.left - box.left + "px"; deck.style.top = r.top - box.top + "px"; deck.style.bottom = "auto";
+    deck.classList.add("dragging");
+    deck.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+  deck.addEventListener("pointermove", e => {
+    if (!grab) return;
+    const { box } = grab;
+    const x = Math.min(Math.max(0, e.clientX - box.left - grab.dx), box.width - deck.offsetWidth);
+    const y = Math.min(Math.max(0, e.clientY - box.top - grab.dy), box.height - deck.offsetHeight);
+    deck.style.left = x + "px"; deck.style.top = y + "px";
+  });
+  const drop = () => { if (grab) { grab = null; deck.classList.remove("dragging"); } };
+  deck.addEventListener("pointerup", drop);
+  deck.addEventListener("pointercancel", drop);
+
+  // The tape plays as the rain view opens (the click that opens it lets the song play), and stops
+  // when it closes; reopening carries on from where it stopped.
+  deck.startTape = () => {
+    if (!start("play")) return;
+    sfx.play();
+    keys.play.classList.add("down");
+    setTimeout(() => keys.play.classList.remove("down"), 140);
+  };
+  deck.stopTape = () => stop();
+})();
+
+/* ---------------------------------------------------------------
    Page peel: the live Rain on Glass loads only while the corner is
    open, and unloads a few seconds after it closes; at rest it's a still
 ---------------------------------------------------------------- */
@@ -1953,27 +2524,46 @@ if (location.hash) {
   peel.addEventListener("blur", close);
 
   // Clicking the peel opens the piece full screen, live, with its own close button; it unloads on close
-  const demo = document.getElementById("demo"), demoClose = document.getElementById("demoClose");
+  const stage = document.getElementById("demoStage"), demo = document.getElementById("demo"), demoClose = document.getElementById("demoClose");
   let demoFrame = null, demoFrom = null, demoGone = 0;
   const openDemo = () => {
+    if (stage.classList.contains("open")) return;
     clearTimeout(demoGone);
     if (!demoFrame) {
       demoFrame = document.createElement("iframe");
+      demoFrame.allow = "autoplay";   // hands the piece the click that opened it, so its rain is heard at once
       demoFrame.src = peel.href;
       demoFrame.title = "Rain on Glass, from Phenomenon";
       demo.prepend(demoFrame);
     }
     demoFrom = document.activeElement;
-    demo.classList.add("open");
+    // pick up the fold where the corner is now, then carry it across the whole page
+    if (!stage.classList.contains("active")) {
+      stage.style.transition = "none";
+      stage.style.setProperty("--p", peel.getBoundingClientRect().width + "px");
+      stage.classList.add("active");
+      stage.getBoundingClientRect();
+      stage.style.transition = "";
+      stage.style.removeProperty("--p");
+    }
+    stage.classList.add("open");
+    peel.classList.add("gone");
     document.body.classList.add("locked");
     demoClose.focus({ preventScroll: true });
+    document.getElementById("deck").startTape?.();   // the song plays as the page peels away
   };
   const closeDemo = () => {
-    if (!demo.classList.contains("open")) return;
-    demo.classList.remove("open");
+    if (!stage.classList.contains("open")) return;
+    stage.classList.remove("open");   // the page peels back down into the corner
     document.body.classList.remove("locked");
-    demoGone = setTimeout(() => { demoFrame?.remove(); demoFrame = null; }, 600);   // after the fade
+    document.getElementById("deck").stopTape?.();
     demoFrom?.focus?.({ preventScroll: true });
+    clearTimeout(demoGone);
+    demoGone = setTimeout(() => {   // once it has settled, unload the piece
+      stage.classList.remove("active");
+      peel.classList.remove("gone");
+      demoFrame?.remove(); demoFrame = null;
+    }, 800);
   };
   peel.addEventListener("click", e => {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;   // a modified click still opens a new tab
