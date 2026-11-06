@@ -497,7 +497,6 @@
     background: linear-gradient(180deg, #b9b9b5, #d7d7d3);
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, .45), inset 0 -1px 0 rgba(255, 255, 255, .75);
     overflow: hidden;
-    cursor: default;
   }
   .deck-door::before {   /* the empty holder, seen once the cassette is out */
     content: ""; position: absolute; inset: 6px;
@@ -2115,7 +2114,7 @@ function clack(pitch = 1) {
     audio = audio || new (window.AudioContext || window.webkitAudioContext)();
     if (audio.state === "suspended") audio.resume();
     const t0 = audio.currentTime, out = audio.createGain();
-    out.gain.value = .14;
+    out.gain.value = .45;
     out.connect(audio.destination);
     const len = Math.floor(audio.sampleRate * .012), buf = audio.createBuffer(1, len, audio.sampleRate), d = buf.getChannelData(0);
     for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len) ** 6;
@@ -2179,16 +2178,18 @@ if (location.hash) {
 }
 
 /* ---------------------------------------------------------------
-   Cassette deck: the tape is "Feel it or Don't", and it plays as the
-   rain view opens. PLAY latches down until STOP (or the end of the
-   tape) releases it. REW and FF latch on a tap and wind until STOP;
-   held down, they wind only while held, squeaking, and the deck goes
-   back to what it was doing. EJECT slides the cassette out of the
-   window. Both reels pass the same tape, so the smaller pack always
-   turns faster, and the motor spools up and brakes with inertia.
+   Cassette deck: the tape is "Feel it or Don't", waiting, stopped, as
+   the rain view opens. PLAY latches down until STOP (or the end of the
+   tape) releases it; from the start of the tape, two seconds of leader
+   go by, with only the tape's noise, before the song comes in. REW and
+   FF latch on a tap and wind until STOP; held down, they wind only
+   while held, squeaking, and the deck goes back to what it was doing.
+   EJECT stops the tape and slides the cassette out of the window. Both
+   reels pass the same tape, so the smaller pack always turns faster,
+   and the motor spools up and brakes with inertia.
 ---------------------------------------------------------------- */
 (() => {   // its own scope: names like tick, start and stop stay out of the page's global scope
-  const deck = document.getElementById("deck"), door = document.getElementById("deckDoor"), counter = document.getElementById("deckDur");
+  const deck = document.getElementById("deck"), counter = document.getElementById("deckDur");
   const keys = Object.fromEntries([...deck.querySelectorAll(".key")].map(k => [k.dataset.act, k]));
   const reelL = document.getElementById("reelL"), reelR = document.getElementById("reelR");
   const packL = document.getElementById("packL"), packR = document.getElementById("packR");
@@ -2199,9 +2200,10 @@ if (location.hash) {
   const HUB = 9.4, FULL = 24;   // reel radius when empty and when holding the whole tape (svg units)
   const SPIN = 32;              // tape speed at play, in svg units a second
   const HOLD = 280;             // ms: a REW/FF press longer than this winds only while held
-  let length = 215.5, pos = 0, speed = 0, target = 0, mode = "stop", ejected = false;
-  let angL = 0, angR = 0, raf = 0, last = 0, held = null;
-  song.addEventListener("loadedmetadata", () => { if (isFinite(song.duration)) length = song.duration; });
+  const LEAD = 2;               // seconds of blank leader before the song
+  let length = LEAD + 215.5, pos = 0, speed = 0, target = 0, mode = "stop", ejected = false;   // pos and length are tape time, leader included
+  let angL = 0, angR = 0, raf = 0, last = 0, held = null, unlocked = false;
+  song.addEventListener("loadedmetadata", () => { if (isFinite(song.duration)) length = LEAD + song.duration; });
   song.addEventListener("ended", () => { if (mode === "play") { pos = length; stop(true); } });
 
   const packs = () => {
@@ -2215,7 +2217,7 @@ if (location.hash) {
     packR.setAttribute("r", rr.toFixed(2));
     reelL.setAttribute("transform", `rotate(${(angL % 360).toFixed(1)} 62 32)`);
     reelR.setAttribute("transform", `rotate(${(angR % 360).toFixed(1)} 138 32)`);
-    counter.textContent = clock(pos);
+    counter.textContent = clock(Math.max(0, pos - LEAD));   // the counter runs with the song: 00:00 through the leader
   }
 
   // ---- the mechanism's sounds, each key its own: hard plastic keys over a steel mechanism,
@@ -2256,9 +2258,9 @@ if (location.hash) {
   const edge = (t, g = .45) => noise(t, .012, "bandpass", 1150, 1.4, g, 5);                    // the key's edge, softened
   const body = (t, g = .8, f = 230, dur = .09) => noise(t, dur, "bandpass", f, 3.2, g * 2.2, 3);   // the chassis, low and hollow
   const thud = (t, g = .8) => { noise(t, .045, "lowpass", 480, .7, g, 4); knock(t, 88, 44, .1, g); };   // the mechanism landing
-  // Recorded from a real deck: PLAY's press and the eject. Decoded as the page loads (an offline
-  // context needs no click), each started just before its first sound so it lands with the key.
-  const RECORDED = { play: ["audio/cassette-play.mp3", .18], eject: ["audio/cassette-eject.mp3", .13] };
+  // Recorded from a real deck: a key press, the eject and the holder closing. Decoded as the page loads
+  // (an offline context needs no click), each started just before its first sound so it lands with the key.
+  const RECORDED = { play: ["audio/cassette-play.mp3", .18], eject: ["audio/cassette-eject.mp3", .13], close: ["audio/cassette-close.mp3", .08] };
   const recorded = {};
   try {
     const decoder = new OfflineAudioContext(1, 1, 48000);
@@ -2266,30 +2268,31 @@ if (location.hash) {
       fetch(url).then(r => r.arrayBuffer()).then(ab => decoder.decodeAudioData(ab)).then(buf => { recorded[name] = buf; }).catch(() => {});
     }
   } catch (e) {}
-  function playRecorded(name, gain = 1.3) {
+  function playRecorded(name, delay = 0, gain = 1.3) {
     if (!recorded[name]) return false;   // not ready (or failed): the synthesized sound stands in
     const a = ac(), src = a.createBufferSource(), g = a.createGain();
     src.buffer = recorded[name]; g.gain.value = gain;
     src.connect(g).connect(a.destination);
-    src.start(0, RECORDED[name][1]);
+    src.start(a.currentTime + delay, RECORDED[name][1]);
     return true;
   }
   const sfx = {
     press() { edge(0); body(0, .8, 250); thud(.004, .75); },
     lift() { edge(0, .25); body(0, .4, 330, .05); },
-    // a key press (PLAY, STOP, REW, FF): the recorded button; failing that, a firm ka-chunk
-    play() { if (!playRecorded("play")) { edge(0, .55); body(0, 1, 210); thud(0, 1); body(.058, .75, 320, .07); thud(.058, .6); edge(.058, .3); } },
+    // a key press (PLAY, STOP, REW, FF): the recorded button, kept quieter than the eject and close;
+    // failing that, a firm ka-chunk
+    play() { if (!playRecorded("play", 0, .6)) { edge(0, .55); body(0, 1, 210); thud(0, 1); body(.058, .75, 320, .07); thud(.058, .6); edge(.058, .3); } },
     // STOP: the latched key is released and springs back up, bouncing once
     release() { edge(0, .5); body(0, .85, 290); thud(.008, .75); body(.05, .4, 250, .06); thud(.05, .35); },
     // EJECT: the recorded eject; failing that, a clunk, a muffled rasp as the cassette slides up, and a stop
     open() { if (!playRecorded("eject")) { edge(0, .5); body(0, .9, 190, .14); thud(0, .9); noise(.03, .45, "bandpass", 900, 1.2, .3, 1.4); body(.5, .7, 210); thud(.5, .8); } },
-    // and back in: it seats with a thud and the holder clunks shut
-    close() { body(0, 1, 190); thud(0, 1); edge(.045, .4); body(.045, .55, 340, .06); thud(.045, .4); },
+    // and back in: the recorded close, timed to land as the sliding cassette seats; failing that, a thud and a clunk
+    close() { if (!playRecorded("close", .24)) { body(0, 1, 190); thud(0, 1); edge(.045, .4); body(.045, .55, 340, .06); thud(.045, .4); } },
     // the volume knob's detents
     detent() { noise(0, .004, "highpass", 4200, .7, .22, 8); },
   };
 
-  // ---- the tape's own sounds: a soft hiss while playing; winding whirs and squeaks ----
+  // ---- the tape's own sounds: a soft lofi noise while playing; winding whirs and squeaks ----
   let tape = null;
   function tapeSound() {
     if (tape) return tape;
@@ -2298,8 +2301,36 @@ if (location.hash) {
       let b = 0;
       for (let i = 0; i < len; i++) { b = .97 * b + .03 * (Math.random() * 2 - 1); d[i] = b * 4 + (Math.random() * 2 - 1) * .3; }
       const src = a.createBufferSource(); src.buffer = buf; src.loop = true;
-      const hissF = a.createBiquadFilter(); hissF.type = "highpass"; hissF.frequency.value = 2600;
+      // the tape's own noise, lofi rather than hiss: a soft, warm bed of pink noise with the top and
+      // the rumble rolled off, and now and then the faint crackle of dust. Both loop, at lengths that
+      // don't line up, so the crackle never falls into a pattern.
+      const filtered = (buf, lo, hi) => {
+        const s = a.createBufferSource(), h = a.createBiquadFilter(), l = a.createBiquadFilter();
+        s.buffer = buf; s.loop = true;
+        h.type = "highpass"; h.frequency.value = lo; h.Q.value = .5;
+        l.type = "lowpass"; l.frequency.value = hi; l.Q.value = .5;
+        s.connect(h).connect(l);
+        return [s, l];
+      };
+      const bedBuf = a.createBuffer(1, a.sampleRate * 4, a.sampleRate), bd = bedBuf.getChannelData(0);
+      let p0 = 0, p1 = 0, p2 = 0, sq = 0;
+      for (let i = 0; i < bd.length; i++) {   // pink noise (Paul Kellet's economy filter)
+        const w = Math.random() * 2 - 1;
+        p0 = .99765 * p0 + w * .099046; p1 = .963 * p1 + w * .2965164; p2 = .57 * p2 + w * 1.0526913;
+        bd[i] = p0 + p1 + p2 + w * .1848; sq += bd[i] * bd[i];
+      }
+      const bedScale = .25 / Math.sqrt(sq / bd.length);   // an rms of .25, so the level below means what it says
+      for (let i = 0; i < bd.length; i++) bd[i] *= bedScale;
+      const dustBuf = a.createBuffer(1, Math.floor(a.sampleRate * 7.3), a.sampleRate), dd = dustBuf.getChannelData(0);
+      for (let k = 0; k < 7.3 * 7; k++) {   // about seven pops a second, nearly all of them tiny
+        const at = Math.floor(Math.random() * (dd.length - 600)), amp = Math.random() ** 3, dec = 6 + Math.random() * 40;
+        for (let j = 0; j < 600 && j < dec * 8; j++) dd[at + j] += amp * Math.exp(-j / dec) * (Math.random() * 2 - 1);
+      }
+      const [bedSrc, bedOut] = filtered(bedBuf, 150, 3800);
+      const [dustSrc, dustOut] = filtered(dustBuf, 400, 2600);
+      const dustG = a.createGain(); dustG.gain.value = 1.2;
       const hiss = a.createGain(); hiss.gain.value = 0;
+      bedOut.connect(hiss); dustOut.connect(dustG).connect(hiss);
       const whirF = a.createBiquadFilter(); whirF.type = "bandpass"; whirF.Q.value = 2.2; whirF.frequency.value = 500;
       const whir = a.createGain(); whir.gain.value = 0;
       const motor = a.createOscillator(); motor.type = "triangle"; motor.frequency.value = 60;
@@ -2308,11 +2339,11 @@ if (location.hash) {
       const squeak = a.createOscillator(); squeak.type = "triangle"; squeak.frequency.value = 1400;
       const squeakF = a.createBiquadFilter(); squeakF.type = "bandpass"; squeakF.Q.value = 5; squeakF.frequency.value = 1600;
       const squeakG = a.createGain(); squeakG.gain.value = 0;
-      src.connect(hissF).connect(hiss).connect(a.destination);
+      hiss.connect(a.destination);
       src.connect(whirF).connect(whir).connect(a.destination);
       motor.connect(motorG).connect(a.destination);
       squeak.connect(squeakF).connect(squeakG).connect(a.destination);
-      src.start(); motor.start(); squeak.start();
+      src.start(); bedSrc.start(); dustSrc.start(); motor.start(); squeak.start();
       tape = { hiss, whir, whirF, motor, motorG, squeak, squeakF, squeakG };
     } catch (e) { tape = false; }
     return tape;
@@ -2321,7 +2352,10 @@ if (location.hash) {
     if (!tape) return;
     const t = audio.currentTime, a = Math.abs(s), wind = Math.max(0, Math.min(1, (a - 1.3) / (FAST - 1.3)));
     const fast = HUB / Math.min(rl, rr);   // the near-empty reel spins fastest, and everything rises with it
-    tape.hiss.gain.setTargetAtTime(.006 * Math.min(1, a) * (1 - wind), t, .04);
+    // the tape's noise runs whenever the tape plays, the leader too: it follows the volume knob, as on a
+    // real deck, and wavers a little with the tape's wow and flutter; winding drowns it, and it stops with the tape
+    const flutter = 1 + .06 * Math.sin(t * 4.1) + .04 * Math.sin(t * 0.7 + 1.3);
+    tape.hiss.gain.setTargetAtTime(.09 * song.volume * Math.min(1, a) * (1 - wind) * flutter, t, .04);   // well under the music, about -22 dB
     tape.whir.gain.setTargetAtTime(.18 * wind, t, .05);
     tape.whirF.frequency.setTargetAtTime(380 + 1500 * wind * fast, t, .05);
     tape.motor.frequency.setTargetAtTime(52 + 70 * wind, t, .05);
@@ -2337,13 +2371,16 @@ if (location.hash) {
   function tick(now) {
     const dt = Math.min(.05, (now - last) / 1000); last = now;
     speed += (target - speed) * Math.min(1, (target === 0 ? 12 : Math.abs(target) > 1 ? 3 : 8) * dt);   // brakes fast, spools up to winding speed slower
-    if (mode === "play" && !song.paused) pos = song.currentTime;   // the song is the tape
-    else pos = Math.min(length, Math.max(0, pos + speed * dt));
+    if (mode === "play" && !song.paused) pos = LEAD + song.currentTime;   // the song is the tape
+    else {
+      pos = Math.min(length, Math.max(0, pos + speed * dt));
+      if (mode === "play" && pos >= LEAD) cue();   // the leader has run out: in comes the song
+    }
     const [rl, rr] = packs(), turn = SPIN * speed * dt * 57.2958;
     angL += turn / rl; angR += turn / rr;
     draw();
     soundFor(speed, rl, rr);
-    if ((target < 0 && pos <= 0) || (target > 1 && pos >= length)) stop(true);   // the end of the tape: the key springs up
+    if ((target < 0 && pos <= 0) || (target > 0 && pos >= length)) stop(true);   // the end of the tape: the key springs up
     if (Math.abs(speed) > .003 || target !== 0) raf = requestAnimationFrame(tick);
     else { speed = 0; raf = 0; soundFor(0, ...packs()); }
   }
@@ -2371,14 +2408,23 @@ if (location.hash) {
     mode = act; target = act === "play" ? 1 : act === "ff" ? FAST : -FAST;
     latch(act);
     if (act === "play") {
-      song.currentTime = Math.min(pos, length);
-      song.play().catch(() => { if (mode === "play") stop(); });
+      if (pos >= LEAD) cue();
+      else if (!unlocked) {   // still on the leader: the song starts later, outside this click, which Safari allows
+        unlocked = true;      // only for a media element that has once been played from a click
+        song.play().catch(() => {});
+        song.pause();
+      }
     } else song.pause();   // the heads lift off the tape while it winds
     run();
     return true;
   }
+  function cue() {
+    if (song.ended || pos >= length - .2) return;   // (a play() at the end would start the song over)
+    song.currentTime = Math.max(0, pos - LEAD);
+    song.play().catch(() => { if (mode === "play") stop(); });
+  }
   function eject() {
-    if (stop()) { sfx.release(); return; }   // a running deck stops first; the next press opens it
+    stop();   // a running deck stops as it opens
     ejected = !ejected;
     deck.classList.toggle("ejected", ejected);
     ejected ? sfx.open() : sfx.close();
@@ -2426,12 +2472,12 @@ if (location.hash) {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); up(name, key); }
     });
   }
-  door.addEventListener("click", () => { if (ejected) eject(); });   // click the empty holder to slide the tape back in
   draw();
 
   // ---- the volume knob: quiet by default, turned through 270 degrees, clicking through detents ----
-  let vol = .4;
-  try { const v = parseFloat(localStorage.getItem("deck-volume")); if (v >= 0 && v <= 1) vol = v; } catch (e) {}
+  // (a new key, since the old one kept the earlier, quieter default for anyone who had opened the deck)
+  let vol = .5;
+  try { const v = parseFloat(localStorage.getItem("deck-vol")); if (v >= 0 && v <= 1) vol = v; } catch (e) {}
   function setVol(v, sound) {
     v = Math.min(1, Math.max(0, v));
     if (sound && Math.floor(v * 20) !== Math.floor(vol * 20)) sfx.detent();   // a detent every 5%
@@ -2439,7 +2485,7 @@ if (location.hash) {
     song.volume = vol * vol;   // the knob's travel follows loudness, so its middle is half as loud, not a quarter
     knob.style.setProperty("--turn", (vol * 270 - 135).toFixed(1) + "deg");
     knob.setAttribute("aria-valuenow", String(Math.round(vol * 100)));
-    try { localStorage.setItem("deck-volume", vol.toFixed(2)); } catch (e) {}
+    if (sound) try { localStorage.setItem("deck-vol", vol.toFixed(2)); } catch (e) {}   // only a turn of the knob is remembered
   }
   setVol(vol);
   let turning = null;
@@ -2463,36 +2509,43 @@ if (location.hash) {
     else if (e.key === "End") { e.preventDefault(); setVol(1, true); }
   });
 
-  // Drag the deck by its metal body (the keys, knob and window keep their own jobs); it stays on screen.
+  // Drag the deck by anything but its keys and knob: the metal body, or the cassette window across its
+  // top half. It stays on screen. A click on the empty holder, without a drag, slides the tape back in.
   let grab = null;
   deck.addEventListener("pointerdown", e => {
-    if (e.button !== 0 || e.target.closest(".key, .deck-door, .deck-knob")) return;
+    if (e.button !== 0 || e.target.closest(".key, .deck-knob")) return;
     const r = deck.getBoundingClientRect(), box = deck.offsetParent.getBoundingClientRect();
-    grab = { dx: e.clientX - r.left, dy: e.clientY - r.top, box };
-    deck.style.left = r.left - box.left + "px"; deck.style.top = r.top - box.top + "px"; deck.style.bottom = "auto";
-    deck.classList.add("dragging");
+    grab = { dx: e.clientX - r.left, dy: e.clientY - r.top, x0: e.clientX, y0: e.clientY, box, moved: false, door: !!e.target.closest(".deck-door") };
     deck.setPointerCapture(e.pointerId);
     e.preventDefault();
   });
   deck.addEventListener("pointermove", e => {
     if (!grab) return;
+    if (!grab.moved) {   // a few pixels before it lifts, so a click stays a click
+      if (Math.hypot(e.clientX - grab.x0, e.clientY - grab.y0) < 4) return;
+      grab.moved = true;
+      const { box } = grab, r = deck.getBoundingClientRect();
+      deck.style.left = r.left - box.left + "px"; deck.style.top = r.top - box.top + "px"; deck.style.bottom = "auto";
+      deck.classList.add("dragging");
+    }
     const { box } = grab;
     const x = Math.min(Math.max(0, e.clientX - box.left - grab.dx), box.width - deck.offsetWidth);
     const y = Math.min(Math.max(0, e.clientY - box.top - grab.dy), box.height - deck.offsetHeight);
     deck.style.left = x + "px"; deck.style.top = y + "px";
   });
-  const drop = () => { if (grab) { grab = null; deck.classList.remove("dragging"); } };
+  const drop = e => {
+    if (!grab) return;
+    const clicked = !grab.moved && grab.door && e.type === "pointerup";
+    grab = null;
+    deck.classList.remove("dragging");
+    if (clicked && ejected) eject();
+  };
   deck.addEventListener("pointerup", drop);
   deck.addEventListener("pointercancel", drop);
 
-  // The tape plays as the rain view opens (the click that opens it lets the song play), and stops
-  // when it closes; reopening carries on from where it stopped.
-  deck.startTape = () => {
-    if (!start("play")) return;
-    sfx.play();
-    keys.play.classList.add("down");
-    setTimeout(() => keys.play.classList.remove("down"), 140);
-  };
+  // The deck waits, stopped, as the rain view opens; the click that opens it starts the sound, so the
+  // first key's sound is heard whole. The tape stops when the view closes, and carries on from there.
+  deck.wake = () => { ac(); };
   deck.stopTape = () => stop();
 })();
 
@@ -2507,7 +2560,11 @@ if (location.hash) {
     clearTimeout(unload);
     if (frame) return;
     frame = document.createElement("iframe");
-    frame.src = peel.href;
+    // the peek is silent (?quiet, and no sound allowed even where a browser would autoplay it):
+    // the rain is heard only once the piece is open
+    frame.allow = "autoplay 'none'";
+    const quiet = new URL(peel.href); quiet.searchParams.set("quiet", "");
+    frame.src = quiet.href;
     frame.title = "Rain on Glass, from Phenomenon";
     frame.tabIndex = -1;
     frame.setAttribute("aria-hidden", "true");
@@ -2550,13 +2607,15 @@ if (location.hash) {
     peel.classList.add("gone");
     document.body.classList.add("locked");
     demoClose.focus({ preventScroll: true });
-    document.getElementById("deck").startTape?.();   // the song plays as the page peels away
+    document.getElementById("deck").wake?.();
   };
   const closeDemo = () => {
     if (!stage.classList.contains("open")) return;
     stage.classList.remove("open");   // the page peels back down into the corner
     document.body.classList.remove("locked");
     document.getElementById("deck").stopTape?.();
+    // the rain goes quiet at once, though the piece stays in view while the page folds back over it
+    try { demoFrame?.contentWindow?.postMessage("phenomenon:quiet", new URL(peel.href).origin); } catch (e) {}
     demoFrom?.focus?.({ preventScroll: true });
     clearTimeout(demoGone);
     demoGone = setTimeout(() => {   // once it has settled, unload the piece
