@@ -522,7 +522,9 @@
   .deck.ejected .deck-door { cursor: pointer; }
   .cassette {   /* drawn in svg (.cs-art): a clear shell, so the dark holder shows through it */
     position: relative;
-    filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, .65));
+    border-radius: 3% / 4.84%;   /* the shell's corners (6 of its 200 x 124) */
+    box-shadow: 0 1px 1.5px rgba(0, 0, 0, .65);
+    will-change: transform;   /* its own layer: the reels turn every frame, and only the cassette is redrawn */
     transition: transform .42s cubic-bezier(.3, 1.25, .5, 1);   /* sliding back in, it seats with a small bounce */
   }
   .deck.ejected .cassette {   /* out: it slides up and away through the top of the window */
@@ -1938,20 +1940,23 @@ function drawPhoto(ctx, w, h, canvas, post) {
 
 /* Animated art: redraw only canvases on screen (and only the article hero while it is open) */
 const running = new Map();
-const watch = new IntersectionObserver(entries => entries.forEach(e => {
-  e.isIntersecting ? running.set(e.target, e.target._post) : running.delete(e.target);
-}));
+let artRaf = 0;
+const watch = new IntersectionObserver(entries => {
+  entries.forEach(e => { e.isIntersecting ? running.set(e.target, e.target._post) : running.delete(e.target); });
+  if (running.size && !artRaf) artRaf = requestAnimationFrame(frame);
+});
 function animate(canvas, post) {
   if (!ANIMATED.has(post.art) || reduceMotion) return;
   canvas._post = post;
   watch.observe(canvas);
 }
-function frame(now) {
+function frame(now) {   // runs only while there is something to draw, and rests otherwise
+  artRaf = 0;
+  if (!running.size) return;
   const open = overlay.classList.contains("open");
   running.forEach((p, c) => { if (!open || c.closest(".overlay")) paint(c, p, now / 1000); });
-  requestAnimationFrame(frame);
+  artRaf = requestAnimationFrame(frame);
 }
-requestAnimationFrame(frame);
 
 /* ---------------------------------------------------------------
    Cards and index
@@ -2394,13 +2399,17 @@ if (location.hash) {
     return [Math.sqrt(HUB * HUB + span * (1 - f)), Math.sqrt(HUB * HUB + span * f)];
   };
   const clock = s => String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(Math.floor(s % 60)).padStart(2, "0");
+  // Only what has changed is set again: the packs grow or shrink by a tenth of a unit (a tenth of a
+  // pixel) every second or so, and the counter changes once a second.
+  const shown = {};
+  const put = (key, v, set) => { if (shown[key] !== v) { shown[key] = v; set(v); } };
   function draw() {
     const [rl, rr] = packs();
-    for (const c of packL) c.setAttribute("r", rl.toFixed(2));
-    for (const c of packR) c.setAttribute("r", rr.toFixed(2));
-    reelL.setAttribute("transform", `rotate(${(angL % 360).toFixed(1)} 58 55)`);
-    reelR.setAttribute("transform", `rotate(${(angR % 360).toFixed(1)} 142 55)`);
-    counter.textContent = clock(Math.max(0, pos - LEAD));   // the counter runs with the song: 00:00 through the leader
+    put("rl", rl.toFixed(1), v => { for (const c of packL) c.setAttribute("r", v); });
+    put("rr", rr.toFixed(1), v => { for (const c of packR) c.setAttribute("r", v); });
+    put("al", (angL % 360).toFixed(1), v => reelL.setAttribute("transform", `rotate(${v} 58 55)`));
+    put("ar", (angR % 360).toFixed(1), v => reelR.setAttribute("transform", `rotate(${v} 142 55)`));
+    put("t", clock(Math.max(0, pos - LEAD)), v => { counter.textContent = v; });   // the counter runs with the song: 00:00 through the leader
   }
 
   // ---- the mechanism's sounds, each key its own: hard plastic keys over a steel mechanism,
@@ -2769,6 +2778,7 @@ if (location.hash) {
   const openDemo = () => {
     if (stage.classList.contains("open")) return;
     clearTimeout(demoGone);
+    clearTimeout(unload); frame?.remove(); frame = null;   // the corner's live preview goes at once: one copy of the piece runs, not two
     if (!demoFrame) {
       demoFrame = document.createElement("iframe");
       demoFrame.allow = "autoplay";   // hands the piece the click that opened it, so its rain is heard at once
