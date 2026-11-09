@@ -1,0 +1,1057 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#f6c9a0">
+<title>Skip</title>
+<style>
+/* Layout: a full-screen canvas scene with one centered card at a time (title, result, board). */
+:root{ --bg:#1d3b47; --panel:rgba(255,250,243,.9); --ink:#1b2f36; --brand:#163b46; --accent:#0f6b78; --accent-ink:#fff; --row:rgba(15,107,120,.08); --row-me:rgba(255,214,102,.4); --field:rgba(255,255,255,.75); --sat:env(safe-area-inset-top,0px); }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --panel:rgba(18,36,44,.92); --ink:#e8f1f3; --brand:#eaf6f8; --accent:#6cc7d2; --accent-ink:#0f2a30; --row:rgba(108,199,210,.12); --row-me:rgba(255,214,102,.28); --field:rgba(255,255,255,.1); color-scheme:dark } }
+:root[data-theme="dark"]{ --panel:rgba(18,36,44,.92); --ink:#e8f1f3; --brand:#eaf6f8; --accent:#6cc7d2; --accent-ink:#0f2a30; --row:rgba(108,199,210,.12); --row-me:rgba(255,214,102,.28); --field:rgba(255,255,255,.1); color-scheme:dark }
+html,body{margin:0;height:100%;background:var(--bg);overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;}
+#c{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:none;}
+.panel{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.96);width:min(86vw,340px);max-height:calc(100% - 40px);overflow:auto;padding:26px 22px 22px;border-radius:24px;background:var(--panel);color:var(--ink);text-align:center;box-shadow:0 24px 70px rgba(10,30,40,.35);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;box-sizing:border-box;}
+.panel.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
+.brand{font-size:58px;font-weight:900;letter-spacing:.14em;line-height:1;margin-bottom:6px;color:var(--brand);}
+.sub{font-size:13px;opacity:.7;margin-bottom:16px;}
+.panel p{margin:8px 0;font-size:17px;line-height:1.35;}
+.hint{font-size:14px;opacity:.75;}
+.legend{font-size:14px;opacity:.85;margin-top:14px;}
+.cta{margin-top:18px;font-weight:700;font-size:16px;color:var(--accent);animation:pulse 1.4s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
+@media (prefers-reduced-motion: reduce){ .cta,.again{animation:none} .panel{transition:none} }
+.big{font-size:44px;font-weight:900;color:var(--brand);line-height:1.05;}
+.big.small{font-size:26px;}
+.reason{font-size:16px;opacity:.8;margin-top:4px;}
+.trail{font-size:18px;letter-spacing:1px;margin:14px 0 8px;word-break:break-all;line-height:1.5;}
+.stats{font-size:14px;opacity:.75;}
+.rank{font-size:15px;font-weight:700;color:var(--accent);margin-top:8px;min-height:1.2em;}
+.btn{pointer-events:auto;display:inline-block;margin-top:14px;padding:12px 24px;border-radius:999px;border:0;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:16px;cursor:pointer;box-shadow:0 6px 18px rgba(15,107,120,.3);font-family:inherit;}
+.btn:active{transform:translateY(1px);}
+.btn:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
+.btn.ghost{background:transparent;color:var(--accent);box-shadow:none;border:2px solid var(--accent);padding:10px 20px;}
+.btn.sm{padding:9px 16px;font-size:14px;margin-top:0;}
+.btnrow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.again{margin-top:12px;font-size:14px;color:var(--accent);font-weight:600;animation:pulse 1.4s ease-in-out infinite;}
+.record{margin:-2px 0 6px;font-size:20px;font-weight:900;letter-spacing:.04em;color:#c0392b;animation:pop .6s cubic-bezier(.2,1.6,.4,1) both;}
+@keyframes pop{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){ .record{animation:none} }
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:5;}
+.namebox{pointer-events:auto;display:flex;gap:8px;justify-content:center;align-items:center;margin-top:12px;}
+.namebox label{font-size:13px;opacity:.75;}
+.namebox input{pointer-events:auto;width:9em;padding:9px 12px;border-radius:12px;border:1px solid rgba(15,107,120,.35);background:var(--field);color:var(--ink);font:inherit;font-size:16px;text-align:center;-webkit-user-select:text;user-select:text;}
+.rows{list-style:none;margin:10px 0 4px;padding:0;text-align:left;pointer-events:auto;}
+.row{display:grid;grid-template-columns:1.6em 1fr auto;gap:8px;align-items:baseline;padding:7px 10px;border-radius:10px;font-size:15px;font-variant-numeric:tabular-nums;}
+.row:nth-child(even){background:var(--row);}
+.row.me{background:var(--row-me);font-weight:700;}
+.row .n{opacity:.6;font-weight:700;}
+.row .who{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.row .d{font-weight:700;}
+.row .d small{font-weight:500;opacity:.65;margin-left:4px;}
+.empty{font-size:14px;opacity:.7;padding:14px 0;}
+.toast{position:fixed;left:50%;bottom:max(24px,env(safe-area-inset-bottom));transform:translateX(-50%);background:rgba(20,40,48,.92);color:#fff;padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;}
+.toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<canvas id="fx"></canvas>
+
+<div id="title" class="panel show">
+  <div class="brand">SKIP</div>
+  <div class="sub" id="lakeLabel">Lake #1</div>
+  <p>Tap while the stone skids on the water<br>(the yellow flash).</p>
+  <p class="hint">Later is flatter and faster. Too late, it sinks.<br>Tap early to drop short and hop high.<br>Streak good skips to get your speed and height back.</p>
+  <div class="legend">🪵 🦆 hop onto, never into &nbsp;·&nbsp; 🌿 stay low</div>
+  <div class="cta">Tap to throw</div>
+  <div class="btnrow"><button class="btn ghost sm board-open" type="button">🏆 Today's board</button></div>
+</div>
+
+<div id="result" class="panel">
+  <div class="record" id="rRecord" hidden>🎉 New record!</div>
+  <div class="big" id="rDist">0 m</div>
+  <div class="reason" id="rReason">Sank</div>
+  <div class="trail" id="rTrail"></div>
+  <div class="hint" style="font-size:12px;margin-top:-4px">each tile is 5 m · 💧 touched down · 🟦 flew over</div>
+  <div class="stats" id="rStats"></div>
+  <div class="rank" id="rRank"></div>
+  <div class="namebox" id="nameBox">
+    <label for="nameInput">Name for the board</label>
+    <input id="nameInput" maxlength="12" autocomplete="nickname" placeholder="e.g. Hiro">
+    <button class="btn sm" id="nameSave" type="button">Save</button>
+  </div>
+  <div class="btnrow">
+    <button class="btn" id="shareBtn" type="button">Share result</button>
+    <button class="btn ghost board-open" type="button">🏆 Board</button>
+  </div>
+  <div class="again">Tap anywhere to skip again</div>
+</div>
+
+<div id="board" class="panel">
+  <div class="big small" id="bTitle">Lake #1 board</div>
+  <div class="sub" id="bScope">Loading…</div>
+  <ol class="rows" id="bRows"></ol>
+  <div class="stats" id="bStatus"></div>
+  <div class="btnrow"><button class="btn" id="bClose" type="button">Back</button></div>
+</div>
+
+<div class="toast" id="toast">Copied</div>
+
+<script>
+(() => {
+'use strict';
+
+// ---------------- constants ----------------
+const G = 900;            // px/s^2
+const METER = 40;         // px per meter
+const STEP = 1 / 240;     // physics step
+const VIEW_W = 520;       // world px visible across the screen (approx)
+const T = {
+  earlyMax: 0.22,   // s before contact that a tap still counts
+  depthMax: 24,     // px the stone may skid into the water before sinking
+  flatPow: 0.6,     // maps tap timing to flatness (q = u^flatPow)
+  // Speed kept per skip as a function of flatness q (piecewise linear):
+  // early drop hops lose, a tap at or after contact roughly holds, a razor holds exactly.
+  keep: [[0, 0.93], [0.3, 0.97], [0.45, 1.0], [1, 1.0]],
+  anglePen: 0,      // steep natural landings no longer cost anything
+  razorQ: 0.9,      // flatness needed to count as a razor skip
+  flatQ: 0.72,      // flatness (a tap at or after contact) that extends a streak
+  // A streak of flat-or-better skips restores speed and height. The gain is
+  // rubber-banded: big when slow, small near the cap; razors earn double.
+  gainLo: 0.06,     // max streak bonus (razor) at or below gainSpeedLo
+  gainHi: 0.025,    // max streak bonus (razor) at or above gainSpeedHi
+  gainSpeedLo: 300, gainSpeedHi: 700,
+  flatGain: 0.6,    // a flat skip earns this fraction of the razor bonus
+  chainRamp: 1,     // skips in a row to reach the full bonus (1 = every good hit pays at once)
+  liftStep: 2,      // degrees of extra bounce height per streak skip when slow...
+  liftMax: 8,       // ...up to this
+  angleHi: 55,      // launch angle (deg) of the earliest, steepest skip
+  razorPeak: 30,    // a razor skip aims for this bounce height (px) whatever the speed...
+  angleLo: 16,      // ...never flatter than this (fast stones)
+  angleLoSlow: 34,  // ...never steeper than this (slow stones)
+  arcSpeedLo: 350, arcSpeedHi: 600, // "slow" range for the streak lift
+  skidMin: 0.11,    // the skid window never gets shorter than this (s), however fast
+  skidMax: 0.16,
+  zoomOut: 0.78,    // camera scale at the speed cap: enough to keep the hop on screen, not so much that speed stops showing
+  streakFrom: 560,  // speed streaks fade in above this speed...
+  streakFull: 780,  // ...and are strongest here
+  zoomSpeedLo: 450,
+  maxSpeed: 800,    // px/s hard cap
+  dive: 600,        // px/s the stone drops at after an early tap
+  bumpKeep: 0.85,   // speed kept after bouncing off the top of a log (chain resets)
+  duckKeep: 0.92,   // speed kept after bouncing off a duck (chain halves)
+  bounceVy: 190,    // upward speed of the bounce: a clean, readable arc
+  minSpeed: 150     // below this the stone is out of steam
+};
+const EPOCH = new Date(2026, 10, 8); // Lake #1
+// Fraction of speed a skip keeps, from its flatness q and natural landing angle phi.
+function keepRate(q, phi) {
+  const k = T.keep; let base = k[k.length - 1][1];
+  for (let i = 1; i < k.length; i++) if (q <= k[i][0]) { const t = (q - k[i - 1][0]) / (k[i][0] - k[i - 1][0]); base = k[i - 1][1] + (k[i][1] - k[i - 1][1]) * t; break; }
+  return base * (1 - T.anglePen * Math.sin(phi));
+}
+// Flattest launch angle at a given speed: slow stones bounce a little higher,
+// and a streak lifts them higher still while they are slow.
+function slowness(s) { return clamp((T.arcSpeedHi - s) / (T.arcSpeedHi - T.arcSpeedLo), 0, 1); }
+function minAngle(s, streak) {
+  // the angle that gives a razorPeak-high bounce at this speed, clamped to a sane range
+  const base = clamp(Math.asin(Math.min(1, Math.sqrt(2 * G * T.razorPeak) / Math.max(1, s))) * 180 / Math.PI, T.angleLo, T.angleLoSlow);
+  return base + slowness(s) * Math.min(T.liftMax, T.liftStep * (streak || 0));
+}
+// Streak bonus for a skip at speed s with `streak` good skips already chained.
+function chainBonus(s, streak, razor) {
+  const max = lerp(T.gainLo, T.gainHi, clamp((s - T.gainSpeedLo) / (T.gainSpeedHi - T.gainSpeedLo), 0, 1)) * (razor ? 1 : T.flatGain);
+  return Math.min(max, max * (streak + 1) / T.chainRamp);
+}
+
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const lerp = (a, b, t) => a + (b - a) * t;
+const rad = d => d * Math.PI / 180;
+const rnd = (a, b) => a + Math.random() * (b - a);
+const fract = v => v - Math.floor(v);
+function hashStr(s) { let h = 2166136261 >>> 0; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return h >>> 0; }
+function rng(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const $ = id => document.getElementById(id);
+
+// ---------------- canvas ----------------
+const canvas = $('c'), ctx = canvas.getContext('2d');
+let VW = 0, VH = 0, DPR = 1, SC = 1, BASE_SC = 1, WY = 0, SX = 0, SAFE_TOP = 0;
+function resize() {
+  DPR = Math.min(2, window.devicePixelRatio || 1);
+  VW = window.innerWidth; VH = window.innerHeight;
+  canvas.width = Math.round(VW * DPR); canvas.height = Math.round(VH * DPR);
+  BASE_SC = clamp(VW / VIEW_W, 0.6, 1.5); SC = BASE_SC;
+  WY = Math.round(VH * 0.58);
+  SX = Math.round(VW * 0.28);
+  SAFE_TOP = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sat')) || 0;
+  const fx = $('fx'); fx.width = Math.round(VW * DPR); fx.height = Math.round(VH * DPR);
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ---------------- daily ----------------
+function todayKey() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function lakeNo() { const d = new Date(); const a = new Date(d.getFullYear(), d.getMonth(), d.getDate()); return Math.max(1, Math.round((a - EPOCH) / 864e5) + 1); }
+function prettyDate() { return new Date().toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }); }
+const store = {
+  get(k) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+
+// ---------------- course ----------------
+function makeCourse(seed) {
+  const r = rng(seed); const obs = [];
+  let xm = 28 + r() * 8;
+  while (xm < 4000) {
+    const p = Math.min(1, xm / 450);
+    const roll = r();
+    let type;
+    if (xm < 60) type = roll < 0.6 ? 'log' : 'duck';
+    else type = roll < 0.38 ? 'log' : roll < 0.62 ? 'duck' : 'branch';
+    const o = { type, x: xm * METER };
+    if (type === 'log') { o.w = 50 + r() * 40; o.h = 8 + r() * 5; }
+    else if (type === 'duck') { o.w = 30; o.h = 16; o.ph = r() * 6.28; }
+    else { o.w = 70 + r() * 60; o.h = 52 + r() * 22; }
+    obs.push(o);
+    xm += lerp(13, 6.5, p) + r() * lerp(8, 3, p);
+  }
+  return obs;
+}
+
+// ---------------- audio ----------------
+const Audio = (() => {
+  let ctx = null, noiseBuf = null;
+  function ensure() {
+    if (window.__skip && window.__skip.mute) return null;
+    if (!ctx) {
+      const C = window.AudioContext || window.webkitAudioContext; if (!C) return null;
+      ctx = new C();
+      const len = ctx.sampleRate; noiseBuf = ctx.createBuffer(1, len, ctx.sampleRate);
+      const d = noiseBuf.getChannelData(0); for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    }
+    if (ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+  function env(node, t0, a, peak, d) {
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.0002, peak), t0 + a);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + a + d);
+    node.connect(g); g.connect(ctx.destination); return g;
+  }
+  function noise(t0, dur, freq, q, peak) {
+    const src = ctx.createBufferSource(); src.buffer = noiseBuf;
+    const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.setValueAtTime(freq, t0); f.Q.value = q;
+    src.connect(f); env(f, t0, 0.005, peak, dur); src.start(t0); src.stop(t0 + dur + 0.05);
+  }
+  function tone(t0, type, f0, f1, dur, peak) {
+    const o = ctx.createOscillator(); o.type = type;
+    o.frequency.setValueAtTime(f0, t0); o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t0 + dur);
+    env(o, t0, 0.005, peak, dur); o.start(t0); o.stop(t0 + dur + 0.05);
+  }
+  return {
+    ensure,
+    skip(q, combo) { if (!ensure()) return; const t = ctx.currentTime; const p = Math.pow(1.059, Math.min(combo, 14)); noise(t, 0.10 + 0.12 * (1 - q), 800 * p * (1 + 0.6 * q), 1.1, 0.22); tone(t, 'sine', 500 * p, 760 * p, 0.07, 0.10); },
+    dip() { if (!ensure()) return; noise(ctx.currentTime, 0.05, 1400, 1.5, 0.08); },
+    early() { if (!ensure()) return; tone(ctx.currentTime, 'square', 300, 240, 0.05, 0.03); },
+    sink() { if (!ensure()) return; const t = ctx.currentTime; tone(t, 'sine', 520, 110, 0.38, 0.22); noise(t, 0.25, 500, 0.8, 0.10); },
+    bonk() { if (!ensure()) return; const t = ctx.currentTime; tone(t, 'triangle', 220, 70, 0.18, 0.28); noise(t, 0.06, 300, 0.8, 0.12); },
+    quack() { if (!ensure()) return; const t = ctx.currentTime; tone(t, 'sawtooth', 480, 330, 0.12, 0.10); tone(t + 0.15, 'sawtooth', 440, 290, 0.14, 0.09); },
+    rustle() { if (!ensure()) return; noise(ctx.currentTime, 0.28, 2600, 0.7, 0.10); },
+    whoosh() { if (!ensure()) return; noise(ctx.currentTime, 0.3, 1200, 0.6, 0.08); },
+    tada() {
+      if (!ensure()) return; const t = ctx.currentTime;
+      // a rising major arpeggio with a held top chord and a little sparkle
+      [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => { tone(t + i * 0.08, 'triangle', f, f, 0.32, 0.11); tone(t + i * 0.08, 'sine', f * 2, f * 2, 0.2, 0.03); });
+      [783.99, 1046.5, 1318.5].forEach(f => tone(t + 0.34, 'triangle', f, f * 1.003, 0.9, 0.09));
+      noise(t + 0.3, 0.6, 7000, 0.6, 0.05);
+    }
+  };
+})();
+
+// ---------------- state ----------------
+const S = {
+  mode: 'title', t: 0, vt: 0, acc: 0, slow: 0, shake: 0,
+  camX: 0, zoom: 1, anchor: 0.28, lake: 1, key: '', seed: 0, course: [],
+  stone: { x: 0, y: 0, vx: 0, vy: 0, phase: 'air' },
+  flight: { airtime: 0, earlyW: T.earlyMax },
+  contactAt: 0, vyC: 0, vxC: 0, D: 0.1, pending: null,
+  skips: [], combo: 0, bestCombo: 0, lastSkipT: -1, dist: 0,
+  endReason: '', sinkT: 0, resultDelay: 1, resultShownAt: 0,
+  sprayT: 0, bubbleT: 0,
+  particles: [], ripples: [], popups: [], trail: [],
+  speedShown: 0, speedFlash: 0, streaks: [],
+  best: null, attempts: 0,
+  auto: null, noObs: false, sun: { x: 0, y: 0, r: 20 }
+};
+const sx = x => (x - S.camX) * SC + SX;
+const sy = y => WY - y * SC;
+
+const REASON_TEXT = { water: 'Sank', steam: 'Ran out of steam', log: 'Bonked a log', duck: 'Startled a duck', branch: 'Caught a branch' };
+const END_EMOJI = { water: '🫧', steam: '🫧', log: '🪵', duck: '🦆', branch: '🌿' };
+
+// ---------------- fx ----------------
+function ripple(x, size) { S.ripples.push({ x, t0: S.vt, life: 0.9 + size * 0.5, maxR: 16 + size * 28 }); }
+function popup(x, y, text, color, size) { S.popups.push({ x, y, text, color, size: size || 18, t0: S.vt, life: 0.9 }); }
+function particle(x, y, vx, vy, r, color, life, grav, bubble) { S.particles.push({ x, y, vx, vy, r, color, life, max: life, grav: grav == null ? G * 0.8 : grav, bubble: !!bubble }); }
+function splash(x, q, s) {
+  const n = 12 + Math.round(16 * q);
+  for (let i = 0; i < n; i++) {
+    const back = -(0.15 + 0.35 * Math.random()) * s * (0.3 + 0.8 * q);
+    const up = (60 + 200 * Math.random()) * (1.35 - 0.75 * q) + (1 - q) * 120 * Math.random();
+    particle(x + rnd(-4, 4), 0, back + rnd(-40, 40), up, rnd(1.2, 3), Math.random() < 0.7 ? 'rgba(255,255,255,0.95)' : 'rgba(214,244,248,0.95)', rnd(0.35, 0.7));
+  }
+}
+function dipFx() {
+  const st = S.stone; ripple(st.x, 0.15); Audio.dip();
+  for (let i = 0; i < 5; i++) particle(st.x, 0, rnd(-30, 30) - st.vx * 0.1, rnd(40, 110), rnd(1, 2), 'rgba(255,255,255,0.85)', rnd(0.2, 0.35));
+}
+function toast(msg) { const el = $('toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove('show'), 1500); }
+
+// ---------------- game flow ----------------
+function init() {
+  S.key = todayKey(); S.lake = lakeNo(); S.seed = hashStr('skip:' + S.key);
+  S.course = makeCourse(S.seed);
+  S.best = store.get('skip.best.' + S.key);
+  $('lakeLabel').textContent = 'Lake #' + S.lake + ' · ' + prettyDate() + (S.best ? ' · best ' + Math.floor(S.best.dist) + ' m' : '');
+  S.camX = 0;
+}
+
+function startRun() {
+  S.mode = 'play'; S.t = 0; S.acc = 0; S.slow = 0; S.shake = 0;
+  S.stone = { x: 0, y: 50, vx: 560, vy: 110, phase: 'air', px: 0, py: 50 };
+  S.flight = { airtime: 0.48, earlyW: T.earlyMax };
+  S.pending = null; S.skips = []; S.combo = 0; S.bestCombo = 0; S.lastSkipT = -1; S.dist = 0;
+  S.endReason = ''; S.sprayT = 0; S.bubbleT = 0;
+  S.particles.length = 0; S.ripples.length = 0; S.popups.length = 0; S.trail.length = 0;
+  for (const o of S.course) { o.hitAt = 0; o.gone = false; }
+  S.camX = S.stone.x; S.attempts++;
+  $('title').classList.remove('show'); $('result').classList.remove('show');
+  Audio.whoosh();
+}
+
+function predictContact(st) {
+  const disc = st.vy * st.vy + 2 * G * st.y;
+  const vyC = -Math.sqrt(Math.max(0, disc));
+  const tc = (st.vy - vyC) / G;
+  return { tc, vyC, D: clamp(T.depthMax / Math.max(1, -vyC), T.skidMin, T.skidMax) };
+}
+
+function tap() {
+  if (Board.open) { Board.show(false); return; }
+  if (S.mode === 'title') { startRun(); return; }
+  if (S.mode === 'result') { if (performance.now() - S.resultShownAt > 250) startRun(); return; }
+  if (S.mode !== 'play') return;
+  const st = S.stone;
+  if (S.t - S.lastSkipT < 0.08) return;
+  if (S.pending) return;
+  const eW = S.flight.earlyW;
+  if (st.phase === 'air') {
+    // Any tap in the air drops the stone straight into the water. Tapping early
+    // shortens the hop and gives a steep, slow bounce; tapping near the water
+    // keeps it flat and fast.
+    const p = predictContact(st);
+    const u = clamp((eW - p.tc) / (eW + p.D), 0, 1);
+    S.pending = { u, vyNat: p.vyC }; // natural incoming speed: the drop adds no energy
+    if (p.tc > eW) { Audio.early(); popup(st.x, st.y + 16, 'drop', '#ffd9a5', 14); }
+    st.vy = Math.min(st.vy, -T.dive);
+  } else {
+    const tau = S.t - S.contactAt;
+    const u = clamp((eW + tau) / (eW + S.D), 0, 1);
+    doSkip(u, S.vyC, S.vxC);
+  }
+}
+
+function doSkip(u, vyC, vxIn, vyNat) {
+  const st = S.stone; st.y = 0; st.phase = 'air';
+  const vx = Math.max(40, vxIn);
+  const vyIn = vyNat == null ? vyC : vyNat;   // a deliberate drop is judged by its natural arc
+  const s0 = Math.hypot(vx, vyIn);
+  const phi = Math.atan2(-vyIn, vx);          // steep natural landings cost a little
+  const q = Math.pow(u, T.flatPow);
+  const razor = q >= T.razorQ, flat = q >= T.flatQ;
+  const comboBonus = flat ? chainBonus(s0, S.combo, razor) : 0;
+  const r = keepRate(q, phi) + comboBonus;
+  const s = Math.min(T.maxSpeed, s0 * r);
+  if (s < T.minSpeed) { st.y = -2; sink('steam'); return; }
+  // any flat-or-better skip extends the streak; anything else breaks it
+  // a good hit extends the streak, a "nice" one keeps it, a drop or early tap breaks it
+  S.combo = flat ? S.combo + 1 : q >= 0.45 ? S.combo : 0; S.bestCombo = Math.max(S.bestCombo, S.combo);
+  if (r > 1.0005) S.speedFlash = 0.35;
+  const th = rad(T.angleHi - (T.angleHi - minAngle(s, S.combo)) * q);
+  st.vx = s * Math.cos(th); st.vy = s * Math.sin(th);
+  S.flight.airtime = 2 * st.vy / G;
+  S.flight.earlyW = Math.min(T.earlyMax, 0.85 * S.flight.airtime);
+  S.skips.push({ x: st.x, u, q }); S.lastSkipT = S.t;
+  // feedback
+  ripple(st.x, q); splash(st.x, q, s); if (razor) ripple(st.x, 1.6);
+  let label, color;
+  if (q < 0.45) { label = 'high hop'; color = '#ffd9a5'; }
+  else if (q < 0.72) { label = 'nice'; color = '#dff7ff'; }
+  else if (q < 0.9) { label = 'flat!'; color = '#8ff0e0'; }
+  else { label = 'razor!'; color = '#fff27a'; S.slow = 0.06; }
+  if (S.combo >= 2) label += ' ×' + S.combo;
+  popup(st.x, 26, label, color, q >= 0.9 ? 22 : 18);
+  Audio.skip(q, S.combo);
+}
+
+function sink(reason, obs) {
+  if (S.mode !== 'play') return;
+  S.mode = 'sinking'; S.endReason = reason; S.sinkT = S.t; S.pending = null; S.dist = Math.max(S.dist, S.stone.x / METER);
+  const st = S.stone;
+  if (reason === 'water' || reason === 'steam') {
+    st.y = Math.min(st.y, -2); st.vy = -45; st.vx *= 0.35; S.resultDelay = 1.0;
+    Audio.sink(); ripple(st.x, 0.5);
+    for (let i = 0; i < 8; i++) particle(st.x, 0, rnd(-50, 50), rnd(50, 150), rnd(1, 2.5), 'rgba(255,255,255,0.9)', rnd(0.3, 0.5));
+    popup(st.x, 20, reason === 'steam' ? 'out of steam' : 'blub', '#d8f3f7', 16); S.shake = 0.5;
+  } else if (reason === 'log' || reason === 'duck') {
+    st.y = Math.max(st.y, obs.h + 2); st.vy = 150; st.vx = -Math.abs(st.vx) * 0.25; S.resultDelay = 1.5;
+    if (reason === 'duck') { Audio.quack(); obs.hitAt = S.vt; popup(obs.x, obs.h + 34, 'QUACK!', '#ffd166', 22); }
+    else { Audio.bonk(); popup(obs.x, obs.h + 26, 'bonk', '#ffd9a5', 18); }
+    S.shake = 1;
+  } else {
+    st.vx *= 0.15; st.vy = Math.min(st.vy, -20); S.resultDelay = 1.5;
+    Audio.rustle(); popup(obs.x, obs.h + 12, 'snagged', '#bfe8a6', 18); S.shake = 0.6;
+  }
+}
+
+function obstacleTop(o, dx) { const half = o.w / 2; return o.h * (1 - 0.35 * (dx / half) * (dx / half)); } // rounded top: the edges sit lower
+function bounceOff(o) {
+  // Landed on top of it: a bounce and a speed penalty, but the run goes on.
+  // A duck is a soft bump; a log is the hard one.
+  const st = S.stone; const duck = o.type === 'duck';
+  st.vy = Math.max(T.bounceVy, -st.vy * 0.45); st.vx *= duck ? T.duckKeep : T.bumpKeep; st.y = obstacleTop(o, Math.abs(st.x - o.x)) + 2;
+  S.pending = null; S.combo = duck ? Math.floor(S.combo / 2) : 0;
+  S.flight.airtime = 2 * st.vy / G; S.flight.earlyW = Math.min(T.earlyMax, 0.85 * S.flight.airtime);
+  S.shake = Math.max(S.shake, 0.5);
+  if (duck) { o.hitAt = S.vt; o.gone = true; Audio.quack(); popup(o.x, o.h + 34, 'QUACK!', '#ffd166', 20); }
+  else { Audio.bonk(); popup(st.x, st.y + 22, 'tok!', '#ffb074', 18); }
+  for (let i = 0; i < 6; i++) particle(st.x, st.y, rnd(-80, 80), rnd(40, 140), rnd(1, 2), '#c9a071', rnd(0.3, 0.5));
+}
+function checkObstacles() {
+  const st = S.stone;
+  for (const o of S.course) {
+    if (o.x < st.x - 200) continue;
+    if (o.x > st.x + 200) break;
+    const dx = Math.abs(st.x - o.x);
+    if (o.type === 'branch') { if (dx < o.w / 2 && st.y + 3 > o.h) { sink('branch', o); return; } }
+    else if (!o.gone) {
+      const half = o.w / 2;
+      if (dx < half + 1 && st.y > -12 && st.y - 1.5 < obstacleTop(o, dx)) {
+        const pdx = Math.abs(st.px - o.x);
+        const fromAbove = pdx < half + 1 && st.py - 1.5 >= obstacleTop(o, pdx) && st.vy < 0;
+        if (fromAbove) bounceOff(o); else sink(o.type, o);
+        return;
+      }
+    }
+  }
+}
+
+function step(dt) {
+  S.t += dt; const st = S.stone;
+  if (S.mode === 'play') {
+    if (S.auto) autoTick();
+    st.px = st.x; st.py = st.y;
+    if (st.phase === 'air') {
+      st.vy -= G * dt; st.x += st.vx * dt; st.y += st.vy * dt;
+      if (st.y <= 0 && st.vy < 0) {
+        const since = st.y / st.vy;
+        S.contactAt = S.t - since; S.vyC = st.vy; S.vxC = st.vx;
+        S.D = clamp(T.depthMax / (-st.vy), T.skidMin, T.skidMax);
+        st.phase = 'sub'; st.y = -1;
+        if (S.pending) { const p = S.pending; S.pending = null; doSkip(p.u, S.vyC, S.vxC, p.vyNat); }
+        else dipFx();
+      }
+    } else {
+      st.x += st.vx * dt; st.y = Math.max(st.y + st.vy * dt * 0.3, -10);
+      st.vx *= Math.max(0, 1 - 0.4 * dt); st.vy *= Math.max(0, 1 - 6 * dt);
+      if (S.t - S.sprayT > 1 / 90) { S.sprayT = S.t; particle(st.x - 6, 0, -st.vx * rnd(0.15, 0.4), rnd(50, 140), rnd(1, 2.2), 'rgba(255,255,255,0.9)', rnd(0.2, 0.35)); }
+      if (S.t > S.contactAt + S.D) sink('water');
+    }
+    if (S.mode === 'play') { S.dist = Math.max(S.dist, st.x / METER); if (!S.noObs) checkObstacles(); }
+  } else if (S.mode === 'sinking') {
+    if (st.y > 0) {
+      st.vy -= G * dt; st.x += st.vx * dt; st.y += st.vy * dt;
+      if (st.y <= 0) {
+        st.y = -1; st.vy = -45; st.vx *= 0.4; Audio.sink(); ripple(st.x, 0.5);
+        for (let i = 0; i < 8; i++) particle(st.x, 0, rnd(-60, 60), rnd(60, 160), rnd(1, 2.5), 'rgba(255,255,255,0.9)', rnd(0.3, 0.5));
+      }
+    } else {
+      st.y += st.vy * dt; st.x += st.vx * dt; st.vx *= Math.max(0, 1 - 2 * dt); st.vy = Math.max(st.vy - 30 * dt, -80);
+      if (S.t - S.bubbleT > 0.09) { S.bubbleT = S.t; particle(st.x + rnd(-4, 4), st.y, rnd(-5, 5), rnd(20, 45), rnd(1, 2.5), 'rgba(255,255,255,0.55)', 1.2, 0, true); }
+    }
+    if (S.t - S.sinkT > S.resultDelay) showResult();
+  }
+  if (S.mode === 'play' || S.mode === 'sinking') S.camX = st.x;
+}
+
+// ---------------- autoplayer (for tuning / tests) ----------------
+// A plan is {type:'ride', u} (tap at timing u on the natural landing) or
+// {type:'dive', x} (tap early so the stone drops into the water at x).
+function diveTime(st) { const vyd = Math.min(st.vy, -T.dive); return (vyd + Math.sqrt(vyd * vyd + 2 * G * Math.max(0, st.y))) / G; }
+// Model one hop launched from x0 with tap timing u; null if it would collide.
+function hopModel(x0, u, vx1, vyC, vyNat, tau) {
+  const skidX = x0 + (tau > 0 ? vx1 * tau * 0.97 : 0);
+  const s0 = Math.hypot(vx1, vyNat), phi = Math.atan2(-vyNat, vx1);
+  const q = Math.pow(u, T.flatPow);
+  const r = keepRate(q, phi);
+  const s = s0 * r; if (s < 95) return null;
+  const th = rad(T.angleHi - (T.angleHi - minAngle(s, S.combo)) * q), vx2 = s * Math.cos(th), vy2 = s * Math.sin(th);
+  const L = 2 * vx2 * vy2 / G, endX = skidX + L;
+  const hAt = x => { const t = (x - skidX) / vx2; return t < 0 ? -99 : vy2 * t - 0.5 * G * t * t; };
+  if (!S.noObs) for (const o of S.course) {
+    if (o.x + o.w / 2 + 10 < x0) continue; if (o.x - o.w / 2 - 10 > endX + 2) break;
+    const lo = o.x - o.w / 2 - 4, hi = o.x + o.w / 2 + 4;
+    if (o.type === 'branch') { for (let i = 0; i <= 6; i++) { const x = lo + (hi - lo) * i / 6; if (x > skidX && x < endX && hAt(x) + 4 > o.h) return null; } }
+    else {
+      if (hi >= x0 - 2 && lo <= skidX + 2) return null;
+      if (endX > lo - 1.2 * METER && endX < hi + 6) return null;
+      for (let i = 0; i <= 4; i++) { const x = lo + (hi - lo) * i / 4; if (x > skidX && x < endX && hAt(x) - 3 < o.h + 3) return null; }
+    }
+  }
+  return { endX, vx2, vy2 };
+}
+// Where the stone really launches for a tap at timing tau (negative = early = it drops short).
+function launchFor(tau, landX, vx, vy0) {
+  if (tau >= 0) return { x: landX, vyC: -vy0 };
+  const tc = -tau; const h = Math.max(0, vy0 * tc - 0.5 * G * tc * tc);
+  const vyd = -Math.sqrt(T.dive * T.dive + 2 * G * h); const td = (-T.dive - vyd) / G;
+  return { x: landX - vx * tc + vx * td, vyC: vyd };
+}
+function autoPlan(tgt) {
+  const st = S.stone, eW = S.flight.earlyW, p = predictContact(st), vx = st.vx, vy0 = -p.vyC;
+  const landX = st.x + vx * p.tc; const uC = clamp(eW / (eW + p.D), 0, 1);
+  if (tgt == null) tgt = uC;
+  const tryU = u => { const tau = u * (eW + p.D) - eW; const L = launchFor(tau, landX, vx, vy0); return hopModel(L.x, u, vx, L.vyC, -vy0, tau); };
+  if (tryU(tgt)) return { type: 'ride', u: tgt };
+  let next = null; for (const o of S.course) { if (o.x + o.w / 2 > st.x - 10) { next = o; break; } }
+  if (!next) return { type: 'ride', u: tgt };
+  if (next.type === 'branch') { for (const u of [0.92, 0.96, 1]) if (tryU(u)) return { type: 'ride', u }; return { type: 'ride', u: 0.95 }; }
+  for (const u of [0.92, 0.85, 0.75, 1, 0.65, 0.5, 0.35, 0.2, 0.05]) if (tryU(u)) return { type: 'ride', u };
+  // drop short so the obstacle sits mid-way through a steep hop
+  const lo = next.x - next.w / 2, hi = next.x + next.w / 2;
+  const sD = Math.hypot(vx, vy0) * keepRate(0, Math.atan2(vy0, vx));
+  const Ls = sD * sD * Math.sin(rad(2 * T.angleHi)) / G;
+  const xLmax = lo - 1.2 * METER, xLmin = hi + 0.6 * METER - Ls;
+  const reach = st.x + vx * diveTime(st) + 1;
+  if (xLmax >= xLmin && xLmax >= reach) { const xL = Math.min(xLmax, landX - 1); if (xL >= xLmin && xL >= reach) return { type: 'dive', x: xL }; }
+  return { type: 'ride', u: tgt };
+}
+function autoTick() {
+  const st = S.stone, a = S.auto; if (S.pending) return;
+  if (st.phase === 'air' && st.vy > 0 && !a.rolled) {
+    a.rolled = true;
+    a.jitterNow = a.jitter ? (Math.random() + Math.random() + Math.random() - 1.5) * a.jitter : 0;
+    a.plan = a.planner ? a.planner() : a.smart ? autoPlan(a.mode === 'contact' ? null : a.u) : { type: 'ride', u: a.u };
+  }
+  const plan = a.plan || { type: 'ride', u: a.u }; const eW = S.flight.earlyW;
+  const fire = () => { a.rolled = false; a.plan = null; tap(); };
+  if (plan.type === 'dive') {
+    if (st.phase === 'air') { if (st.x + st.vx * diveTime(st) >= plan.x) fire(); }
+    else fire();
+    return;
+  }
+  if (st.phase === 'air') {
+    const p = predictContact(st); const tauT = plan.u * (eW + p.D) - eW + a.jitterNow;
+    if (tauT < 0 && p.tc <= -tauT && p.tc <= eW) fire();
+  } else {
+    const tauT = plan.u * (eW + S.D) - eW + a.jitterNow;
+    if (tauT < 0 || S.t - S.contactAt >= tauT) fire();
+  }
+}
+
+// ---------------- result / share ----------------
+function trailString() {
+  const n = Math.floor(S.dist / 5); const tiles = [];
+  const cap = Math.min(n, 40);
+  for (let i = 0; i < cap; i++) {
+    const lo = i * 5 * METER, hi = (i + 1) * 5 * METER;
+    tiles.push(S.skips.some(s => s.x >= lo && s.x < hi) ? '💧' : '🟦');
+  }
+  if (n > 40) tiles.push('…');
+  tiles.push(END_EMOJI[S.endReason] || '🫧');
+  return '🪨' + tiles.join('');
+}
+function shareText() { return 'Skip · Lake #' + S.lake + '\n' + trailString() + '\n' + Math.floor(S.dist) + ' m · ' + S.skips.length + (S.skips.length === 1 ? ' skip' : ' skips'); }
+function showResult() {
+  S.mode = 'result'; S.resultShownAt = performance.now();
+  const d = Math.floor(S.dist), n = S.skips.length;
+  const hadBest = !!S.best;
+  const isBest = !S.best || S.dist > S.best.dist;
+  const record = isBest && hadBest; // beat an earlier run today
+  $('rRecord').hidden = !record;
+  if (record) celebrate();
+  if (isBest) { S.best = { dist: S.dist, skips: n, trail: trailString() }; store.set('skip.best.' + S.key, S.best); Board.submit(S.best); }
+  $('rDist').textContent = d + ' m';
+  $('rReason').textContent = (REASON_TEXT[S.endReason] || 'Sank') + ' at ' + d + ' m';
+  $('rTrail').textContent = trailString();
+  $('rStats').textContent = n + (n === 1 ? ' skip' : ' skips') + (S.bestCombo >= 2 ? ' · best streak ×' + S.bestCombo : '') + (isBest ? ' · new best today' : ' · best today ' + Math.floor(S.best.dist) + ' m');
+  renderRank();
+  $('result').classList.add('show');
+}
+
+// ---------------- leaderboard ----------------
+// Shared through the page's database when the game runs as a published page
+// (everyone with the page sees one board for today's lake); otherwise a board
+// kept on this device. One entry per player per lake: their best run.
+const Board = {
+  db: null, user: null, shared: false, rows: [], loading: true, status: '', unsub: null, writing: false, pending: null,
+  pid: '', name: '', open: false,
+  async init() {
+    this.pid = store.get('skip.pid') || ''; if (!this.pid) { this.pid = Math.random().toString(36).slice(2, 10); store.set('skip.pid', this.pid); }
+    this.name = (store.get('skip.name') || '').toString().slice(0, 12);
+    $('nameInput').value = this.name; $('nameBox').hidden = !!this.name;
+    try {
+      if (window.claude && typeof window.claude.use === 'function') {
+        const db = await window.claude.use('db');
+        if (db) { this.db = db; this.shared = true; this.user = await window.claude.use('user'); this.subscribe(); }
+      }
+    } catch (e) { this.db = null; this.shared = false; }
+    if (!this.shared) { this.rows = this.localRows(); this.loading = false; }
+    renderBoard(); renderRank();
+  },
+  subscribe() {
+    const q = this.db.collection('runs').where('lake', '==', S.lake).orderBy('dist', 'desc').limit(10);
+    const timer = setTimeout(() => { if (this.loading) { this.loading = false; this.status = "Can't reach the board yet"; renderBoard(); } }, 10000);
+    this.unsub = q.onSnapshot(snap => {
+      if (!snap.metadata.fromCache) { clearTimeout(timer); this.loading = false; if (this.status.indexOf("reach") === 0 || this.status.indexOf("Can't") === 0) this.status = ''; }
+      this.rows = snap.docs.map(d => d.data()).filter(r => r && typeof r.dist === 'number');
+      renderBoard(); renderRank();
+    }, err => { clearTimeout(timer); this.loading = false; this.status = 'The board is unavailable right now'; renderBoard(); });
+  },
+  localRows() { const all = store.get('skip.board.' + S.key) || []; return all.filter(r => r && typeof r.dist === 'number').sort((a, b) => b.dist - a.dist).slice(0, 10); },
+  setName(v) {
+    v = (v || '').replace(/\s+/g, ' ').trim().slice(0, 12); if (!v) return false;
+    this.name = v; store.set('skip.name', v); $('nameBox').hidden = true;
+    if (S.best) this.submit(S.best); return true;
+  },
+  async submit(run) {
+    if (!run) return;
+    if (!this.name) { this.pending = run; renderRank(); return; }
+    const entry = { lake: S.lake, pid: this.pid, name: this.name, dist: Math.round(run.dist * 10) / 10, skips: run.skips, trail: run.trail, ts: Date.now() };
+    const all = (store.get('skip.board.' + S.key) || []).filter(r => r && r.pid !== this.pid); all.push(entry);
+    store.set('skip.board.' + S.key, all.sort((a, b) => b.dist - a.dist).slice(0, 50));
+    if (this.shared) {
+      if (this.writing) { this.pending = run; return; }
+      this.writing = true;
+      try { await this.db.doc('runs/L' + S.lake + '_' + this.pid).set(entry); this.status = ''; }
+      catch (e) { this.status = (e && e.code === 'invalid_argument') ? 'This page is read-only for you, so your score stays on this device' : 'Could not post your score'; }
+      this.writing = false;
+      if (this.pending && this.pending !== run) { const p = this.pending; this.pending = null; this.submit(p); } else this.pending = null;
+    } else { this.rows = this.localRows(); }
+    renderBoard(); renderRank();
+  },
+  rank() { const i = this.rows.findIndex(r => r.pid === this.pid); return i < 0 ? null : i + 1; },
+  show(on) { this.open = on; $('board').classList.toggle('show', on); if (on) renderBoard(); }
+};
+function renderBoard() {
+  $('bTitle').textContent = 'Lake #' + S.lake + ' board';
+  $('bScope').textContent = Board.loading ? 'Loading…' : Board.shared ? 'Everyone with this page · best run today' : 'This device · best run today';
+  const ol = $('bRows'); ol.textContent = '';
+  if (!Board.loading && Board.rows.length === 0) { const li = document.createElement('li'); li.className = 'empty'; li.textContent = Board.name ? 'No runs yet today. Yours will be first.' : 'No runs yet today. Finish a run and add your name to appear here.'; ol.appendChild(li); }
+  Board.rows.forEach((r, i) => {
+    const li = document.createElement('li'); li.className = 'row' + (r.pid === Board.pid ? ' me' : '');
+    const n = document.createElement('span'); n.className = 'n'; n.textContent = String(i + 1);
+    const who = document.createElement('span'); who.className = 'who'; who.textContent = String(r.name || 'Someone').slice(0, 12) + (r.pid === Board.pid ? ' (you)' : '');
+    const d = document.createElement('span'); d.className = 'd'; d.textContent = Math.floor(r.dist) + ' m';
+    const sm = document.createElement('small'); sm.textContent = (r.skips || 0) + ' skips'; d.appendChild(sm);
+    li.appendChild(n); li.appendChild(who); li.appendChild(d); ol.appendChild(li);
+  });
+  $('bStatus').textContent = Board.status;
+}
+function renderRank() {
+  const el = $('rRank'); if (!el) return;
+  if (!Board.name) { el.textContent = Board.shared ? 'Add your name to get on the board' : 'Add your name to keep a board on this device'; return; }
+  const r = Board.rank();
+  el.textContent = r ? '#' + r + (Board.shared ? ' on today’s board' : ' on this device today') : (Board.shared && Board.status ? Board.status : '');
+}
+$('nameSave').addEventListener('click', e => { e.stopPropagation(); if (Board.setName($('nameInput').value)) { toast('Saved as ' + Board.name); renderRank(); } else $('nameInput').focus(); });
+$('nameInput').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') { e.preventDefault(); $('nameSave').click(); } });
+for (const b of document.querySelectorAll('.board-open')) b.addEventListener('click', e => { e.stopPropagation(); Board.show(true); });
+$('bClose').addEventListener('click', e => { e.stopPropagation(); Board.show(false); });
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.focus(); ta.select();
+  let ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+  document.body.removeChild(ta); toast(ok ? 'Copied to clipboard' : 'Could not copy');
+}
+$('shareBtn').addEventListener('click', async e => {
+  e.stopPropagation(); const text = shareText();
+  if (navigator.share && !window.claude && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+    try { await navigator.share({ text }); return; } catch (err) { if (err && err.name === 'AbortError') return; }
+  }
+  try { await navigator.clipboard.writeText(text); toast('Copied to clipboard'); } catch (err) { fallbackCopy(text); }
+});
+
+// ---------------- input ----------------
+function onPointer(e) {
+  if (e.target && e.target.closest && e.target.closest('.btn, input, label, .namebox, .rows')) return;
+  if (e.pointerType === 'mouse' && e.button !== 0) return;
+  e.preventDefault(); Audio.ensure(); tap();
+}
+window.addEventListener('pointerdown', onPointer, { passive: false });
+window.addEventListener('keydown', e => {
+  if (e.repeat) return;
+  if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON')) return;
+  if (e.code === 'Space' || e.code === 'Enter' || e.code === 'ArrowUp' || e.code === 'KeyW') { e.preventDefault(); Audio.ensure(); tap(); }
+});
+window.addEventListener('contextmenu', e => e.preventDefault());
+
+// ---------------- render ----------------
+function roundRect(x, y, w, h, r) { r = Math.min(r, w / 2, h / 2); ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+
+function drawSky() {
+  const g = ctx.createLinearGradient(0, 0, 0, WY);
+  g.addColorStop(0, '#78b1e3'); g.addColorStop(0.55, '#c9d9e8'); g.addColorStop(0.85, '#f7cba3'); g.addColorStop(1, '#ffb78d');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, VW, WY + 2);
+  const sunX = VW * 0.74, sunY = WY - VH * 0.17, R = Math.max(18, VH * 0.05);
+  const gl = ctx.createRadialGradient(sunX, sunY, R * 0.5, sunX, sunY, R * 4);
+  gl.addColorStop(0, 'rgba(255,240,200,0.55)'); gl.addColorStop(1, 'rgba(255,240,200,0)');
+  ctx.fillStyle = gl; ctx.fillRect(0, 0, VW, WY);
+  ctx.fillStyle = '#fff3cf'; ctx.beginPath(); ctx.arc(sunX, sunY, R, 0, Math.PI * 2); ctx.fill();
+  S.sun = { x: sunX, y: sunY, r: R };
+}
+function hillPath(par, base, amp, f1, f2, f3) {
+  ctx.beginPath(); ctx.moveTo(-2, WY + 2);
+  for (let x = -2; x <= VW + 10; x += 10) {
+    const wx = x / SC + S.camX * par;
+    const h = base + amp * (0.55 * Math.sin(wx * f1 + 1.7) + 0.3 * Math.sin(wx * f2 + 0.4) + 0.15 * Math.sin(wx * f3 + 3.1));
+    ctx.lineTo(x, WY - h * SC);
+  }
+  ctx.lineTo(VW + 2, WY + 2); ctx.closePath();
+}
+function drawHills() {
+  const layers = [
+    [0.06, 80, 45, 0.0035, 0.009, 0.021, '#8fb3cf'],
+    [0.12, 46, 30, 0.005, 0.013, 0.03, '#5d8d9a'],
+    [0.2, 22, 14, 0.008, 0.02, 0.05, '#3b6b66']
+  ];
+  for (const L of layers) { hillPath(L[0], L[1], L[2], L[3], L[4], L[5]); ctx.fillStyle = L[6]; ctx.fill(); }
+  ctx.beginPath(); ctx.moveTo(-2, WY + 2);
+  for (let x = -2; x <= VW + 6; x += 6) {
+    const wx = x / SC + S.camX * 0.28; const k = Math.floor(wx / 14);
+    const hh = 6 + 10 * fract(Math.sin(k * 12.9898) * 43758.5453);
+    const within = (wx - k * 14) / 14; const tri = hh * (1 - Math.abs(within * 2 - 1));
+    ctx.lineTo(x, WY - (tri + 3) * SC);
+  }
+  ctx.lineTo(VW + 2, WY + 2); ctx.closePath(); ctx.fillStyle = '#2b544e'; ctx.fill();
+}
+function drawWater() {
+  const g = ctx.createLinearGradient(0, WY, 0, VH);
+  g.addColorStop(0, '#8ad3da'); g.addColorStop(0.35, '#3f8f9b'); g.addColorStop(1, '#1b3a46');
+  ctx.fillStyle = g; ctx.fillRect(0, WY, VW, VH - WY);
+  // reflections
+  ctx.save(); ctx.beginPath(); ctx.rect(0, WY, VW, VH - WY); ctx.clip();
+  ctx.translate(0, WY * 1.7); ctx.scale(1, -0.7); ctx.globalAlpha = 0.22; drawHills(); ctx.restore();
+  // sun glint
+  ctx.fillStyle = 'rgba(255,235,190,0.6)';
+  for (let i = 0; i < 9; i++) {
+    const yy = WY + 8 + i * ((VH - WY) / 9); const w = S.sun.r * (1.2 + i * 0.5);
+    const wob = Math.sin(S.vt * 1.3 + i) * w * 0.3;
+    ctx.globalAlpha = 0.45 - i * 0.045;
+    ctx.beginPath(); ctx.ellipse(S.sun.x + wob, yy, w, 2.2 + i * 0.3, 0, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  // waves
+  for (let k = 0; k < 4; k++) {
+    ctx.beginPath(); const yBase = WY + 10 + k * k * 9 + 6 * k;
+    for (let x = 0; x <= VW; x += 8) {
+      const wx = x / SC + S.camX * (0.5 + 0.15 * k);
+      const yy = yBase + Math.sin(wx * 0.025 + S.vt * (1.1 + 0.25 * k) + k) * 2.2 * (1 + 0.3 * k);
+      if (x === 0) ctx.moveTo(x, yy); else ctx.lineTo(x, yy);
+    }
+    ctx.strokeStyle = 'rgba(255,255,255,' + (0.22 - k * 0.045) + ')'; ctx.lineWidth = 1.2; ctx.stroke();
+  }
+  // ripples
+  for (let i = S.ripples.length - 1; i >= 0; i--) {
+    const r = S.ripples[i]; const p = (S.vt - r.t0) / r.life;
+    if (p >= 1) { S.ripples.splice(i, 1); continue; }
+    const rr = r.maxR * p * SC; const x = sx(r.x);
+    ctx.strokeStyle = 'rgba(255,255,255,' + (0.7 * (1 - p)) + ')'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.ellipse(x, WY, rr, rr * 0.3, 0, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,' + (0.4 * (1 - p)) + ')';
+    ctx.beginPath(); ctx.ellipse(x, WY, rr * 0.55, rr * 0.16, 0, 0, Math.PI * 2); ctx.stroke();
+  }
+  // surface line
+  ctx.beginPath(); ctx.moveTo(0, WY + 0.5); ctx.lineTo(VW, WY + 0.5); ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineWidth = 1.5; ctx.stroke();
+}
+function drawObstacles() {
+  for (const o of S.course) {
+    const x = sx(o.x); if (x < -260 || x > VW + 260) continue;
+    if (o.type === 'log') {
+      const w = o.w * SC, top = sy(o.h), bot = sy(-7), h = bot - top;
+      ctx.fillStyle = 'rgba(0,0,0,0.12)'; ctx.beginPath(); ctx.ellipse(x, WY + 4, w * 0.55, 5 * SC, 0, 0, Math.PI * 2); ctx.fill();
+      roundRect(x - w / 2, top, w, h, h * 0.45); ctx.fillStyle = '#6b452b'; ctx.fill();
+      roundRect(x - w / 2 + 2, top, w - 4, h * 0.4, h * 0.3); ctx.fillStyle = '#8f6240'; ctx.fill();
+      ctx.fillStyle = '#c9a071'; ctx.beginPath(); ctx.ellipse(x + w / 2, top + h / 2, h * 0.22, h / 2, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#8f6240'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(x + w / 2, top + h / 2, h * 0.11, h * 0.25, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = 'rgba(120,200,210,0.45)'; ctx.fillRect(x - w / 2 - 2, WY, w + 4, bot - WY);
+    } else if (o.type === 'duck') {
+      const bob = Math.sin(S.vt * 2.2 + o.ph) * 1.5; const sc = SC;
+      const flap = o.hitAt ? Math.min(1, (S.vt - o.hitAt) * 2) : 0;
+      if (flap >= 1) continue;
+      const yy = sy(bob) - flap * flap * 260 * SC; const xx = x + flap * 60 * SC;
+      if (!flap) { ctx.fillStyle = 'rgba(0,0,0,0.12)'; ctx.beginPath(); ctx.ellipse(x, WY + 3, 16 * sc, 4 * sc, 0, 0, Math.PI * 2); ctx.fill(); }
+      ctx.fillStyle = '#f7d148'; ctx.beginPath(); ctx.ellipse(xx - 2 * sc, yy - 7 * sc, 15 * sc, 8 * sc, 0, 0, Math.PI * 2); ctx.fill();
+      const wingY = yy - 7 * sc + (flap ? Math.sin(S.vt * 40) * 5 * sc : 0);
+      ctx.fillStyle = '#e6b92e'; ctx.beginPath(); ctx.ellipse(xx - 5 * sc, wingY, 8 * sc, 4 * sc, -0.3, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#f7d148'; ctx.beginPath(); ctx.arc(xx + 9 * sc, yy - 17 * sc, 7 * sc, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#f0892a'; ctx.beginPath(); ctx.moveTo(xx + 14 * sc, yy - 18 * sc); ctx.lineTo(xx + 22 * sc, yy - 15.5 * sc); ctx.lineTo(xx + 14 * sc, yy - 13.5 * sc); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#222'; ctx.beginPath(); ctx.arc(xx + 11 * sc, yy - 19 * sc, 1.4 * sc, 0, Math.PI * 2); ctx.fill();
+      if (!flap) { ctx.fillStyle = 'rgba(120,200,210,0.5)'; ctx.fillRect(x - 18 * sc, WY, 36 * sc, 4 * sc); }
+    } else {
+      const w = o.w * SC, bottom = sy(o.h), bough = sy(o.h + 34);
+      ctx.strokeStyle = '#5a3a24'; ctx.lineWidth = 6 * SC; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(x - w / 2 - 90 * SC, -20); ctx.quadraticCurveTo(x - w / 2 - 50 * SC, bough - 30 * SC, x + w / 2 + 6 * SC, bough); ctx.stroke();
+      const n = Math.max(4, Math.round(w / (9 * SC)));
+      for (let i = 0; i < n; i++) {
+        const fx = x - w / 2 + (i + 0.5) * (w / n);
+        const sway = Math.sin(S.vt * 1.6 + i * 0.9 + o.x * 0.01) * 3 * SC;
+        const len = (bough - bottom) * (0.9 + 0.1 * fract(Math.sin(i * 7.3 + o.x) * 100));
+        ctx.strokeStyle = '#4f7f3f'; ctx.lineWidth = 1.5 * SC; ctx.beginPath(); ctx.moveTo(fx, bough); ctx.quadraticCurveTo(fx + sway, bough + len * 0.5, fx + sway * 1.4, bough + len); ctx.stroke();
+        for (let k = 1; k <= 3; k++) {
+          const ly = bough + len * k / 3; ctx.fillStyle = k % 2 ? '#62a04f' : '#4b8a44';
+          ctx.beginPath(); ctx.ellipse(fx + sway * k / 3 + 2 * SC, ly, 4 * SC, 2 * SC, 0.6, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+    }
+  }
+}
+function landingBlocked(st, p, lx) {
+  // Will this arc hit the side of a log or duck, or skid into one?
+  for (const o of S.course) {
+    if (o.type === 'branch' || o.gone) continue;
+    const lo = o.x - o.w / 2, hi = o.x + o.w / 2;
+    if (hi < st.x) continue; if (lo > lx + st.vx * 0.16 + 8) break;
+    if (lx < lo) return true; // lands just short: the skid runs into it
+    if (st.x < lo) { // flying into the near face?
+      const t = (lo - st.x) / Math.max(1, st.vx); const h = st.y + st.vy * t - 0.5 * G * t * t;
+      if (h - 1.5 < obstacleTop(o, o.w / 2 - 1)) return true;
+    }
+  }
+  return false;
+}
+function drawMarker() {
+  if (S.mode !== 'play') return; const st = S.stone; if (st.phase !== 'air') return;
+  const p = predictContact(st); const lx = st.x + st.vx * p.tc;
+  // plain landing marker: where the stone will touch down (red if that means a side hit)
+  const danger = landingBlocked(st, p, lx);
+  const k = clamp(p.tc / 0.7, 0, 1); const rr = (6 + 16 * k) * SC; const x = sx(lx);
+  ctx.lineWidth = danger ? 2.2 : 1.4;
+  ctx.strokeStyle = danger ? 'rgba(255,90,70,0.95)' : 'rgba(255,255,255,0.6)';
+  ctx.beginPath(); ctx.ellipse(x, WY, rr, rr * 0.32, 0, 0, Math.PI * 2); ctx.stroke();
+  if (danger) { ctx.fillStyle = 'rgba(255,90,70,0.22)'; ctx.fill(); }
+  if (danger && !S.pending) {
+    ctx.font = '700 13px -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+    ctx.fillStyle = 'rgba(255,120,100,0.95)'; ctx.fillText('tap to drop short', x, WY - 10 * SC - 4);
+  }
+}
+function drawStone() {
+  if (S.mode === 'title') return; const st = S.stone;
+  const yv = (st.phase === 'sub' && S.mode === 'play') ? -1.5 : st.y;
+  const x = sx(st.x), y = sy(yv);
+  const rush = speedRush();
+  for (let i = 0; i < S.trail.length; i++) {
+    const t = S.trail[i]; const a = (i + 1) / S.trail.length;
+    ctx.fillStyle = 'rgba(255,255,255,' + (0.25 * a + 0.35 * a * rush) + ')'; ctx.beginPath(); ctx.arc(sx(t.x), sy(t.y), (1 + 2.5 * a + 1.5 * rush) * SC, 0, Math.PI * 2); ctx.fill();
+  }
+  const ang = -Math.atan2(st.vy, Math.max(60, Math.abs(st.vx))) * 0.5;
+  const alpha = yv < -2 ? clamp(1 + yv / 90, 0.1, 1) : 1;
+  if (S.mode === 'play' && S.combo >= 3) { // streak glow
+    const g = Math.min(0.55, 0.12 * (S.combo - 2)); const R = (14 + 2 * Math.min(S.combo, 8)) * SC;
+    const gl = ctx.createRadialGradient(x, y, 2 * SC, x, y, R); gl.addColorStop(0, 'rgba(255,240,150,' + g + ')'); gl.addColorStop(1, 'rgba(255,240,150,0)');
+    ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(x, y, R, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.save(); ctx.translate(x, y); ctx.rotate(ang); ctx.globalAlpha = alpha;
+  ctx.fillStyle = '#6d7178'; ctx.beginPath(); ctx.ellipse(0, 0, 7.5 * SC, 2.8 * SC, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#a3a7ae'; ctx.beginPath(); ctx.ellipse(-1.5 * SC, -0.9 * SC, 4.5 * SC, 1.1 * SC, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+  if (st.phase === 'sub' && S.mode === 'play') {
+    // the skid flash: this is the tap window. Bright yellow, shrinking as it closes.
+    const rem = clamp(1 - (S.t - S.contactAt) / S.D, 0, 1);
+    const rx = (10 + 26 * rem) * SC, ry = (3.5 + 7 * rem) * SC;
+    const gl = ctx.createRadialGradient(x, WY, 0, x, WY, rx * 1.6);
+    gl.addColorStop(0, 'rgba(255,240,120,' + (0.35 + 0.3 * rem) + ')'); gl.addColorStop(1, 'rgba(255,240,120,0)');
+    ctx.fillStyle = gl; ctx.beginPath(); ctx.ellipse(x, WY, rx * 1.6, ry * 1.6, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,' + Math.round(170 + 85 * rem) + ',' + Math.round(60 + 80 * rem) + ',0.95)'; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.ellipse(x, WY, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
+    if (S.attempts <= 3) {
+      ctx.font = '900 16px -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+      ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(20,50,60,0.6)'; ctx.strokeText('TAP', x, y - 12 * SC); ctx.fillStyle = '#fff27a'; ctx.fillText('TAP', x, y - 12 * SC);
+    }
+  }
+}
+function drawParticles() {
+  for (const p of S.particles) {
+    const a = clamp(p.life / p.max, 0, 1);
+    ctx.globalAlpha = a; ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(sx(p.x), sy(p.y), p.r * SC, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+function drawPopups() {
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  for (let i = S.popups.length - 1; i >= 0; i--) {
+    const p = S.popups[i]; const k = (S.vt - p.t0) / p.life;
+    if (k >= 1) { S.popups.splice(i, 1); continue; }
+    const a = k < 0.65 ? 1 : (1 - k) / 0.35; const y = sy(p.y) - 34 * k; const x = sx(p.x);
+    ctx.globalAlpha = a; ctx.font = '800 ' + p.size + 'px -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+    ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(20,50,60,0.55)'; ctx.strokeText(p.text, x, y);
+    ctx.fillStyle = p.color; ctx.fillText(p.text, x, y);
+  }
+  ctx.globalAlpha = 1;
+}
+function drawHUD() {
+  if (S.mode === 'title') return;
+  const font = '-apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+  const d = Math.floor(S.dist);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.shadowColor = 'rgba(20,50,60,0.35)'; ctx.shadowBlur = 8;
+  ctx.font = '800 46px ' + font; ctx.fillStyle = 'rgba(255,255,255,0.95)'; ctx.fillText(d + ' m', VW / 2, 16 + SAFE_TOP);
+  ctx.font = '600 15px ' + font; ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  let line = S.skips.length + (S.skips.length === 1 ? ' skip' : ' skips'); if (S.combo >= 2) line += '   ×' + S.combo + ' streak';
+  ctx.fillText(line, VW / 2, 68 + SAFE_TOP);
+  // speed bar: fills with speed, flashes yellow when a hit gains speed
+  const sp = S.mode === 'play' ? Math.hypot(S.stone.vx, S.stone.vy) : S.speedShown;
+  S.speedShown += (sp - S.speedShown) * 0.12;
+  const bw = 120, bh = 5, bx = VW / 2 - bw / 2, by = 92 + SAFE_TOP;
+  ctx.shadowBlur = 0; ctx.fillStyle = 'rgba(255,255,255,0.25)'; roundRect(bx, by, bw, bh, 3); ctx.fill();
+  ctx.fillStyle = S.speedFlash > 0 ? 'rgba(255,240,140,0.95)' : 'rgba(255,255,255,0.85)';
+  roundRect(bx, by, Math.max(bh, bw * clamp(S.speedShown / T.maxSpeed, 0, 1)), bh, 3); ctx.fill();
+  ctx.shadowBlur = 8;
+  ctx.font = '600 13px ' + font; ctx.textAlign = 'left'; ctx.fillText('Lake #' + S.lake, 16, 16 + SAFE_TOP);
+  if (S.best) { ctx.textAlign = 'right'; ctx.fillText('best ' + Math.floor(S.best.dist) + ' m', VW - 16, 16 + SAFE_TOP); }
+  ctx.shadowBlur = 0;
+  if (S.attempts === 1 && S.mode === 'play') {
+    let msg = null;
+    if (S.skips.length === 0) msg = 'tap during the yellow skid flash';
+    else if (S.skips.length < 4) msg = 'later = flatter & faster';
+    else if (S.skips.length < 7) msg = 'tap early to drop it short & hop high';
+    else if (S.skips.length < 10) msg = 'streak good skips to build speed & height';
+    if (msg) { ctx.textAlign = 'center'; ctx.font = '700 15px ' + font; ctx.fillStyle = 'rgba(255,255,255,0.95)'; ctx.shadowBlur = 6; ctx.fillText(msg, VW / 2, WY + (VH - WY) * 0.35); ctx.shadowBlur = 0; }
+  }
+  if (S.mode === 'play') {
+    const st = S.stone;
+    for (const o of S.course) {
+      if (o.x < st.x) continue;
+      if (o.x - st.x > Math.max(320, st.vx * 1.8)) break;
+      const x = sx(o.x - o.w / 2);
+      if (x > VW - 12) {
+        const em = o.type === 'log' ? '🪵' : o.type === 'duck' ? '🦆' : '🌿';
+        ctx.globalAlpha = 0.6 + 0.4 * Math.sin(S.vt * 8);
+        ctx.font = '24px serif'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+        ctx.fillText(em, VW - 12, sy(o.type === 'branch' ? o.h + 16 : o.h + 10));
+        ctx.globalAlpha = 1; break;
+      }
+    }
+  }
+}
+function render() {
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  let shx = 0, shy = 0;
+  if (S.shake > 0) { shx = (Math.random() - 0.5) * S.shake * 10; shy = (Math.random() - 0.5) * S.shake * 10; }
+  ctx.translate(shx, shy);
+  drawSky(); drawHills(); drawWater(); drawObstacles(); drawMarker(); drawStone(); drawParticles(); drawStreaks(); drawPopups();
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  drawHUD();
+}
+// how fast the stone is, from 0 (streaks off) to 1 (full rush)
+function speedRush() { return S.mode === 'play' ? clamp((S.stone.vx - T.streakFrom) / (T.streakFull - T.streakFrom), 0, 1) : 0; }
+function drawStreaks() {
+  const rush = speedRush(); if (rush <= 0) return;
+  ctx.lineCap = 'round'; ctx.lineWidth = 1.5;
+  for (const s of S.streaks) {
+    ctx.strokeStyle = 'rgba(255,255,255,' + (0.1 + 0.3 * rush) * s.a + ')';
+    ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(s.x + s.len * (0.5 + rush), s.y); ctx.stroke();
+  }
+}
+
+// ---------------- celebration ----------------
+// Confetti lives on its own canvas above the cards, in screen pixels.
+const CONFETTI_COLORS = ['#ffd166', '#ef476f', '#06d6a0', '#118ab2', '#f78c6b', '#ffffff', '#c77dff'];
+S.confetti = [];
+function celebrate() {
+  Audio.tada();
+  const C = S.confetti; const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const count = reduce ? 40 : 160;
+  for (let i = 0; i < count; i++) { // shower from above
+    C.push({ x: VW * (0.1 + 0.8 * Math.random()), y: -20 - Math.random() * VH * 0.4, vx: (Math.random() - 0.5) * 140, vy: 80 + Math.random() * 220, w: 6 + Math.random() * 6, h: 4 + Math.random() * 5, rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 12, ph: Math.random() * 6.28, color: CONFETTI_COLORS[i % CONFETTI_COLORS.length], life: 3.2 + Math.random() * 1.5 });
+  }
+  if (!reduce) for (const side of [0, 1]) for (let i = 0; i < 45; i++) { // two cannons from the bottom corners
+    const dir = side ? -1 : 1;
+    C.push({ x: side ? VW + 6 : -6, y: VH + 6, vx: dir * (220 + Math.random() * 320), vy: -(620 + Math.random() * 420), w: 6 + Math.random() * 6, h: 4 + Math.random() * 5, rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 16, ph: Math.random() * 6.28, color: CONFETTI_COLORS[(i * 3 + side) % CONFETTI_COLORS.length], life: 3.5 + Math.random() });
+  }
+}
+function updateConfetti(dt) {
+  const C = S.confetti; if (!C.length) return;
+  for (let i = C.length - 1; i >= 0; i--) {
+    const p = C[i]; p.life -= dt; p.vy += 420 * dt; p.vx *= Math.max(0, 1 - 1.4 * dt); p.vy *= Math.max(0, 1 - 0.9 * dt);
+    p.x += (p.vx + Math.sin(S.vt * 3 + p.ph) * 30) * dt; p.y += p.vy * dt; p.rot += p.vr * dt;
+    if (p.life <= 0 || p.y > VH + 30) C.splice(i, 1);
+  }
+}
+function drawConfetti() {
+  const fx = $('fx'); const g = fx.getContext('2d'); g.setTransform(DPR, 0, 0, DPR, 0, 0); g.clearRect(0, 0, VW, VH);
+  const C = S.confetti; if (!C.length) return;
+  for (const p of C) {
+    g.save(); g.translate(p.x, p.y); g.rotate(p.rot); g.globalAlpha = Math.min(1, p.life);
+    g.fillStyle = p.color; g.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * (0.35 + 0.65 * Math.abs(Math.sin(S.vt * 6 + p.ph))));
+    g.restore();
+  }
+}
+
+// ---------------- loop ----------------
+function updateFx(dt) {
+  const P = S.particles;
+  for (let i = P.length - 1; i >= 0; i--) {
+    const p = P[i]; p.life -= dt; p.vy -= p.grav * dt; p.x += p.vx * dt; p.y += p.vy * dt;
+    if (p.life <= 0 || (p.bubble ? p.y > 0 : (p.y < 0 && p.vy < 0))) P.splice(i, 1);
+  }
+  if (P.length > 400) P.splice(0, P.length - 400);
+  updateConfetti(dt);
+  const rush = speedRush();
+  if (S.mode === 'play') { S.trail.push({ x: S.stone.x, y: Math.max(S.stone.y, -1) }); const keep = 14 + Math.round(16 * rush); while (S.trail.length > keep) S.trail.shift(); }
+  // wind streaks: screen-space lines that fly left faster the faster the stone goes
+  if (S.streaks.length < 22) S.streaks.push({ x: Math.random() * VW, y: Math.random() * VH, len: 30 + Math.random() * 70, a: 0.4 + Math.random() * 0.6 });
+  if (rush > 0) for (const s of S.streaks) { s.x -= (S.stone.vx * 1.8 * SC + 200) * dt; if (s.x + s.len * 1.5 < 0) { s.x = VW + Math.random() * 60; s.y = Math.random() * VH; s.len = 30 + Math.random() * 70; } }
+  if (S.mode === 'title') S.camX += dt * 25;
+}
+let last = performance.now();
+function frame(now) {
+  let dt = (now - last) / 1000; last = now; if (dt > 0.1) dt = 0.1;
+  S.vt += dt;
+  if (S.mode === 'play' || S.mode === 'sinking') {
+    let sdt = dt; if (S.slow > 0) { sdt *= 0.25; S.slow -= dt; }
+    S.acc += sdt; let guard = 0;
+    while (S.acc >= STEP && guard++ < 80) { step(STEP); S.acc -= STEP; }
+  }
+  S.shake = Math.max(0, S.shake - dt * 3); S.speedFlash = Math.max(0, S.speedFlash - dt);
+  // camera: zoom out and push the stone left as it gets faster, so the whole hop stays visible
+  const live = S.mode === 'play' || S.mode === 'sinking';
+  const zt = live ? clamp((S.stone.vx - T.zoomSpeedLo) / (T.maxSpeed - T.zoomSpeedLo), 0, 1) : 0;
+  const k = Math.min(1, 2.5 * dt);
+  S.zoom += (lerp(1, T.zoomOut, zt) - S.zoom) * k; S.anchor += (lerp(0.28, 0.2, zt) - S.anchor) * k;
+  SC = BASE_SC * S.zoom; SX = Math.round(VW * S.anchor);
+  updateFx(dt); render(); drawConfetti(); requestAnimationFrame(frame);
+}
+document.addEventListener('visibilitychange', () => { last = performance.now(); });
+
+init();
+Board.init();
+requestAnimationFrame(frame);
+
+// debug / test hooks
+window.__skip = {
+  S, T, G, tap, step, start: startRun, predictContact, diveTime, mute: false,
+  auto(u, opts) { S.auto = u == null ? null : Object.assign({ u, jitter: 0, jitterNow: 0, rolled: false, plan: null, smart: false, mode: '' }, opts || {}); },
+  sim(u, opts, noObs) { S.noObs = !!noObs; this.auto(u, opts); startRun(); let n = 0; while ((S.mode === 'play' || S.mode === 'sinking') && n++ < 240 * 400) step(STEP); const r = this.stats(); this.auto(null); return r; },
+  noObs(v) { S.noObs = !!v; },
+  stats() { return { mode: S.mode, dist: +S.dist.toFixed(1), skips: S.skips.length, t: +S.t.toFixed(2), reason: S.endReason, speed: Math.round(Math.hypot(S.stone.vx, S.stone.vy)), bestCombo: S.bestCombo }; },
+  share: shareText
+};
+})();
+</script>
+</body>
+</html>

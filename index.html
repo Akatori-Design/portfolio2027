@@ -622,6 +622,13 @@
     background: linear-gradient(160deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, 0) 38%);
     box-shadow: inset 0 2px 6px rgba(0, 0, 0, .7);
   }
+  #skipApp { top: 266px; }   /* the third icon, under Storm Wing */
+  .app-tile-skip { background: linear-gradient(180deg, #f7cba3 0%, #ffb78d 42%, #4aa3ad 44%, #1d3b47 100%); }   /* the game's dusk sky over its lake */
+  .app-tile-skip svg { width: 44px; }
+  .skip-win {   /* Skip's window: the same frame as Storm Wing's, wider, round a taller view of the lake */
+    width: min(560px, calc(100% - 32px), calc((100vh - 132px) * 5 / 6 + 24px));
+  }
+  .skip-win .game-screen { aspect-ratio: 5 / 6; background: #1d3b47; }
   .deck.jolt { transform: translateY(1px); }   /* a key going down shakes the whole deck a hair */
   .deck.dragging {   /* lifted: a deeper shadow */
     cursor: grabbing; transition: none;
@@ -1009,6 +1016,15 @@
     <div class="game-win" id="gameWin" role="dialog" aria-label="Storm Wing">
       <button class="deck-x" type="button" aria-label="Close the game"><svg viewBox="0 0 8 8" aria-hidden="true"><path d="M1 1l6 6M7 1 1 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
       <div class="game-title" aria-hidden="true">STORM WING</div>
+      <div class="game-screen"></div>
+    </div>
+    <button class="app-icon" id="skipApp" type="button" aria-label="Skip: open the stone-skipping game" aria-controls="skipWin" aria-expanded="false">
+      <span class="app-tile app-tile-skip" aria-hidden="true"><svg viewBox="0 0 44 30"><path d="M2 4 Q8 14 14 12 Q19 10.5 24 12 Q28 13 32 12.2" fill="none" stroke="#fff" stroke-opacity=".9" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2.2 2.2"/><ellipse cx="14" cy="12.6" rx="5.5" ry="1.6" fill="none" stroke="#e6fbff" stroke-opacity=".8" stroke-width="1"/><ellipse cx="24" cy="12.6" rx="3.8" ry="1.1" fill="none" stroke="#e6fbff" stroke-opacity=".7" stroke-width="1"/><ellipse cx="36" cy="9.5" rx="4.6" ry="1.8" fill="#6d7178" transform="rotate(-10 36 9.5)"/><ellipse cx="35.2" cy="8.9" rx="2.4" ry=".65" fill="#a9adb4" transform="rotate(-10 36 9.5)"/></svg></span>
+      <span class="app-name">Skip</span>
+    </button>
+    <div class="game-win skip-win" id="skipWin" role="dialog" aria-label="Skip">
+      <button class="deck-x" type="button" aria-label="Close the game"><svg viewBox="0 0 8 8" aria-hidden="true"><path d="M1 1l6 6M7 1 1 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+      <div class="game-title" aria-hidden="true">SKIP</div>
       <div class="game-screen"></div>
     </div>
     <div class="deck" id="deck" role="group" aria-label="Cassette player">
@@ -3448,6 +3464,63 @@ const toFront = win => { win.style.zIndex = String(++windowZ); };
 }
 
 /* ---------------------------------------------------------------
+   Skip: the stone-skipping game, a third icon on the rain view's
+   desktop. Its window is wider than Storm Wing's. The game is loaded
+   only while its window is open, and unloaded once it has closed.
+---------------------------------------------------------------- */
+{
+  const app = document.getElementById("skipApp"), win = document.getElementById("skipWin");
+  const screen = win.querySelector(".game-screen"), shut = win.querySelector(".deck-x");
+  let game = null;
+  const show = on => {
+    const box = win.offsetParent;
+    if (on && !win.style.top) {   // the first time, in the middle of the screen
+      win.style.left = Math.max(0, (box.clientWidth - win.offsetWidth) / 2) + "px";
+      win.style.top = Math.max(16, (box.clientHeight - win.offsetHeight) / 2) + "px";
+    }
+    win.style.transformOrigin = `${app.offsetLeft + app.offsetWidth / 2 - win.offsetLeft}px ${app.offsetTop + 30 - win.offsetTop}px`;
+    win.classList.toggle("shown", on);
+    app.classList.toggle("on", on); app.setAttribute("aria-expanded", String(on));
+    if (on) {
+      toFront(win);
+      if (!game) {
+        game = document.createElement("iframe");
+        game.src = "games/skip.html"; game.title = "Skip";
+        game.allow = "clipboard-write";   // its Share button copies the result
+        game.addEventListener("load", function () { if (this === game) this.contentWindow.focus(); }, { once: true });
+        screen.appendChild(game);
+      } else game.contentWindow?.focus();
+    } else if (game) {
+      const old = game; game = null;
+      setTimeout(() => old.remove(), 260);   // once it has shrunk away
+    }
+  };
+  desktopIcon(app, () => show(true));
+  shut.addEventListener("click", () => { show(false); app.focus({ preventScroll: true }); });
+  win.hide = () => { if (win.classList.contains("shown")) show(false); };
+  addEventListener("blur", () => setTimeout(() => { if (game && document.activeElement === game) toFront(win); }));
+  let grab = null;
+  win.addEventListener("pointerdown", e => {
+    toFront(win);
+    if (e.button !== 0 || e.target.closest(".deck-x, .game-screen")) return;
+    const r = win.getBoundingClientRect();
+    grab = { dx: e.clientX - r.left, dy: e.clientY - r.top, box: win.offsetParent.getBoundingClientRect() };
+    win.classList.add("dragging");
+    try { win.setPointerCapture(e.pointerId); } catch (_) {}
+    e.preventDefault();
+  });
+  win.addEventListener("pointermove", e => {
+    if (!grab) return;
+    const { box } = grab;
+    win.style.left = Math.min(Math.max(0, e.clientX - box.left - grab.dx), box.width - win.offsetWidth) + "px";
+    win.style.top = Math.min(Math.max(0, e.clientY - box.top - grab.dy), box.height - win.offsetHeight) + "px";
+  });
+  const drop = () => { if (!grab) return; grab = null; win.classList.remove("dragging"); game?.contentWindow?.focus(); };
+  win.addEventListener("pointerup", drop);
+  win.addEventListener("pointercancel", drop);
+}
+
+/* ---------------------------------------------------------------
    Page peel: the live Rain on Glass loads only while the corner is
    open, and unloads a few seconds after it closes; at rest it's a still
 ---------------------------------------------------------------- */
@@ -3515,6 +3588,7 @@ const toFront = win => { win.style.zIndex = String(++windowZ); };
     document.getElementById("deck").stopTape?.();
     document.getElementById("deck").hide?.();   // the player and the game close with the view: next time, only their icons
     document.getElementById("gameWin").hide?.();
+    document.getElementById("skipWin").hide?.();
     // the rain goes quiet at once, though the piece stays in view while the page folds back over it
     try { demoFrame?.contentWindow?.postMessage("phenomenon:quiet", new URL(peel.href).origin); } catch (e) {}
     demoFrom?.focus?.({ preventScroll: true });
