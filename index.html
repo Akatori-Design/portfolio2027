@@ -492,6 +492,83 @@
     user-select: none; -webkit-user-select: none;
     transition: transform .08s;
   }
+  .deck { transform-origin: left top; transition: transform .08s, opacity .25s, scale .34s cubic-bezier(.2, .9, .3, 1.12), visibility 0s; }
+  .deck:not(.shown) {   /* closed: it shrinks away toward its app icon, and stops */
+    opacity: 0; scale: .6; visibility: hidden; pointer-events: none;
+    transition: transform .08s, opacity .2s, scale .22s ease-in, visibility 0s .22s;
+  }
+  .deck-x {   /* closes the player, like a window's close button; the tape stops */
+    position: absolute; top: -8px; left: -8px; z-index: 3;
+    width: 20px; height: 20px; padding: 0; border: 0; border-radius: 50%;
+    display: grid; place-items: center;
+    background: radial-gradient(circle at 40% 35%, #4b4b4f, #19191b);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, .85), 0 0 0 2px rgba(255, 255, 255, .16), 0 2px 4px rgba(0, 0, 0, .6);
+    color: #ececea; cursor: pointer;
+  }
+  .deck-x:hover { background: radial-gradient(circle at 40% 35%, #ff6b5d, #c4302a); }
+  .deck-x:focus-visible { outline: 1px solid #fff; outline-offset: 2px; }
+  .deck-x svg { width: 8px; height: 8px; }
+  .app-icon {   /* the player's app on the screen, like an icon on a desktop: a click opens it */
+    position: absolute; top: 66px; right: 14px; z-index: 1;   /* top right, under the view's Close button */
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    width: 84px; padding: 6px 0 4px; border: 0; background: none;
+    font: inherit; color: #fff; cursor: pointer;
+    touch-action: none; user-select: none; -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .app-icon.dragging { cursor: grabbing; z-index: 999; }   /* picked up: it lifts a little, over everything */
+  .app-icon.dragging .app-tile { transform: scale(1.06); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), inset 0 0 0 1px rgba(255, 255, 255, .06), 0 14px 26px rgba(0, 0, 0, .55), 0 2px 4px rgba(0, 0, 0, .6); }
+  .app-tile {
+    width: 58px; height: 58px; border-radius: 14px;
+    display: grid; place-items: center;
+    background: linear-gradient(160deg, #47474c 0%, #1e1e21 60%, #121214);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), inset 0 0 0 1px rgba(255, 255, 255, .06), 0 6px 14px rgba(0, 0, 0, .5), 0 1px 2px rgba(0, 0, 0, .6);
+    transition: transform .15s, filter .15s;
+  }
+  .app-tile svg { width: 40px; height: auto; filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .5)); }
+  .app-icon:hover .app-tile { transform: translateY(-1px); }
+  .app-icon:active .app-tile { filter: brightness(.85); }
+  .app-name { font-size: 12px; font-weight: 500; padding: 1px 6px; border-radius: 4px; text-shadow: 0 1px 2px rgba(0, 0, 0, .85); }
+  .app-icon.on .app-name { background: rgba(10, 132, 255, .9); text-shadow: none; }   /* highlighted while its window is open */
+  .app-icon:focus-visible { outline: none; }
+  .app-icon:focus-visible .app-tile { outline: 2px solid rgba(255, 255, 255, .7); outline-offset: 2px; }
+  #gameApp { top: 166px; }   /* the second icon, under the first */
+  .app-tile-game { background: linear-gradient(170deg, #5b9be6 0%, #2a62b0 55%, #1b3f78); }   /* a patch of sea */
+  .app-tile-game svg { width: 34px; }
+  .game-win {   /* Storm Wing's window: a dark frame round a tall pixel screen, opened from its icon */
+    position: absolute; left: 0; top: 0; z-index: 2;
+    width: min(352px, calc(100% - 32px), calc((100vh - 142px) * 2 / 3 + 24px));
+    box-sizing: border-box; padding: 30px 12px 12px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #2c2c31, #17171a);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .14), inset 0 0 0 1px rgba(255, 255, 255, .04),
+      0 0 0 1px #050506, 0 4px 10px rgba(0, 0, 0, .5), 0 24px 50px -12px rgba(0, 0, 0, .85);
+    cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none;
+    transition: opacity .25s, scale .34s cubic-bezier(.2, .9, .3, 1.12), visibility 0s;
+  }
+  .game-win:not(.shown) {   /* closed: it shrinks away into its icon */
+    opacity: 0; scale: .6; visibility: hidden; pointer-events: none;
+    transition: opacity .2s, scale .22s ease-in, visibility 0s .22s;
+  }
+  .game-win.dragging { cursor: grabbing; transition: none; }
+  .game-win .deck-x { top: 6px; left: 8px; width: 18px; height: 18px; }
+  .game-title {
+    position: absolute; top: 10px; left: 0; right: 0;
+    text-align: center; font-size: 9px; font-weight: 700; letter-spacing: .24em; color: #8d8d93;
+    pointer-events: none;
+  }
+  .game-screen {   /* the screen, set into the frame, with a faint glare on its glass */
+    position: relative; aspect-ratio: 2 / 3; overflow: hidden;
+    border-radius: 4px; background: #0d0b14;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, .85), 0 1px 0 1px rgba(255, 255, 255, .06);
+  }
+  .game-screen iframe { display: block; width: 100%; height: 100%; border: 0; }
+  .game-screen::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(160deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, 0) 38%);
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, .7);
+  }
   .deck.jolt { transform: translateY(1px); }   /* a key going down shakes the whole deck a hair */
   .deck.dragging {   /* lifted: a deeper shadow */
     cursor: grabbing; transition: none;
@@ -768,7 +845,7 @@
   }
   .peel.gone { visibility: hidden; }   /* the corner has become the page being peeled */
   @media (prefers-reduced-motion: reduce) { .demo-stage { transition: none; } }
-  .demo iframe {   /* runs 120px past the right edge, so the piece's own name tab sits out of view */
+  .demo > iframe {   /* the piece itself runs 120px past the right edge, so its own name tab sits out of view */
     position: absolute; top: 0; left: 0;
     width: calc(100% + 120px); height: 100%;
     border: 0;
@@ -821,7 +898,21 @@
 <div class="demo-stage" id="demoStage">
   <div class="demo" id="demo" role="dialog" aria-modal="true" aria-label="Rain on Glass, from Phenomenon">
     <button class="close" id="demoClose" type="button">Close ✕</button>
+    <button class="app-icon" id="musicApp" type="button" aria-label="Music: open the tape player" aria-controls="deck" aria-expanded="false">
+      <span class="app-tile" aria-hidden="true"><svg viewBox="0 0 40 26"><rect x=".5" y=".5" width="39" height="25" rx="3" fill="#e8e3d7"/><rect x="3" y="3" width="34" height="5" rx=".8" fill="#f7f5ef"/><rect x="3" y="8" width="34" height="13" fill="#cdb380"/><rect x="10" y="10.5" width="20" height="8" rx="2" fill="#141210"/><circle cx="14.5" cy="14.5" r="2.8" fill="#f1f0ec"/><circle cx="25.5" cy="14.5" r="2.8" fill="#f1f0ec"/><circle cx="14.5" cy="14.5" r="1.2" fill="#141210"/><circle cx="25.5" cy="14.5" r="1.2" fill="#141210"/><path d="M9 25.5l2-3h18l2 3" fill="#d6d0c2"/></svg></span>
+      <span class="app-name">Music</span>
+    </button>
+    <button class="app-icon" id="gameApp" type="button" aria-label="Storm Wing: open the game" aria-controls="gameWin" aria-expanded="false">
+      <span class="app-tile app-tile-game" aria-hidden="true"><svg viewBox="0 0 15 13" shape-rendering="crispEdges"><rect x="7" y="0" width="1" height="1" fill="#f4f1e6"/><rect x="6" y="1" width="1" height="1" fill="#f4f1e6"/><rect x="7" y="1" width="1" height="1" fill="#a9aeb8"/><rect x="8" y="1" width="1" height="1" fill="#f4f1e6"/><rect x="6" y="2" width="3" height="1" fill="#e0483e"/><rect x="6" y="3" width="1" height="1" fill="#e0483e"/><rect x="7" y="3" width="1" height="1" fill="#8fe0ef"/><rect x="8" y="3" width="1" height="1" fill="#e0483e"/><rect x="6" y="4" width="1" height="1" fill="#e0483e"/><rect x="7" y="4" width="1" height="1" fill="#8fe0ef"/><rect x="8" y="4" width="1" height="1" fill="#e0483e"/><rect x="1" y="5" width="1" height="1" fill="#e0483e"/><rect x="6" y="5" width="3" height="1" fill="#e0483e"/><rect x="13" y="5" width="1" height="1" fill="#e0483e"/><rect x="0" y="6" width="15" height="1" fill="#e0483e"/><rect x="0" y="7" width="1" height="1" fill="#f4f1e6"/><rect x="1" y="7" width="1" height="1" fill="#8f2626"/><rect x="2" y="7" width="11" height="1" fill="#e0483e"/><rect x="13" y="7" width="1" height="1" fill="#8f2626"/><rect x="14" y="7" width="1" height="1" fill="#f4f1e6"/><rect x="6" y="8" width="3" height="1" fill="#e0483e"/><rect x="6" y="9" width="3" height="1" fill="#e0483e"/><rect x="6" y="10" width="1" height="1" fill="#e0483e"/><rect x="7" y="10" width="1" height="1" fill="#8f2626"/><rect x="8" y="10" width="1" height="1" fill="#e0483e"/><rect x="4" y="11" width="7" height="1" fill="#e0483e"/><rect x="5" y="12" width="1" height="1" fill="#8f2626"/><rect x="9" y="12" width="1" height="1" fill="#8f2626"/></svg></span>
+      <span class="app-name">Storm Wing</span>
+    </button>
+    <div class="game-win" id="gameWin" role="dialog" aria-label="Storm Wing">
+      <button class="deck-x" type="button" aria-label="Close the game"><svg viewBox="0 0 8 8" aria-hidden="true"><path d="M1 1l6 6M7 1 1 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+      <div class="game-title" aria-hidden="true">STORM WING</div>
+      <div class="game-screen"></div>
+    </div>
     <div class="deck" id="deck" role="group" aria-label="Cassette player">
+      <button class="deck-x" type="button" aria-label="Close the tape player"><svg viewBox="0 0 8 8" aria-hidden="true"><path d="M1 1l6 6M7 1 1 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
       <div class="deck-door" id="deckDoor">
         <div class="cassette">
           <!-- a clear-shelled tape after a classic 80s cassette: a white strip to write on, a gold label with
@@ -2366,6 +2457,45 @@ if (location.hash) {
 }
 
 /* ---------------------------------------------------------------
+   The rain view's desktop: its app icons can be dragged about like a
+   desktop's (a click without a drag opens the app), and its windows
+   come to the front when touched
+---------------------------------------------------------------- */
+function desktopIcon(app, open) {
+  let grab = null, moved = false;
+  app.addEventListener("click", () => { if (moved) { moved = false; return; } open(); });   // the click that ends a drag opens nothing
+  app.addEventListener("pointerdown", e => {
+    if (e.button !== 0) return;
+    const r = app.getBoundingClientRect();
+    grab = { dx: e.clientX - r.left, dy: e.clientY - r.top, x0: e.clientX, y0: e.clientY, box: app.offsetParent.getBoundingClientRect(), moved: false };
+    moved = false;
+    try { app.setPointerCapture(e.pointerId); } catch (_) {}
+  });
+  app.addEventListener("pointermove", e => {
+    if (!grab) return;
+    if (!grab.moved) {   // a few pixels before it lifts, so a click stays a click
+      if (Math.hypot(e.clientX - grab.x0, e.clientY - grab.y0) < 4) return;
+      grab.moved = true;
+      app.classList.add("dragging");
+      app.style.right = "auto";   // from here it is placed from the left
+    }
+    const { box } = grab;
+    app.style.left = Math.min(Math.max(0, e.clientX - box.left - grab.dx), box.width - app.offsetWidth) + "px";
+    app.style.top = Math.min(Math.max(0, e.clientY - box.top - grab.dy), box.height - app.offsetHeight) + "px";
+  });
+  const drop = () => {
+    if (!grab) return;
+    moved = grab.moved;
+    grab = null;
+    app.classList.remove("dragging");
+  };
+  app.addEventListener("pointerup", drop);
+  app.addEventListener("pointercancel", drop);
+}
+let windowZ = 2;
+const toFront = win => { win.style.zIndex = String(++windowZ); };
+
+/* ---------------------------------------------------------------
    Cassette deck: the tape is "Feel it or Don't", waiting, stopped, as
    the rain view opens. PLAY latches down until STOP (or the end of the
    tape) releases it; from the start of the tape, two seconds of leader
@@ -2705,7 +2835,7 @@ if (location.hash) {
   // top half. It stays on screen. A click on the empty holder, without a drag, slides the tape back in.
   let grab = null;
   deck.addEventListener("pointerdown", e => {
-    if (e.button !== 0 || e.target.closest(".key, .deck-knob")) return;
+    if (e.button !== 0 || e.target.closest(".key, .deck-knob, .deck-x")) return;
     const r = deck.getBoundingClientRect(), box = deck.offsetParent.getBoundingClientRect();
     grab = { dx: e.clientX - r.left, dy: e.clientY - r.top, x0: e.clientX, y0: e.clientY, box, moved: false, door: !!e.target.closest(".deck-door") };
     deck.setPointerCapture(e.pointerId);
@@ -2739,7 +2869,79 @@ if (location.hash) {
   // first key's sound is heard whole. The tape stops when the view closes, and carries on from there.
   deck.wake = () => { ac(); };
   deck.stopTape = () => stop();
+
+  // It opens from its app icon on the screen and closes with its X, stopping the tape as it goes. It grows
+  // out of the icon and shrinks back into it, wherever the icon has been dragged to.
+  const app = document.getElementById("musicApp"), shut = deck.querySelector(".deck-x");
+  const show = on => {
+    deck.style.transformOrigin = `${app.offsetLeft + app.offsetWidth / 2 - deck.offsetLeft}px ${app.offsetTop + 30 - deck.offsetTop}px`;
+    deck.classList.toggle("shown", on);
+    app.classList.toggle("on", on); app.setAttribute("aria-expanded", String(on));
+    if (on) { ac(); toFront(deck); } else stop();
+  };
+  desktopIcon(app, () => show(true));
+  deck.addEventListener("pointerdown", () => toFront(deck), true);
+  shut.addEventListener("click", () => { show(false); app.focus({ preventScroll: true }); });
+  deck.hide = () => show(false);
 })();
+
+/* ---------------------------------------------------------------
+   Storm Wing: an airplane shooter (games/storm-wing.html) in its own
+   window on the rain view's desktop. The game is loaded only while its
+   window is open, and unloaded once it has closed.
+---------------------------------------------------------------- */
+{
+  const app = document.getElementById("gameApp"), win = document.getElementById("gameWin");
+  const screen = win.querySelector(".game-screen"), shut = win.querySelector(".deck-x");
+  let game = null;
+  const show = on => {
+    const box = win.offsetParent;
+    if (on && !win.style.top) {   // the first time, in the middle of the screen
+      win.style.left = Math.max(0, (box.clientWidth - win.offsetWidth) / 2) + "px";
+      win.style.top = Math.max(16, (box.clientHeight - win.offsetHeight) / 2) + "px";
+    }
+    win.style.transformOrigin = `${app.offsetLeft + app.offsetWidth / 2 - win.offsetLeft}px ${app.offsetTop + 30 - win.offsetTop}px`;
+    win.classList.toggle("shown", on);
+    app.classList.toggle("on", on); app.setAttribute("aria-expanded", String(on));
+    if (on) {
+      toFront(win);
+      if (!game) {
+        game = document.createElement("iframe");
+        game.src = "games/storm-wing.html"; game.title = "Storm Wing";
+        game.addEventListener("load", function () { if (this === game) this.contentWindow.focus(); }, { once: true });
+        screen.appendChild(game);
+      } else game.contentWindow?.focus();
+    } else if (game) {
+      const old = game; game = null;
+      setTimeout(() => old.remove(), 260);   // once it has shrunk away
+    }
+  };
+  desktopIcon(app, () => show(true));
+  shut.addEventListener("click", () => { show(false); app.focus({ preventScroll: true }); });
+  win.hide = () => { if (win.classList.contains("shown")) show(false); };
+  // a click into the game moves focus into it: bring its window to the front then too
+  addEventListener("blur", () => setTimeout(() => { if (game && document.activeElement === game) toFront(win); }));
+  // drag the window by its frame
+  let grab = null;
+  win.addEventListener("pointerdown", e => {
+    toFront(win);
+    if (e.button !== 0 || e.target.closest(".deck-x, .game-screen")) return;
+    const r = win.getBoundingClientRect();
+    grab = { dx: e.clientX - r.left, dy: e.clientY - r.top, box: win.offsetParent.getBoundingClientRect() };
+    win.classList.add("dragging");
+    try { win.setPointerCapture(e.pointerId); } catch (_) {}
+    e.preventDefault();
+  });
+  win.addEventListener("pointermove", e => {
+    if (!grab) return;
+    const { box } = grab;
+    win.style.left = Math.min(Math.max(0, e.clientX - box.left - grab.dx), box.width - win.offsetWidth) + "px";
+    win.style.top = Math.min(Math.max(0, e.clientY - box.top - grab.dy), box.height - win.offsetHeight) + "px";
+  });
+  const drop = () => { if (!grab) return; grab = null; win.classList.remove("dragging"); game?.contentWindow?.focus(); };
+  win.addEventListener("pointerup", drop);
+  win.addEventListener("pointercancel", drop);
+}
 
 /* ---------------------------------------------------------------
    Page peel: the live Rain on Glass loads only while the corner is
@@ -2807,6 +3009,8 @@ if (location.hash) {
     stage.classList.remove("open");   // the page peels back down into the corner
     document.body.classList.remove("locked");
     document.getElementById("deck").stopTape?.();
+    document.getElementById("deck").hide?.();   // the player and the game close with the view: next time, only their icons
+    document.getElementById("gameWin").hide?.();
     // the rain goes quiet at once, though the piece stays in view while the page folds back over it
     try { demoFrame?.contentWindow?.postMessage("phenomenon:quiet", new URL(peel.href).origin); } catch (e) {}
     demoFrom?.focus?.({ preventScroll: true });
