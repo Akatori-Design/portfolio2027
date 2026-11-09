@@ -1135,7 +1135,7 @@
               </g>
             </defs>
           </svg>
-          <svg class="cs-art" data-skin="denon" viewBox="0 0 200 124" role="img" aria-label="A cassette labelled Feel it or Don't, 3:35">
+          <svg class="cs-art" data-skin="denon" viewBox="0 0 200 124" role="img" aria-label="A cassette labelled Feel it or Don't, 3:35" hidden>
             <!-- the clear shell: its edges and inner walls catch the light; molded plates on its top edge -->
             <rect x=".5" y=".5" width="199" height="123" rx="6" fill="url(#csShell)"/>
             <rect x=".5" y=".5" width="199" height="123" rx="6" fill="url(#csShellCore)"/>
@@ -1209,7 +1209,7 @@
             <use href="#csScrew" x="7" y="7"/><use href="#csScrew" x="193" y="7"/><use href="#csScrew" x="7" y="117"/><use href="#csScrew" x="193" y="117"/><use href="#csScrew" x="100" y="100.5"/>
             <path d="M.5 6.5a6 6 0 0 1 6-6h60L20 123.5H6.5a6 6 0 0 1-6-6z" fill="url(#csGlare)" opacity=".5"/>
           </svg>
-          <svg class="cs-art" data-skin="c60" viewBox="0 0 200 124" role="img" aria-label="A cassette labelled アメノオト, 3:03" hidden>
+          <svg class="cs-art" data-skin="c60" viewBox="0 0 200 124" role="img" aria-label="A cassette labelled アメノオト, 3:03">
             <!-- the classic tape: a smoky blue-grey shell, a white index strip written on by hand, a red-orange
                  label round a black window, and a band along its foot -->
             <rect x=".5" y=".5" width="199" height="123" rx="6" fill="url(#c6Shell)"/>
@@ -2968,7 +2968,7 @@ const toFront = win => { win.style.zIndex = String(++windowZ); };
   const keys = Object.fromEntries([...deck.querySelectorAll(".key")].map(k => [k.dataset.act, k]));
   const reelL = deck.querySelectorAll(".cs-reelL"), reelR = deck.querySelectorAll(".cs-reelR");   // one pair on each tape's cassette
   const packL = deck.querySelectorAll(".cs-packL"), packR = deck.querySelectorAll(".cs-packR");   // the wound tape and its sheen
-  const song = new Audio("audio/feel-it-or-dont.m4a");
+  const song = new Audio("audio/amenooto.m4a");   // アメノオト is in the deck to begin with
   song.preload = "auto";
   // Safari on iPhone ignores a media element's volume and always plays it at full level, so there the
   // knob would do nothing. There, and only there, the music runs through a gain in the audio graph
@@ -2981,7 +2981,7 @@ const toFront = win => { win.style.zIndex = String(++windowZ); };
   const SPIN = 32;              // tape speed at play, in svg units a second
   const HOLD = 280;             // ms: a REW/FF press longer than this winds only while held
   const LEAD = 2;               // seconds of blank leader before the song
-  let length = LEAD + 215.5, pos = 0, speed = 0, target = 0, mode = "stop", ejected = false;   // pos and length are tape time, leader included
+  let length = LEAD + 182.81, pos = 0, speed = 0, target = 0, mode = "stop", ejected = false;   // pos and length are tape time, leader included
   let angL = 0, angR = 0, raf = 0, last = 0, held = null, unlocked = false;
   song.addEventListener("loadedmetadata", () => { if (isFinite(song.duration)) length = LEAD + song.duration; });
   song.addEventListener("ended", () => { if (mode === "play") { pos = length; stop(true); } });
@@ -3234,7 +3234,7 @@ const toFront = win => { win.style.zIndex = String(++windowZ); };
     { title: "アメノオト", len: "3:03", src: "audio/amenooto.m4a", dur: 182.81, skin: "c60" },              // smoky shell, red label
   ];
   const places = TAPES.map(() => 0), cases = [...deck.querySelectorAll(".tape-case")];
-  let tapeNo = 0;
+  let tapeNo = 2;   // アメノオト, in the deck to begin with
   function loadTape(i) {
     if (i === tapeNo) return;
     places[tapeNo] = pos;
