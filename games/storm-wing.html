@@ -865,23 +865,42 @@ function seaClear(x, row) {   // no deck will slide over a boat put here before 
   return true;
 }
 
-// ---------- sound: small square-wave blips and noise, made on the fly ----------
+// ---------- sound: chip-style blips and noise, made on the fly ----------
 let ac = null, master = null, muted = false, noiseBuf = null;
 try { muted = localStorage.getItem("storm-wing-mute") === "1"; } catch (e) {}
 function audio() {
   if (!ac) {
-    try { ac = new (window.AudioContext || window.webkitAudioContext)(); master = ac.createGain(); master.gain.value = .22; master.connect(ac.destination); }
-    catch (e) { return; }
+    try {
+      ac = new (window.AudioContext || window.webkitAudioContext)();
+      // a compressor at the end, so a bomb doesn't drown out the coins and the guns
+      const comp = ac.createDynamicsCompressor();
+      comp.threshold.value = -20; comp.knee.value = 10; comp.ratio.value = 4; comp.attack.value = .003; comp.release.value = .2;
+      master = ac.createGain(); master.gain.value = .55; master.connect(comp); comp.connect(ac.destination);
+    } catch (e) { return; }
+    try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (e) {}   // an iPhone on silent still plays it
   }
-  if (ac.state !== "running") ac.resume();
+  if (ac.state !== "running") {
+    ac.resume().catch(() => {});
+    // older iPhones wake their sound only once something has played inside the tap
+    try { const s = ac.createBufferSource(); s.buffer = ac.createBuffer(1, 1, 22050); s.connect(ac.destination); s.start(0); } catch (e) {}
+  }
 }
+// a finger on the glass doesn't count as a tap until it lifts, so wake the sound then too
+for (const ev of ["pointerup", "touchend", "click"]) addEventListener(ev, audio, { capture: true, passive: true });
 const live = () => ac && !muted && ac.state === "running";
+// for a sound asked for in the same tap that wakes the sound: it plays as soon as the sound is up
+function cue(fn) {
+  if (live()) { fn(); return; }
+  if (!ac || muted) return;
+  const asked = performance.now();
+  ac.addEventListener("statechange", () => { if (live() && performance.now() - asked < 800) fn(); }, { once: true });
+}
 function tone(f, d, type = "square", v = .2, slide = 1, at = 0) {
   if (!live()) return;
   const t0 = ac.currentTime + at, o = ac.createOscillator(), gn = ac.createGain();
   o.type = type; o.frequency.setValueAtTime(f, t0);
   if (slide !== 1) o.frequency.exponentialRampToValueAtTime(Math.max(20, f * slide), t0 + d);
-  gn.gain.setValueAtTime(v, t0); gn.gain.exponentialRampToValueAtTime(.0008, t0 + d);
+  gn.gain.setValueAtTime(0, t0); gn.gain.linearRampToValueAtTime(v, t0 + .004); gn.gain.exponentialRampToValueAtTime(.0008, t0 + d);
   o.connect(gn); gn.connect(master); o.start(t0); o.stop(t0 + d + .02);
 }
 function noise(d, v = .3, f = 1200, at = 0) {
@@ -893,17 +912,42 @@ function noise(d, v = .3, f = 1200, at = 0) {
   gn.gain.setValueAtTime(v, t0); gn.gain.exponentialRampToValueAtTime(.0008, t0 + d);
   s.connect(lp); lp.connect(gn); gn.connect(master); s.start(t0); s.stop(t0 + d + .02);
 }
+const notes = (fs, step, d, type, v, at = 0) => fs.forEach((f, i) => tone(f, d, type, v, 1, at + i * step));
 const sfx = {
-  shot: () => tone(1400, .035, "square", .025, .55),
-  hit: () => tone(300, .03, "square", .04, .7),
-  boom: (big) => { noise(big ? .7 : .3, big ? .45 : .25, big ? 900 : 1800); if (big) tone(80, .5, "sine", .35, .4); },
-  die: () => { noise(.9, .5, 1400); tone(520, .7, "square", .12, .15); },
-  item: () => { tone(880, .06, "square", .1); tone(1320, .08, "square", .1, 1, .06); },
-  power: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, .07, "square", .1, 1, i * .055)),
-  medal: () => tone(1760, .07, "triangle", .12, 1.2),
-  bomb: () => { noise(1.4, .6, 2400); tone(160, 1.2, "sawtooth", .18, .25); },
-  warn: () => { for (let i = 0; i < 6; i++) tone(i % 2 ? 440 : 660, .18, "square", .08, 1, i * .2); },
-  shield: () => tone(600, .3, "triangle", .15, .3),
+  // the guns fire 7 to 12 times a second: each weapon gets a short voice of its own, kept well under everything else
+  shot: (k) => {
+    if (k === "L") tone(1500, .05, "sawtooth", .04, .62);                     // laser: a thin zip
+    else if (k === "H") tone(700, .06, "triangle", .045, .45);                  // homing: a soft thump
+    else { tone(1050, .045, "triangle", .05, .5); noise(.025, .02, 5000); }      // spread: a pew
+  },
+  missile: () => { noise(.14, .045, 1800); tone(260, .12, "triangle", .03, 1.9); },   // homing missiles leaving their rails
+  hit: () => noise(.04, .12, 4200),   // a tick off armour
+  boom: (big) => {
+    noise(big ? .9 : .38, big ? .7 : .4, big ? 1200 : 2600);
+    tone(big ? 95 : 150, big ? .7 : .22, "sine", big ? .55 : .32, .35);
+  },
+  die: () => { noise(1.1, .7, 1600); tone(620, .8, "square", .12, .12); tone(90, .9, "sine", .5, .4); },
+  // a coin: two bright notes, a fourth apart, a semitone higher for each one in the chain
+  medal: (value) => {
+    const k = 2 ** (Math.min(12, Math.max(0, value / 100 - 1)) / 12);
+    tone(988 * k, .07, "square", .2); tone(1319 * k, .36, "square", .2, 1, .07);
+  },
+  // the items each sound like what they are
+  item: (k) => {
+    if (k === "B") { noise(.05, .3, 3200); tone(220, .08, "square", .24); tone(440, .18, "square", .22, 1, .08); }   // a bomb racked in
+    else if (k === "O") notes([1047, 1319, 1568, 2093], .04, .1, "triangle", .26);                                   // an option: a sparkle
+    else if (k === "S") { tone(380, .4, "triangle", .3, 3.2); tone(760, .4, "sine", .14, 3.2); }                      // a shield: rising hum
+    else notes([784, 1047, 1568], .05, .09, "square", .18);
+  },
+  // a weapon gem: a run up the scale that ends on a held note
+  power: () => { notes([523, 659, 784, 1047, 1319], .045, .07, "square", .15); tone(1568, .34, "square", .15, 1, .23); tone(784, .34, "triangle", .15, 1, .23); },
+  bomb: () => { noise(1.6, .9, 3200); tone(170, 1.3, "sawtooth", .22, .22); tone(60, 1.2, "sine", .55, .5); },
+  warn: () => { for (let i = 0; i < 6; i++) tone(i % 2 ? 440 : 660, .18, "square", .1, 1, i * .2); },
+  shield: () => { noise(.25, .35, 6000); tone(1300, .35, "triangle", .16, .3); },   // the shield breaks like glass
+  start: () => { notes([392, 523, 659, 784], .07, .08, "square", .1); tone(1047, .4, "square", .1, 1, .28); tone(523, .4, "triangle", .12, 1, .28); },
+  clear: () => { notes([523, 659, 784, 1047, 784, 1047], .1, .12, "square", .1); tone(1319, .7, "square", .1, 1, .6); tone(659, .7, "triangle", .14, 1, .6); },
+  over: () => notes([659, 587, 523, 440, 392], .22, .26, "triangle", .16),
+  pause: () => tone(1100, .07, "square", .2, 1.2),
 };
 
 // ---------- state ----------
@@ -928,7 +972,7 @@ const rain = Array.from({ length: 46 }, () => ({ x: rnd(0, RW), y: rnd(0, RH), v
 const groundY = (row) => mod(row - deckTop + 200, DH) - 200;   // where a row of the deck strip is on screen
 
 function start() {
-  audio();
+  audio(); cue(sfx.start);
   state = "play"; t = 0; score = 0; lives = 2; bombs = 2; rank = 0; medalValue = 100; paused = false; newHi = false; mosaic = 10;
   const test = /([VLH])([1-5])/.exec(location.hash);   // #L5 and the like start with that weapon, for testing
   Object.assign(P, { x: W / 2, y: H - 34, inv: 120, dead: 0, type: test ? test[1] : "V", lvl: test ? +test[2] : 1, shield: false, opts: [], fireT: 0, misT: 0, bank: 0, lx: W / 2 });
@@ -937,7 +981,7 @@ function start() {
   banner("STAGE 1", "MISSION START");
 }
 function gameOver() {
-  state = "over"; over = 0;
+  state = "over"; over = 0; sfx.over();
   if (score > hi) { hi = score; newHi = true; try { localStorage.setItem("storm-wing-hi", String(hi)); } catch (e) {} }
 }
 function banner(a, b, life = 140, st = "gold") { banners.push({ a, b, life, st, t: 0 }); }
@@ -975,13 +1019,13 @@ function fire() {
     if (L >= 3) for (const dx of [-2, 2]) shots.push({ k: "v", x: P.x + dx, y: P.y - 7, vx: 0, vy: -5.5, d: 1 });
     else shots.push({ k: "v", x: P.x, y: P.y - 7, vx: 0, vy: -5.5, d: 1 });
     if (--P.misT <= 0) {
-      P.misT = 3;
+      P.misT = 3; sfx.missile();
       const n = [1, 2, 2, 3, 4][L - 1];
       for (let i = 0; i < n; i++) { const a = -Math.PI / 2 + (i - (n - 1) / 2) * .55; shots.push({ k: "h", x: P.x, y: P.y - 2, vx: Math.cos(a) * 2.2, vy: Math.sin(a) * 2.2, d: 2.2, life: 120 }); }
     }
   }
   for (const o of P.opts) shots.push({ k: "o", x: o.x, y: o.y - 4, vx: 0, vy: -5, d: .8 });
-  if ((frame & 3) === 0) sfx.shot();
+  sfx.shot(P.type);   // every volley, 7 to 12 a second
 }
 function hurt() {
   if (P.inv > 0 || P.dead > 0) return;
@@ -1143,7 +1187,7 @@ function updateBoss(f) {
       f.dead = true; boss = null;
       explode(f.x, f.y, 2); explode(f.x - 16, f.y, 2); explode(f.x + 16, f.y, 2); shake = 10; sfx.boom(true);
       score += f.score; pop(f.x, f.y, f.score, "gold", 80);
-      banner("STAGE CLEAR", "THE BOMBER IS DOWN", 150); banner("STAGE " + (rank + 2), "MISSION START");
+      banner("STAGE CLEAR", "THE BOMBER IS DOWN", 150); sfx.clear(); banner("STAGE " + (rank + 2), "MISSION START");
       drop(f.x - 10, f.y, "W"); drop(f.x + 10, f.y, "O"); drop(f.x, f.y + 6, "B");
       rank++; bossAt = t + 60 * 80; nextWave = 120;
     }
@@ -1208,13 +1252,13 @@ function collect(it) {
       else { score += 5000; pop(P.x, P.y - 14, "5000", "gold", 50); }
     } else { P.type = T; pop(P.x, P.y - 14, WEAPON[T].name, WEAPON[T].st, 60); }
     sfx.power();
-  } else if (it.type === "B") { bombs = Math.min(6, bombs + 1); pop(P.x, P.y - 14, "BOMB +1", ITEM.B.st, 50); sfx.item(); }
+  } else if (it.type === "B") { bombs = Math.min(6, bombs + 1); pop(P.x, P.y - 14, "BOMB +1", ITEM.B.st, 50); sfx.item("B"); }
   else if (it.type === "O") {
     if (P.opts.length < 2) { P.opts.push({ x: P.x, y: P.y }); pop(P.x, P.y - 14, "OPTION", ITEM.O.st, 50); }
     else { score += 3000; pop(P.x, P.y - 14, "3000", "gold", 50); }
-    sfx.item();
-  } else if (it.type === "S") { P.shield = true; pop(P.x, P.y - 14, "SHIELD", ITEM.S.st, 50); sfx.item(); }
-  else { score += medalValue; pop(it.x, it.y - 6, medalValue, "gold", 40); medalValue = Math.min(3000, medalValue + 100); sfx.medal(); }
+    sfx.item("O");
+  } else if (it.type === "S") { P.shield = true; pop(P.x, P.y - 14, "SHIELD", ITEM.S.st, 50); sfx.item("S"); }
+  else { score += medalValue; pop(it.x, it.y - 6, medalValue, "gold", 40); sfx.medal(medalValue); medalValue = Math.min(3000, medalValue + 100); }
 }
 function collide() {
   for (const s of shots) {
@@ -1561,7 +1605,7 @@ addEventListener("keydown", (e) => {
   if (e.repeat) return;
   if (e.code === "KeyM") { toggleMute(); return; }
   if (state !== "play") { if (e.code === "Space" || e.code === "Enter" || e.code === "KeyZ") begin(); return; }
-  if (e.code === "KeyP" || e.code === "Escape") paused = !paused;
+  if (e.code === "KeyP" || e.code === "Escape") { paused = !paused; sfx.pause(); }
   else if (paused) { if (e.code === "Space" || e.code === "Enter") paused = false; }
   else if (e.code === "KeyX" || e.code === "Space" || e.code === "KeyB") bomb();
 });
@@ -1578,7 +1622,7 @@ cv.addEventListener("pointerdown", (e) => {
   if (state === "title" && Math.abs(sy - SOUND_Y - 4) < 8 && Math.abs(sx - RW / 2) < 64) { toggleMute(); return; }
   if (begin()) return;
   if (state === "play") {
-    if (Math.hypot(sx - PB[0], sy - PB[1]) < 17) { paused = !paused; return; }
+    if (Math.hypot(sx - PB[0], sy - PB[1]) < 17) { paused = !paused; sfx.pause(); return; }
     if (paused) { paused = false; return; }
     if (Math.hypot(sx - BB[0], sy - BB[1]) < 24) { bomb(); return; }
   }
