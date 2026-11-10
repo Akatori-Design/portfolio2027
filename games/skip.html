@@ -3,100 +3,208 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Skip">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#f6c9a0">
+<meta name="theme-color" content="#14303a">
+<meta name="description" content="Skip a stone across a new lake every day. One tap, perfect timing, and a leaderboard for how far it goes.">
+<meta property="og:title" content="Skip: a daily stone-skipping game">
+<meta property="og:description" content="One stone. One tap. A new lake every day, the same lake for everyone. How far can you skip it?">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://imhiro.xyz/games/skip.html">
+<meta property="og:image" content="https://imhiro.xyz/games/skip-og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1024 1024%22%3E %3Cdefs%3E %3ClinearGradient id=%22sky%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E %3Cstop offset=%220%22 stop-color=%22#3f6fb8%22/%3E %3Cstop offset=%22.42%22 stop-color=%22#9fb6dc%22/%3E %3Cstop offset=%22.54%22 stop-color=%22#f4c3a0%22/%3E %3Cstop offset=%22.6%22 stop-color=%22#ff9e7c%22/%3E %3C/linearGradient%3E %3ClinearGradient id=%22water%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E %3Cstop offset=%220%22 stop-color=%22#73c3cb%22/%3E %3Cstop offset=%22.4%22 stop-color=%22#2f7f8c%22/%3E %3Cstop offset=%221%22 stop-color=%22#0f3240%22/%3E %3C/linearGradient%3E %3CradialGradient id=%22glow%22 cx=%22790%22 cy=%22540%22 r=%22330%22 gradientUnits=%22userSpaceOnUse%22%3E %3Cstop offset=%220%22 stop-color=%22#fff4d6%22 stop-opacity=%22.75%22/%3E %3Cstop offset=%221%22 stop-color=%22#fff4d6%22 stop-opacity=%220%22/%3E %3C/radialGradient%3E %3ClinearGradient id=%22stone%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E %3Cstop offset=%220%22 stop-color=%22#7b8089%22/%3E %3Cstop offset=%221%22 stop-color=%22#3f434a%22/%3E %3C/linearGradient%3E %3C/defs%3E %3Crect width=%221024%22 height=%221024%22 fill=%22url(#sky)%22/%3E %3Cg transform=%22translate(-118 -150) scale(1.18)%22%3E %3Crect x=%22-100%22 width=%221300%22 height=%22640%22 fill=%22url(#glow)%22/%3E %3Ccircle cx=%22790%22 cy=%22540%22 r=%22128%22 fill=%22#fff3d2%22/%3E %3Cpath d=%22M0 600 C120 540 220 560 330 585 C430 560 520 520 640 560 C760 600 860 560 1024 575 V640 H0 Z%22 fill=%22#5d8d9a%22/%3E %3Cpath d=%22M0 640 L0 612 L30 596 L52 614 L84 590 L112 616 L150 598 L186 618 L226 594 L262 620 L300 604 L340 622 L372 600 L410 624 L452 606 L496 628 L540 608 L580 630 L626 610 L668 632 L710 614 L752 634 L1024 634 V640 Z%22 fill=%22#2b544e%22/%3E %3Crect x=%22-100%22 y=%22640%22 width=%221300%22 height=%22520%22 fill=%22url(#water)%22/%3E %3Cg fill=%22#fff1cf%22 opacity=%22.55%22%3E %3Crect x=%22700%22 y=%22672%22 width=%22180%22 height=%228%22 rx=%224%22/%3E %3Crect x=%22726%22 y=%22712%22 width=%22132%22 height=%228%22 rx=%224%22/%3E %3Crect x=%22748%22 y=%22756%22 width=%2292%22 height=%227%22 rx=%223.5%22/%3E %3Crect x=%22766%22 y=%22802%22 width=%2258%22 height=%226%22 rx=%223%22/%3E %3C/g%3E %3Cpath d=%22M56 690 Q196 360 336 710 Q448 520 560 710 Q636 590 712 710%22 fill=%22none%22 stroke=%22#ffffff%22 stroke-width=%2218%22 stroke-linecap=%22round%22 stroke-dasharray=%220.1 40%22/%3E %3Cellipse cx=%22336%22 cy=%22712%22 rx=%2274%22 ry=%2217%22 fill=%22none%22 stroke=%22#ffffff%22 stroke-opacity=%22.7%22 stroke-width=%2210%22/%3E %3Cellipse cx=%22560%22 cy=%22712%22 rx=%2256%22 ry=%2213%22 fill=%22none%22 stroke=%22#ffffff%22 stroke-opacity=%22.7%22 stroke-width=%229%22/%3E %3Cellipse cx=%22712%22 cy=%22712%22 rx=%2250%22 ry=%2212%22 fill=%22#ffd84d%22 fill-opacity=%22.3%22 stroke=%22#ffd84d%22 stroke-width=%2210%22/%3E %3Cpath d=%22M712 710 Q752 650 790 628%22 fill=%22none%22 stroke=%22#ffffff%22 stroke-width=%2218%22 stroke-linecap=%22round%22 stroke-dasharray=%220.1 40%22/%3E %3Cg transform=%22rotate(-14 832 606)%22%3E %3Cellipse cx=%22832%22 cy=%22606%22 rx=%22104%22 ry=%2238%22 fill=%22url(#stone)%22/%3E %3Cellipse cx=%22812%22 cy=%22590%22 rx=%2256%22 ry=%2211%22 fill=%22#b4b9c1%22 opacity=%22.85%22/%3E %3C/g%3E %3C/g%3E %3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAQAElEQVR4nOx9CZBkSXleHq/uvq/qY6Zneq7dYXfZ+xA3iEPLYRwOhG0hbMVicGAIYWyFbdlGlmVH2I4AQuCQA4EcRgcSNgIUEKDFHIaFXWBZ2Gt2dufsmenpnr6P6uq630tn/n9mvqzq6pnume7pYepl9Pzz919ZWa/f+9+X3//n/7K8137kUUqJEIRSKoSol5G9pe0ekyoRlEmD+p0Q4uiRvaXtntQpZdJfiPrd+A5DD4rsLW1ngBxSUVhidVdG9ta1E0oYIyBBp6jTyB7ZDefAWQd14uiRvYXtIedQNoLclRg9sre0HTkHzDrUmXW0Htlb2u6hVfqLnHlQEphxpO9E9ha3e4qD6PlGS+LOPZG9he0etfMN+Iu0gm5zZ5G9de0KOQRBJIG4FphqaInsLW0Hjersh+ph9cje4nbgHIp+6B6RHulW9yDN4cw0SheOHtlb147IIVdcFF2lWqeOHtlb1+4pJNEzC1EOY3QhInur23FtBeYYDGWMTiP7DWanRhfX63NxbcVdy4/03dEZCy1yRTQQAVNrHAHlTAQBZSDX61T11BZGg2A7j00jB43kbkgK9yj+AtigKYCUnAEtRAvfWIInqZ5gYRxmBEQXZJfXcIQKOTAxhv6Cuisj+/baFUIEOK8L5Q0iUKufiAcigNBRWQhiA+BHYO2OVJgRBMonQCKKCGsHXUmlUxLAfLTF4/espwjHa4T15ci+TXblDQATct1C3d9EVdMIlVfAO57Be5mxE0ACQtECErxH/QdpCBbILtiH6/5wWZVOOQajanzCAT+49DD0jxBXrnj8IeeA1TkR6durM9C5uk4BA2wI9SDgYAntOOsHsj+Mgxhj2UBgeYl6r0c1Pwjws6TOFecwusIP6YcBsBape0QjkMIVot51xeOv5xwk0rdNp9aiMEMhhKIDsAiuYYQjmIQIgWbCw3EIcgjHTnAF1dqFJi1gJ5pz4Co8IBBTq/AapZgAyRleewKOoABlg7/F0xZYpRVAZojxnch+dXY4swLmAuAKBico3PjgJGjXGGD7a85BdPSB3AIjF2pGCwy3QDsB1iL7B77hImgnGmOUHfGGoB0+hTHf8BKMd0Szv8uz/iKs1xBnHorsW7GTsKpKITQlTHsJ1ThBNXAAk1A9FAZQjRw6IQXvQkQB75FvdezATpSu7TjLAKvAPoHAWQmODeYaG79ALQ+BPsQD/CDYH9briZpr6v4u4BwwCq7S4n2g557Ivmm7kYAT5s7WOkizpqV5A9qRf1CIKQD5A4sfOk5BXqK9IQilueN1RgQjHQLcggPSkPBVtDNgJ5gL8ZRUqCNxBfsTfC8NUYfRppyDbDCPRvYN7MwwDIxFEDPgrmMOmtB65Ah7KpzwkFaE/AO5CENGAp+Fr1qJfIKgBPqK/dHzjB11ofGMAEeB+AWYB2EeSODCyEWoQRGhnnjDw66PdyN9kzqFHJS6y7nmBzjrI0IQzTBMH6b7IP8g9o5XWQ3MTmI+w8QpbN3ngt0eg86HBmruECaToXiG4SvE6gYniPlEqQuuPwV0fVQ+9lH9Jecwa3F6Ho30zen6XuTIJcFLuMYJuIORgVCj47Sv8xnyfiVWh/ueegYb8M4mOhLR8QsJPxfjFH082MeDex3zGfo4GRAYw0UUCIDuoTcAz1C6epd0Ki5fVTozupAzioqQKdHhla7/ifRN6JJcyv894JieSnSrcyovvrGrrmEfpSsvwj7yVXm54L1q7ld9PAX93OjUGZ/Be5l+r8p6hTqMicfAeePncuC5UnJ4FyVwbPJoPfhcZxwP3svV58LxmGNTXf7pJ35sArFIbkpCIEIwBKGQ5AJJTG0E2KmWhpcIICRhHyLsqzpMoXZ8qsGCOOls5xjQRIR7VAExDyeBnRBgIaFdGAvQTSnVtESUVBbbU1iplvENckRykxLvMw9qpDgsjmnphXZ9L3K8L1V0ghL7cMQJ3UdLTjQq6Hsa0MhrsMC9rsZx7Ba37Oea/uaznE8BVKBwtPbI4b14PFoK6A/48c8++ZPQHV0/dd00soPOdBgBaAEmZpKckIUERKG6D8a3mpmam5zVIwdiBMQvDk4wXAIhhuU4uTWAi8DJtmm7WjjR/QEOcKEN8MDomOcKLNIQEhhWKy2QUge70H0UJSX4bDWpkxT4VGS3dgp3FTXzN+PAMJBncI0oCl2QYZh5va6P5RM8RA6mCAWO6SCNHp/ouR/HAansTFg00nbZH8gC6l74Xsl8FTf1INOpGQlgA1O6CMcnpj9X/Tn0V/LDf/hTYpu5Vxpba9vVLU4Nw4DcV2jRdpdnUM0wTP0lreMfZkDzOajpX1lIJagGLmogBY+lgf7o/jbnbQFHoIrIZ/BPMw+hBxNa1yOYX0PpVILZ1T/RiFqtbIeYU+cqSH0+A6tszKthPoO7WQ1c5dL1XW7OAy0mN2rzH9zRHQnj6LUVu9ri1oZZC9Z2mFyFzlhgpgTzIkGAs4nOgsh3+TgmZERwLQZ70o98+klBwskv0l0dEYJgHEsFroZwgAW4u/VCqdsHVyNgItLAwCw2OGAjCGZKBIICRXBAi3MUlFJzPKHd1YFhODp4s9BoobHExQ+9wkY0t6AGJ4IQgYBzrEeOkPsYZGtlO97llOhsJgfMCFEBMgeyP6/Dg7A/4orOkOJVd/HDVHPJ/gTrvkx2FWu6cA3W5E81Btg6MZ1jDcLVE0SpwCANMfUcwuRJmc2l+vovVastfohPsP6iRuOIKMypBLO3gPHWlrarewYZBgQPcNUF7qAGFuwCfVCnQq+YQFKTMpQwJriGPs+hBbLvmGslugJUr82CuxFcQ6G61ksZuM57olS3N9N1YgL7o4/CCHYuI7giCJlTAdlVAblU4CVQRaYsTJj3yr/VzKp2VdasN1KnFqhl7SZG1TwD1kX1CiqkBvR55zqaDV/VPIPaPiEvUXVceh7B1Vq8ZsAnzNqsRQtmcALXac26KzAGofsTEq7fUhbWeRBXyquu6jxwvkBeomJdZBW4Tqu4iFnj1ZzD6BBpEbt3hyNb1Y53uUEImF9k1IdoQeowA3+nNjbREMGQc8A4sNqizXqtlpq8iV4awdUZs5RivAdxQjg1pDqFgjjB7NosJlig1isAO6CFtSsXDqBaDOcRvVwIsXoAxSRgYQJrGQXUGkpdVZoIjRzrk7SaGbWencEyGrIBmB0CZiqyiH4CPYxUIXcOPU3FF/IGitJEpCg5shlm8MOp7zJrudoCc0rIBhrqzq209aeoc7P6ijzD2hlEMcI+FxPoyEVxJl8VpmLPQIT16wLCFc+dfXHerZMtZmeWQxi2gRyCMQczKK3jHLYn1pYzXSmue8JnhXrIPzQm4SwWeozFD+I8n8Is29B4UL9IozmHQguuH24kQK21BAiCEIQCwwCQ4lSzDaJ8HmIVNYIA/ABeonf20dGUHrBVdabhHHMV1HIO5B+OnTAbp5jaT85MJZjuD26A+QytC32JqYlZwBvgzq7TxXodYgco6HF0zTmg+pyG+QxdZ8qw7gu5CMVIVcEHw2w6ZM0ZRq1U14kpi8lzgP+5e4IZj25JnTEzX8DKu45NNAZonduZhVrMoDa3wU3NsJl3dMWX7k+omZVsPbormcUPQkxNIUAQ4AccrcESYfoomzDRCtzriCtQN2pGBk9CbgE1YBilI3IgE4cnYtD7iTB2ppED5jCTHGlJHS8Eg6ACmQTjHO97xSo4M3aCFeRMgz300TELJ+a9hnNgdhWrvHCVX1d8AfPQWRBqr6hmJDAO6ERnOCi8y2CGgxME7nXED6VzrvFD2yGODWDegYdbgFowgZihdeAi0EdjjK+OweQ5dAIPj6ZFdQqRp+aYBLwBcxvwRBDgBDxVwB2ewfW7iMUP60kWP2DnaOyJGRFidEL0SgrlDoYhcuCtjTq3fbRu7cAwtINbXfEJCEKASVBkDzq3Eein31DnlnOo4ASiFcinca5jFmk3nAOxRZOY1tLVhQCcQN7AXTxAu9YdPqGrRMP36rxnnY7rJhTjTCEcPdD8Bo/BrOMz95k2Yp+XZ2ZvUMAVzFXonJWpISX6b4E1EZUbVeOAZMgtdBUgcg6tB9gHdcx8yL8dcqY4Dq//vhWNeFS7b2vYGQ8xg3NqEAJnB8AMjSLEoALOLyF+hHhjIlWmn3lnug8mFnRPgx/UwQwTQRCByQeiEYLpPpjlJMZLMC1CTH+T8VTHb8dRMiDoYeaJWd3H3hsckANxgnLjbSFyQFQmDMXBvKnWW8COzw8y8Alm2BzFs4Z+Y9Zd8Rpr5OBIDZEwUBPLuOu32mP06qtZuTVrKxDvBJpugp1QTgzG6GvDNG8gxDw9QO1aLoSriDeQkkAiCzXDQKi0zgEzWFin3kTHJ2wBVwSsvMBajHrUyTPxkmG29umdFrCHq+1Ex6X6iqr7PoByO8HCFROha80x7rDv0vlQm3GH7AWwEJNHXy/Np9sjYSHnYBYnjAURTmftjLRZf5wNqXlmSb8K6BLAXxeYSATqy40ONeg6JufhU9oE+qPuEczdmPsJvViT6JvdTqAiC5CD2TueG3ZGDJIbLqKvRIg3hkMQjQ2Wi5g1MOF4TH1Vh/YJk/PQR6hjGa1rRNFsA+cC+9x9mC8J9AYfcIQBYobGBo52qms4rIWaDKnObRimAs+zwJoLxDLu963oiK4+/r5p7ZCfUCBQF6dALhy2vRBQ4i9sBp3qiKahP4wDSQxrsfihBLU5D7TrLAiBtRtin0VjJkKh+jiJgzHE/AHWHuIHLuISO9dQQAWcN8P1VYMWxs+I5iJcW4ids1wZcg4jiaPfzHbAA8JtNkJo3sB5+Lwazju8ScVXHR7oS0bqscQ89+bgB1uPGYYpGxliidFpqLuS2J5BqNu1VraOWzBdCcasrjHDsJbAJxCnhJJpz20xiVlwjFEhqaE5h5U0lOEzq9zkSZWkjg6kAwp4ifteXMPjKJGXUKNTp48rqTuCGbmZZLon6m7/huPfpCTrpUew+s3m/FtDJ/DEWH3ewtZqhGuwZj3F8o+ANdfN7AA5KDOmY2d2DaW5LlDXtR3CVnlp7qx3FkSc0Drgh9V1nhQAxeZSCdZ0Kc6h4xqrW4xRPu0jLwGf0BwFqlXMU/a4NtgaussPqK3J0OxBzb9GB7ZhdIYr+Npu11DC7AUNxwl1YuzM9HGqPczcpPHMzD6g05BtaMk05wijLWJmGcs/MIohWPdF9WwldN1GvQ4eSYnl2ubOQU8lzHCOsCYKg+r1tVI3lZ2Z2cRcFb2XBncwA64T1nTV223dhnnV1nkYSz0vsQzD0S0vtvYwZlGkxeEZei8Q5Ez1LEQ93QT9RegliIsB9g9MNEvDHcCI0W3MAuOoPj72VAlU5sPfElaCGSkc/Sa0c8s8DGYwczfbKIPbq1hvN/2x1sv6iu1ZF30Q0xNxizuMpy5OcWXoTyTh0Z520RYX8ZhIeCTOSdxTtLFSJZUarfhSimKFzq7SctXc9zA0zhQBtgw4ZwAAEABJREFU0VEJJ1rCI21Mnwfg44GWOI9gH9wfV60wByrPYY+YECHETa+bfDnR87dZSyNOrYZej72Mnepqb5xZkBPgXEN0DXqDnRK3NszgEOrUJPal3paivW1C/nSk1LVe35Jx+WNfEgezpFAm83k6nyerRS7wSgdY06qAwuwHBHjjY12qgo5APy8j9P5Bau9KmRRlPlafg39gPYc+h+jj2Ix+s9mZwwngqUBMLjRyhQ3tymMII2E2k1KT86CatZjchslvhu/VrxLaqEvZkQwOZoOOFNlqSyfIaEKM9pJStXZuns+uCKdWA2rArO7YsY/AmZeFs5WuWiKY5yAmB9cC0okgGp46CWUTu51ZzKt1OQ/nVXCAeouTw3D7UEfPJMlYv9/TJsi1tWSM3Drkj/bQs3N0aY2tX08JdwKyeVJhpNuHaAv9wy8dx6GFScTdxDpRyKFWrNDCzDOuBIq9aTM76givkPE0dquLJv3r+pDQjuTfPlsr37u3L9jfF5DtbvOr9MQlJqcRdQbgJAihz4ZwnmlTL8GHB9AP7YHQ/aEaluo5+KbXcWUEZwe7PkLNCou2O330Sgq77Jh6r2rdn4pQ132oGROIqGU5HhVHR/yd8AzZ+trFXft8OeMQ4JTM7CFg/y78K/B4sI/9uxgep/zv019+kZhQL5TYbi573bPwKpA3livaXQviBHYOMxz1umhuJ449Ew9uHfZTcbKjzQ/IqRk+n1MkCBHC8AzEBtD1bj6OHSYbAYWI4Z0RSkpvQruov795ox104dhNVttUBFKoBtI81NTy6D6MOf3r7aTBTrId/stHd9wzCMyVkoUcyAb4udQ816mPH3Xu6PV/l2cRj+jIrV7eRHaN5zz0BtTrLAyrv/BVrOzCM6Uz6/Y86lcx7tAWajDD1oatszDalQ4OyatFyXVrw10KFs7PcRFWAhhJw9W7JnaK8xA1Z6RB3ix2O9NTrOmiWmfmVWKz5rbyT9h7SNf8EesHjOmrjrXHdu7g9Z8uGo8nFRNHhvzr6RnYRrqDvo6g8ZyAHiKlK1VddMMTbzevdK6TwgacdxqeMaF6rYToui9Wjw2iPmOh2UOo6zHhEw0OUaL7KOlRyTNqHiO70g4N+DKjulbGzAURtsLI1kA11kNBpK096OaWes8upSveQB0esF6nphKM4/kxvIHW32G8zoJ+QHRcEFb94JgygyAx4zrwjI2a/IOka8Y9g5F1dQJ1NQMKRwFdWuU73qiJUZnWmUERZ5XVYEN4purQIsQAamcNq7s50HD2MRYhBjpJV/pa01zX2OQazf4+/8wsxxyXwy30/hyBWZXF1Rbn+1Zw1e4m1dVlopjf1Pvp4HMoZl3erruaJ+Wpvp+E4zGEOLowz+Cz+nFI4PSxTzxIVlgjN0DrbfMvLrFyjemqUsyd271+mNkPCFdl9b2l14VvTt3Gt0RJmDtgd3BqdXPtcT2W1vUHpA0RSFdgaGTWO2qAJ1GNE4S4q6xKz7b7Mrd9IzR5XHu6g7NzzOEWLtswVYYh56Bm/fpm1fE6Ub1OZr2B1q28Q1UpbcwVGs8w7w136dDcosF7iP4s4x/q1WDoxoANbBI8kjGV8aIhN3JmYRryJ7cS7OaVmiuAt1AblQi7dw81VRTc8aeQZ9i9N6iJbpyactOHUDy3Bj9sz8FOEePkxmnyyEa6/LPznhBuboNgnYeLJR4nPt3htdBdl2b/UFwFRWbgA1fwmanMIIHZYzTcY8PUk+K79DjhaqrpQ827mo5PO1M+ucFaV8bn8yqlo/cBg8Jzs1cYWtSk68VooKvQtESe4lp+6e0wFdQMDyDqylEra3B1fehj7IqQBDDtYMJKMGakfcZa2QPtJRTfiygtIcQHyAhguvHbkrscpKxv8i7oSJHVIuJCoLi0OhvINuSqrDwDSkfkIM6THTehJNo/YCVJP69malvw7IQY4KAC4IRojhPUwQkqGuyqp36mvjuDbnTDtY6UXyjhrsW2UhD2GdBPtai/xYsxX9iVTEfiBic3h53iIipIfAYa5pq6HEb4IBm8l6I0TyuZEaiOco0/QU8BkCGgj8YYtMgunakbDjawyaTL7FJA7eZhcMywTBtaPC4AW9ZXbJvq5192O+5JHX5vYwD7kxBgG1rCLjyBeU46/D5HN/+BMSpgA8WnRfz1Nei0DmPUsyTJ2A2JG4TEYyTGg5qvXB6+YAMyQ+r73oS1eB4LDATDfWaB2Oq/5HYgIMAD1EXzIXStAVogn6jpvSI5NTzUBwzQfYDEYx8B42COC8aRfcCtACd8kycleudJYCExj9ywLe7BlzIBN8L9nyBrR8zzUYHnwVkQ5pwanIE7z7Fzj46M9Pf0dFy4ML20tOr2P3x4NB73JiZmcrm1K45z/e0Yx0NsVrW7aODuF8ghpD3cZ1g4OTF3Xy9Row12Hcs02C3eKDyWn6b2CrtRWyImKhXwA6gzFSpmMfsbw77HnkehQsgFv3Xzt2xHDo+N7B2USmdn2+OPPWXtff09+/Yp+9BQn7RXKtXLj7Mr9pAxwB2PlV0mz21xxfAJjSgmYwFRDFh8bYH4RY0JHgDjEIMrvuElypK4UecUbDEmdAk63FFq0wFEETUzEkQOfzOkX2IDjhiPxxIe9Ws1tHd3tdkPSyW8oFLa2cBj6zLcGdjs0qdXQOwaCqy9wbwQ2u23GoTPm2jvCXf+w6iEmmfn68dRnxvjNygbxSanPPWVoYAcAuYRCbB6r3SwIHIgJl9OTo6f6+zqiCfi0xOT1C97xr44MzMw2BdPJPIruXJ+xbvSOLsgBd7xPrHXWN3fOCNAOlCZamCvOfaatlNrDxx7YDBDzyCwiRPVyKHxw497NzDjkM7B8UtqA8QM8A8fUAT3uw3ok9/5LgkziQL1ts7OVCY9f2m6wb6RnmlvL6yuunbKeSweq5TKV3zvjuuKVgRm3z5WqFQKgShUa4WaX6zUSoGo+n41ELUgqIDuMR7nNO7xGKPJGE9x3paIZeKsPRHviHuJOMdxEJNE+L0qGnWotitcSad4b9/uVXBcqeXXaosLFYhT4PvrcZ8PzHzAmm095wA5MDo6cviIVLp7e8ePPdfwalNZUZgRWhLp1OF77oslEpOnTs5OXNjMCDskKyKYWa3Mlypzxcp8sTxfrNbENUF9Z8Lb25ke7Uzv60pn2xJc+4RiG0Tjh+IiBClxsEtVX5trcgYxj70BWgCKEJMzVZzDyZDiPUe6+vvxzV0DA3EZ6fo1tEPTfdz+6+1DY2PSM6RVOllu9lKtUrp8/+21L5drk/nyZKEs5XypSra1rZRrK7O5Y7M5qUuA2deZPtjbdrA7PdKVMrNMuNopfLkYmyA3alNlHCKw+VB4xIkGsIaA38Ih11Z8ZWN4gtV7VmenMl3dUskvzLKgDIUPMJi+CKSh/3q7X1rDj/erFeaXuY4FtjzO5u2zpepEvnxxrXJhtbxW25HHhNa3ii9OLa7JH6mnYvxIb+ZwX/pwb1t3KqbntRuaj5LA92HbRIjFNDOFdRbYmUNeRq8mqrmyWKnUVqtBruLnqn7u9NzQ8fP7hrM/eObFXLlcC0RJ+Q9JcprkTN4uKZAJxhKcpmNM/tqV4B0x1hn3Uqp4iC5dOCkpqqQdC2dP0KAcwwymm8fcDv1SoTKeq5zLVybyMlzf5etQrPrPTufkj9T7M/HDvenDfRkpifuQ1c63mfnVqZnc3GI+ly/l10qFYnU5V1jOFSV7SCfjqWSsoy2Z7W/P9nXs39MTDxhG4wI9w+geRfyg9L2f+CzZvhZjpDPGOxNMyp6kN5jiezKxJO48tR3BackPTq9UzuSrp5bL+euFENfS9velbxvpGutv29+bHuhMku1u8sKPX1yUDnHx0tLUzEqlUoNvz1CMQSFXExlqfV2Z+28bfej2fdAfBNxiELiAROcY6e2eXFgiO9O6E2w45e3JeMMZb2+Gx7EGC5MuhGxGnyrUTq5UT+YqF/I3UEnVVpuMffb3Zcb6M6M96eHuVG9bvONqq9EvTC2/dGbmxJnZS3M52IuHrJcKD1ScamT4qnrqUfcJRMdAT/bQmPQpHzuhfwA2q0D8w29/4wNHxqaXVv7Ll76xlF8j292WysEdh8ce/pV7j52/+Af/97GBJBtOS0ThUu5NxyQl1nlMPDCt03zVP5mrnVqpvbRSKdxw5TJX00pV/6VLOfljLTHOetrifW0JKXsycUqvMAPll9cWZ5flT7VcMddYnTPu8VQqlUjKPFRC3v2VcjmXzxXyhRAxGuFDN6kuTM3M1Zjo6Vv/cd5of6/0DKkNdne+/YE7//x7T5DtbvIj/smbXyOV19x+y/jM/HefPT5bCp5Z1HHEQJKOpCWiMOkuIyk2XfRP5IKXVqoTa764ntP1brSqH8yslOTP5btJCG2rlNKlgvoeFI0Kok22TKatXTVPZdsc1gVQ8fjjj/sy0qyfWIw/occYjFlepE2dY2FVEpdyJqkirufGJ8gONIQrbJ2Zxq1rZktCxhpPL65/303uGZtsmVKhrbhGfV9t+xeL9/b2dnV1dnZ0kDqYEXY6kLJarb54/MVyuSzq2zrg0Caapk2XBz3pGf/pi1972/13npmeffaanaNWrXixxnn04vzSj46fuv/I2GPHTnzzZ8+RqG2iSUaYKhXTa3mZaJJJo4HsgMxJppMpUY8QxPoFGoSYmZl58cWX5IUAP0DOUY8ThpcIo3vNYEMdw+WjlXKpkEimySba6sr8hbPPSxwbO3xPe2cvido1tGSpmMmvyIXzrHSKgf5MJhO+JkiT/IkgtVp14uLF8xculIrFjRCinoCgmbDOruQttzU9jOYrQ/KtS/OT05OnS8V8T9/I8N5bLuMilXLp4rkXlhcv4a+njv94cOTw4N4jjG7bvLC0cGlq4sTI6NGuniy5qZukF5mVpXhxrbOr88DYgWQKot91CIGqRIXV1dWlxaWlpcXZuTmZ1MJLjyxVONhQF8s4UQzNZNKHj254MG/86O8M7Tnimuamz09Pna6Wi66xL7tvaO+RWKwxGTw9debSxElVJ1LfMu09Y0fujsebb45XKOTmLo2vLM329A0NDB2KJzZMAPi12oXx55bmp/DXzu7s6IE7YvHm/Xvb215x9NDxianj587PT5+TWbjs0JhcASRbaZVyMZ7Y+p5+29FkHrt9bppWKzL6eOj+B+TxkwaQEKRaq62sLC8tLS+DU9R8n4h1zXpGQzRbjyZeV3fm6B3wKRscz23v+jtDe28Z2nM4qNVmZ87NXjorp6vmXRnLjhwaHDzAYCU6tzJ/cfyYhJaNhmZebP+hu7q66+71hdmJYm7ud97zGw/edse/+e+f/PFzz0qjBKeBkYPpdEfDCGv5pfGTv6jUuynj3vDorQOD+9d/4mc+9I/TCcV4PvCf/8MTzz5DVIwXz44cPHLo9l+59dDpqekz03Nkg+YH/vz0+dnps9VyqW9wvzwh6++Epq1aKc3PXJAru4N7Dnve1QUDmkQAAA+0SURBVK/BSsxIT0+yahnv75HhERmGJBIyNA0KxWJB/isW1lbzK6u5eg5hZor1OFHnE0FDn8Tw3szBI+Sy6E5f9chvLuVynT1DqysSl66cYuJeTJ64tfyyvZsv3/qHDuzd/zLJXeZnzs/PTvi1yv/43Y+95p775Evzy0uve/9v2Z5tnb3ZoYOd3QP466WLpy5NnNhoWIlMEkJS6XZridXy//NffRT1z3/9bz7+Z//LvvSZf/f7r7rrbql87ls/+OELJxuGkjfD3LS8K8blBbZGuBMODw6OsY1rMlZXFuZnz9vzwBgfGBobGD5wRReRZ0MC5+LCVG//noGhA7G48sL40ry3tKj5QbPWhENYnHA4hLGuS2gYziFTIm23vCzefWVe6EnPkP+tGMZwxebXqhfPHSebbnOXzi4vXKpWwrvfrpnHvTrAz68syJ9Eqi07dGBhbmJt9XIZ27XVxcrC2aWFlDy/4HYX5IG9dO6dt+4/IH3uq9/7jtsZPUO2+w7ucZ2jUi5MT56RYCZEYyZe3l7TEyfmp8clrPZn97kvSYxZmpucnR4vFVZdexD4kqVJP8vuOSzfwnkTr1pZmpubHs8tz+KvM1MyxznePziaHTqUWFqoqWJwJw9RRyIbYw2yEZPYmG3IOztz8FBmdIxsrqlphVzfdmBkzx/97se62tv/9ac++dgvniJbb/uGhv/k9/5gqK//s1/50qf/6i+sPR6LHR07cObiRL5QcPv/3gc++O43/ZpUHvmP//7Z02clv06m26cnT20S/BLJjJzIunuH5BwqCZl03CtCrKems0P9g/uwwFj60+LsxOz0ufIGs3CCx17eMbxBGrMhi7Vuvmia+HQ8TDaeSqdH96eH916GYaxvu+Ac197+22//i7e9+rWov/GD75uen7/iW/YPj1Sq1am5WXK1TbLUBvZzxebFkkN7DpWKaxKcguBy/sQpu7N9eFMcwqybNO/jrpuAmyT6BzJ79iX7B8jW2w1d5LhRuzCtJ8FiuVwolTbzlnNTkw2Wd77uDf/yvb/15LHnf/+P/6gBaZq2rXoGUWymNDF+bDM9fRHMlnLdLNmMQ6zHhrqJh5AmLMPnzM8kam3JPK8uzJ4m8mfrjf7zL/yVXvL65ZFxxt/zil9ZLZW+/9JL86v5rbxXL//3pNMfe+c78BR8+4Xj33zu+fqu9vRcYRxdeeRasJOtSCLr7UaXSixkXcL3V469mD91Rj0zskGsQRrZhhO0Ai9JDfR37B/t3L8v2d0FTucTNQNufAzrj9P5uzy656ATTNPrr9/d3xPn/KdhkHnl91YJ/fw40IXOAdqZvYrPjaXDTAnv6KYjY1d3/CNt6cl8wbWnvdhH7j4q11e/P3HpiUtzmx9T/ieTOO0Prq6dPFk4c2ZtcrIJh3BwAluitzeZzaYGhzLDw+mhIRaPb+n4L697QeDrAn2oKb3O+ntuPXhfViX2+1PJr525sFH/fR1t/anEc/OLFV9sy+dO54ufO3bi3YfHTq+sPjp+EVF5S+MMpZMfuvtlGc87vrj82edesvYHB3v7Ia35rsP7n5tbWIWK5s0fG89k2u+6u+ueez52z+1nTp48cfLUMzPzk6qOQu24w+W19zwpqRfz0knJJLhKhOB7VY1cEGzP+UHdM6EyFWEx0PXT7+zvQSc93NVhjqSxz8v7et93h8rhTqyuffyp57frGI7NLcof917Z0jiv2zuUgRTIy3q6epOJ+WIJ7WmTF6kGQalWA/zf8rHV/ODL4xOvPXBgb3bwyZPjfRvf31c3/iZ1z/iacKab66d/78LUW/bvkQf0t+MX1D52zfo8MKSr4fe2Z7risSW1En29j3O9/tLC8gOD6sCm8oXZtaK1/78LU20xryMR//HUTLHqX/X4z8wuPDu3IOpowPX+G+mHvv2jzdO5nZDDbaliLVhSQUfzPg8OZd9722F5GU4trXzq58d26EiS3Hv7odGuROJvz14AGnHld93e1z2YSf/o4qWSH1yx/6093W1x76np+d0921uS9IPfesz4S5NnQG4Q/b6h/iTnj09O79xn/fotB143OixdcK1a+7c/+ClWUG3X+H/38NibxxRAnlhc/vTPj63v05dMPnLnUY/SL750+sxS7gY5/7vMOTap/2wKk1c7+Fl2c6ZMzGuPxxaKRbfP0d6e995+5FK+8IUXTiyWKlsd/7b+bhz8lp4uRsRwmt3fV5dhetnQ/uEO9Uj6h+4++qPTT5NtbWdXa08v+ldxTjyY6anewUP7TmA8qIXs3zh9/q6BvpLvf/P0ubm1gts/4fH333U05XndycS7bj30mV8c2+r4P5q49PePHpLn/cmpmarvzxWDmRI8VWv2IaoG2jdzpdJs0a/fpUhnRdbtXrRZ+2QhcPjcFs4Pff83voeHhUxkt3SPsd+47ci9QwPfGZ/4+qnxtx3aN9rR/sOJKQwodvfYEpx/4k2visNuX/KQ/vz5E1cxzqHujp50UkJg0z7yI95z+y0y5fXVE2dXypXd/XtD/X1f/45mH1SjimxGvx52eV/KufYtB/a99fB+fFVG9ndldfj2se//RCJ8NRDX7Xia2vd1tn3gnjsWCsU/efqFXKVyPc/PLtrpI1/7NvrL9ZF9qdRgW7o/k+pLp3pTybhZJOxPp4bbdaVkvlJti+u88osq8aVSxeWaP1cozheKc2vF6bW1xWJ5J47Qg++uinMGGzGo78yQzLRSC1BWZWb72saPsVqCVlO8oiSryDRCWcSKfqwsEmt+nKh96K7ftbjy2XCyKFrq/fQdy7Xb5RxxR7Zvb0dbvH7JGH224vsXVlalQ2TisbNLKxMrqw+MDMpfZ9YK0lFigOfyUo20Z0aMA5Vq/rnl3HMzc5cge3jVx5n0vL0d7Vnpr+nUQCad9PThgb3N4+zM4oo8PHvA8njkUUkfnV0rnF9e9Z2zt8HnkiPJi7dkLo0lZw6mptv55ZYJF6ptZ0vZ8eLAieKes8Xsdbgul7fTf/SVR8kOt9eP7b1rsN/+en45t1gsyZ8l+VMq5ytX3iVB5pS6kgmJND2pZHcqubczLAD74fnJp6ZmyNabHFO64Mv6ezjTu2jInOZKqbxWqZZ9/x1HDqRgJ0DpqY+dn5Rzn3RrtX9LIs7NtCwToM/PzD85OeN6j9vuaz/zroGfDCWWXaMvWEDjsY6HyMAjJCjmL3yKV05JIGnYy/ZMMfulmYdeLOwhu9dstCJ2SA61Ze4c7Jf6s9NzZxaXL+byta1/orxmy8WS9Cq0xBgd7ew40td9a3/vq0aHT8wvyg5bHfPXDu2XE9nU6tr40rKUi4VSoVazr77xwCg6x1q1+q3T56ydUSohrSed2tPedrC3677hrLR8f3xi/fj98dUP731UXvGCHz9TyM5UOpZqbQvVTNFP3DU08Prsw4SlCe9a6//oX/7kK/I+bfdK3V6+18tnEysH07MHUzO/vffRj5z4TTnj7NzVuby0eQ6yQ1LeavK/5VL5iQuThaoueLnGMcsBObWwJAPOfV0dMsKU6WrpOlsaQd79vemkhIrHz09OrOSEc7tgn8899dyHHrxbQsifPv2CrZ0h6r5Xnip/LiytSH768JEx6WFNz+FocpaqrYW8J5YPnSpkC74tVxa/mJp5xS0+lEKT+fyStNzaHU8w+XuH/KQlujZR6zoYezHNy+/YU170O8kWW8kXT0yXrv3K0n/4v7++o96X4OyRe1+ejqmNO6Zy+XPLK+eXViS1lATzKkZLebwvkx7r6tzf0ylZgrTMrxU+//QLV3Fs940Mvm5sr9SrfjC1mpfuJT14uVRaq9TkfCFnCnmE0ntkBJuMeTGQMjnWnUp1JuM9qZSkKXI+kpzjK8dPnVtaWT++zGP81yN/vSepK2HXavHFWmaxmslVU6XA44ns0bG3ezx27NSXSW3uYAdJsUKK5pM05xE9z84GYz+rvOsqEt9lX3zzXL5QvdY5gf6DL36N7HCTgclb1B3W5hoL1epCQdGOXLksLw/s2hbIwEReFQnU8pJIMhjjar8GKTuTia5Uoj+TTtTzWXlVHj01vlqukKtqg22Z1x7YK2cosvUmT9/xuYXHz02ulMsb9fGo/46BZ9+ZfSbBtrZNwGot8X+m7/3u/FH8PvndavTdf/k312cO29/defdQdl93Z5yzaxytWK2eXVz5+eT0dH7t2o9Nolq2LSORINvWJvkE7CPIUMqwFlzWB/cNyn4tV6rM5Ndm84Xp1bzaBWET4zNSG0quZuO5wWSukxdTvJpgMpqVoWxVxowyji0FMpr1CkFiuZKcqXZeKnXMVdsDvUWq2EVJf/0LXyXXt0kg6Uol0zEVuErSBz8xGUPK6FH+SKNkrBLSJbYXqzWU8FOV3FCChAQbOeWTqO182/FoZb2cza9JLrm790QkN4Ucf+/P/ppELWrNms6Qkq18R2ukt4iu8xyQSzfRbaRHOuh1ayskrKaJ9F3TO+LsgNoPObRsRgoRnFwqF6r+Nh5PmCE1qKK/ccP6UWS/zvaRtuRdAw0bhOA1W9/q7EvF2ni5tp3H8/Af/wU1K0nwWqRHutbDGlL0wUiPdKvv8nMrkX4j6w3V55GMZCj52MPvNEjiSrrOEtlbzu4iB2nWI7K3rt0zTzTY+YY6zzJE9pa2exo4Gn2HODKyt6jdW/cslNVFZN91+1uP9O/vSq17ji3Ua77402emKuphx+0/Hvqqj38GNIJN1OVDIvsu29uTXmeCX6Z/uRbMF6o7dDxN11YCR4/su2nPFSu5okGKTa2wbOfx8D1vfKuZbyIZyTrJh9/wsP1d77Yf6ZEOelTPEekb6nzo9W+J7pVIb6rv+BNvkfzllTz72jdHZyGSTWWEHJHcUCrnoKBBdszm1WX2jUT2Frfz7GveRNY3QZq3yN5Kdj7w6l/VnuJKus4S2VvPzrOv/lUiAEtgpiEGYrQe2VvYjpxDzjSBzqrLWUeu0xK7i2Vkb127pxAEa45x0kGmSlwZ2VvU7gn9lL3DVyM90kHnA698A8w3CC4k0iPd6kyE31YqIj3SXR04B843kYxkvZScA6JbBSemfjDSIx10zziK4aiRHulG530PvrpJpiySkZQZ0r6HXgOuAtkxBBR0Hp0vi+yta4doBb7UVr2kdOHokb2l7U6GFDlqpEe60U20YuAkkpG0kvfe/0qCDSaaSI90q/Oee1+h2SkFGemRbnTee+8rFYggaw0l+k5kb2m7p56w1uv3DVJE9ha3u/UckYxknYyilUhuKHnPPQ8RmGKInm+M7srI3pJ25qziC8iLiTpLZG9hO+++60HShLVGMpLu2oogkR7prs6777wfPIU4k4+Rkb217SZaCTZgrZG9he286477QqehTdwosres/f8DAAD//6muE0UAAAAGSURBVAMAMsynzulv8fkAAAAASUVORK5CYII=">
 <title>Skip</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Unbounded:wght@600;800;900&display=swap" rel="stylesheet">
 <style>
-/* Layout: a full-screen canvas scene with one centered card at a time (title, result, board). */
-:root{ --bg:#1d3b47; --panel:rgba(255,250,243,.9); --ink:#1b2f36; --brand:#163b46; --accent:#0f6b78; --accent-ink:#fff; --row:rgba(15,107,120,.08); --row-me:rgba(255,214,102,.4); --field:rgba(255,255,255,.75); --sat:env(safe-area-inset-top,0px); }
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --panel:rgba(18,36,44,.92); --ink:#e8f1f3; --brand:#eaf6f8; --accent:#6cc7d2; --accent-ink:#0f2a30; --row:rgba(108,199,210,.12); --row-me:rgba(255,214,102,.28); --field:rgba(255,255,255,.1); color-scheme:dark } }
-:root[data-theme="dark"]{ --panel:rgba(18,36,44,.92); --ink:#e8f1f3; --brand:#eaf6f8; --accent:#6cc7d2; --accent-ink:#0f2a30; --row:rgba(108,199,210,.12); --row-me:rgba(255,214,102,.28); --field:rgba(255,255,255,.1); color-scheme:dark }
-html,body{margin:0;height:100%;background:var(--bg);overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;}
+/* Layout: a full-bleed canvas lake with the HUD drawn on it; one floating card at a time (title, result, or a sheet), centered. */
+:root{
+  --bg:#14303a;
+  --panel:rgba(252,250,246,.94); --panel-line:rgba(19,38,45,.08);
+  --ink:#13262d; --muted:rgba(19,38,45,.6);
+  --lake:#0e6874; --signal:#ffd84d; --signal-ink:#231d00; --coral:#e2533f;
+  --chip:rgba(14,104,116,.09); --row:rgba(19,38,45,.045); --row-me:rgba(255,216,77,.42); --field:#ffffff;
+  --gold:#f2c14e; --silver:#cfd5da; --bronze:#d9976a;
+  --display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --body:"Figtree",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --sat:env(safe-area-inset-top,0px);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --panel:rgba(14,28,34,.93); --panel-line:rgba(255,255,255,.08); --ink:#eef5f6; --muted:rgba(238,245,246,.6); --lake:#7fd3dc; --chip:rgba(127,211,220,.12); --row:rgba(255,255,255,.05); --row-me:rgba(255,216,77,.22); --field:rgba(255,255,255,.08); color-scheme:dark } }
+:root[data-theme="dark"]{ --panel:rgba(14,28,34,.93); --panel-line:rgba(255,255,255,.08); --ink:#eef5f6; --muted:rgba(238,245,246,.6); --lake:#7fd3dc; --chip:rgba(127,211,220,.12); --row:rgba(255,255,255,.05); --row-me:rgba(255,216,77,.22); --field:rgba(255,255,255,.08); color-scheme:dark }
+[hidden]{display:none!important;}
+html,body{margin:0;height:100%;background:var(--bg);overflow:hidden;font-family:var(--body);-webkit-font-smoothing:antialiased;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;}
 #c{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:none;}
-.panel{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.96);width:min(86vw,340px);max-height:calc(100% - 40px);overflow:auto;padding:26px 22px 22px;border-radius:24px;background:var(--panel);color:var(--ink);text-align:center;box-shadow:0 24px 70px rgba(10,30,40,.35);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;box-sizing:border-box;}
-.panel.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
-.brand{font-size:58px;font-weight:900;letter-spacing:.14em;line-height:1;margin-bottom:6px;color:var(--brand);}
-.sub{font-size:13px;opacity:.7;margin-bottom:16px;}
-.panel p{margin:8px 0;font-size:17px;line-height:1.35;}
-.hint{font-size:14px;opacity:.75;}
-.legend{font-size:14px;opacity:.85;margin-top:14px;}
-.cta{margin-top:18px;font-weight:700;font-size:16px;color:var(--accent);animation:pulse 1.4s ease-in-out infinite;}
-@keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
-@media (prefers-reduced-motion: reduce){ .cta,.again{animation:none} .panel{transition:none} }
-.big{font-size:44px;font-weight:900;color:var(--brand);line-height:1.05;}
-.big.small{font-size:26px;}
-.reason{font-size:16px;opacity:.8;margin-top:4px;}
-.trail{font-size:18px;letter-spacing:1px;margin:14px 0 8px;word-break:break-all;line-height:1.5;}
-.stats{font-size:14px;opacity:.75;}
-.rank{font-size:15px;font-weight:700;color:var(--accent);margin-top:8px;min-height:1.2em;}
-.btn{pointer-events:auto;display:inline-block;margin-top:14px;padding:12px 24px;border-radius:999px;border:0;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:16px;cursor:pointer;box-shadow:0 6px 18px rgba(15,107,120,.3);font-family:inherit;}
-.btn:active{transform:translateY(1px);}
-.btn:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
-.btn.ghost{background:transparent;color:var(--accent);box-shadow:none;border:2px solid var(--accent);padding:10px 20px;}
-.btn.sm{padding:9px 16px;font-size:14px;margin-top:0;}
-.btnrow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
-.again{margin-top:12px;font-size:14px;color:var(--accent);font-weight:600;animation:pulse 1.4s ease-in-out infinite;}
-.record{margin:-2px 0 6px;font-size:20px;font-weight:900;letter-spacing:.04em;color:#c0392b;animation:pop .6s cubic-bezier(.2,1.6,.4,1) both;}
-@keyframes pop{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
-@media (prefers-reduced-motion: reduce){ .record{animation:none} }
 #fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:5;}
-.namebox{pointer-events:auto;display:flex;gap:8px;justify-content:center;align-items:center;margin-top:12px;}
-.namebox label{font-size:13px;opacity:.75;}
-.namebox input{pointer-events:auto;width:9em;padding:9px 12px;border-radius:12px;border:1px solid rgba(15,107,120,.35);background:var(--field);color:var(--ink);font:inherit;font-size:16px;text-align:center;-webkit-user-select:text;user-select:text;}
-.rows{list-style:none;margin:10px 0 4px;padding:0;text-align:left;pointer-events:auto;}
-.row{display:grid;grid-template-columns:1.6em 1fr auto;gap:8px;align-items:baseline;padding:7px 10px;border-radius:10px;font-size:15px;font-variant-numeric:tabular-nums;}
-.row:nth-child(even){background:var(--row);}
-.row.me{background:var(--row-me);font-weight:700;}
-.row .n{opacity:.6;font-weight:700;}
-.row .who{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.row .d{font-weight:700;}
-.row .d small{font-weight:500;opacity:.65;margin-left:4px;}
-.empty{font-size:14px;opacity:.7;padding:14px 0;}
-.toast{position:fixed;left:50%;bottom:max(24px,env(safe-area-inset-bottom));transform:translateX(-50%);background:rgba(20,40,48,.92);color:#fff;padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;}
-.toast.show{opacity:1;}
+
+/* cards */
+.panel{position:fixed;left:50%;top:50%;z-index:4;transform:translate(-50%,-47%) scale(.97);width:min(calc(100vw - 32px),360px);max-height:calc(100% - 32px);overflow:auto;box-sizing:border-box;padding:28px 24px 22px;border-radius:28px;background:var(--panel);border:1px solid var(--panel-line);color:var(--ink);text-align:center;box-shadow:0 30px 80px -24px rgba(6,20,28,.6),0 2px 8px rgba(6,20,28,.12);backdrop-filter:blur(16px) saturate(1.15);-webkit-backdrop-filter:blur(16px) saturate(1.15);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .28s ease,transform .34s cubic-bezier(.2,.9,.3,1.1),visibility 0s .34s;}
+.panel.show{opacity:1;visibility:visible;transform:translate(-50%,-50%) scale(1);transition:opacity .28s ease,transform .34s cubic-bezier(.2,.9,.3,1.1);}
+.sheet.show{pointer-events:auto;}
+@media (prefers-reduced-motion: reduce){ .panel,.panel.show{transition:opacity .2s ease} }
+
+/* brand */
+.logo{display:grid;justify-items:center;margin:0 0 6px;color:var(--lake);}
+.logo svg{width:176px;height:auto;display:block;margin-bottom:-2px;overflow:visible;}
+.logo-word{font-family:var(--display);font-weight:900;font-size:64px;line-height:.92;letter-spacing:.01em;color:var(--ink);}
+.tagline{font-size:15px;line-height:1.4;color:var(--muted);margin:10px auto 18px;max-width:24ch;text-wrap:balance;}
+.daychip{display:inline-flex;align-items:center;gap:8px;padding:7px 12px 7px 9px;border-radius:999px;background:var(--chip);font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);}
+.daychip i{width:11px;height:11px;border-radius:50%;background:var(--swatch,#f7cba3);box-shadow:0 0 0 2px var(--panel);}
+.dayline{font-size:13px;color:var(--muted);margin-top:8px;}
+.bestline{font-size:13px;font-weight:700;color:var(--ink);margin-top:4px;font-variant-numeric:tabular-nums;}
+
+/* buttons */
+.actions{display:grid;gap:10px;margin-top:20px;}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.pair .btn{padding:14px 8px;gap:6px;white-space:nowrap;min-width:0;}
+.btn{pointer-events:auto;appearance:none;-webkit-appearance:none;border:0;border-radius:16px;padding:14px 16px;font:700 15px/1.1 var(--body);color:var(--ink);background:var(--chip);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .08s ease,filter .15s ease;}
+.btn:hover{filter:brightness(1.05);}
+.btn:active{transform:translateY(1px) scale(.99);}
+.btn:focus-visible,input:focus-visible{outline:3px solid var(--lake);outline-offset:2px;}
+.btn svg{width:17px;height:17px;flex:none;}
+.btn-primary{background:var(--signal);color:var(--signal-ink);font-size:17px;padding:17px 16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.65),0 12px 26px -12px rgba(170,120,0,.8);}
+.btn.sm{padding:11px 14px;font-size:14px;border-radius:12px;}
+.footnote{font-size:12px;color:var(--muted);margin-top:12px;}
+
+/* result */
+.eyebrow{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.record{display:inline-block;margin-bottom:12px;padding:7px 12px;border-radius:999px;background:var(--coral);color:#fff;font:800 11px/1 var(--display);letter-spacing:.12em;text-transform:uppercase;animation:pop .6s cubic-bezier(.2,1.6,.4,1) both;}
+@keyframes pop{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.12);opacity:1}100%{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){ .record{animation:none} }
+.distance{font-family:var(--display);font-weight:800;font-size:68px;line-height:1;margin:10px 0 6px;letter-spacing:-.01em;font-variant-numeric:tabular-nums;}
+.distance small{font-size:26px;font-weight:600;color:var(--muted);margin-left:4px;letter-spacing:0;}
+.reason{font-size:15px;color:var(--muted);}
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0 10px;}
+.stat{background:var(--row);border-radius:14px;padding:11px 4px 9px;min-width:0;}
+.stat b{display:block;font:800 17px/1.1 var(--display);font-variant-numeric:tabular-nums;white-space:nowrap;}
+.stat span{display:block;margin-top:5px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+.skipmap{display:block;width:100%;height:auto;color:var(--lake);margin:4px 0 0;overflow:visible;}
+.skipmap text{font:600 9px var(--body);fill:var(--muted);}
+.rank{font-size:14px;font-weight:700;color:var(--lake);min-height:1.2em;margin-top:8px;}
+.namebox{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:12px;text-align:left;}
+.namebox label{grid-column:1/-1;font-size:12px;font-weight:600;color:var(--muted);}
+.namebox input{pointer-events:auto;min-width:0;padding:11px 12px;border-radius:12px;border:1px solid var(--panel-line);background:var(--field);color:var(--ink);font:500 16px var(--body);-webkit-user-select:text;user-select:text;}
+
+/* sheets: leaderboard and how to play */
+.sheet-title{font:800 24px/1.15 var(--display);margin:6px 0 4px;text-wrap:balance;}
+.sheet-sub{font-size:13px;color:var(--muted);margin-bottom:14px;}
+.rows{list-style:none;margin:0 0 6px;padding:0;text-align:left;}
+.row{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:8px 10px;border-radius:12px;font-size:15px;font-variant-numeric:tabular-nums;}
+.row:nth-child(odd){background:var(--row);}
+.row.me{background:var(--row-me);}
+.row .n{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:800 11px var(--display);color:var(--muted);}
+.row.r1 .n{background:var(--gold);color:#3b2a00;}
+.row.r2 .n{background:var(--silver);color:#22292e;}
+.row.r3 .n{background:var(--bronze);color:#3a1d08;}
+.row .who{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;}
+.row .d{font:800 15px/1.1 var(--display);text-align:right;}
+.row .d small{display:block;font:500 11px var(--body);color:var(--muted);margin-top:2px;}
+.empty{font-size:14px;line-height:1.45;color:var(--muted);padding:18px 8px;text-align:center;list-style:none;}
+.status{font-size:13px;color:var(--muted);min-height:1em;}
+.steps{list-style:none;margin:6px 0 0;padding:0;text-align:left;display:grid;gap:12px;}
+.steps li{display:grid;grid-template-columns:46px 1fr;gap:12px;align-items:center;font-size:14px;line-height:1.4;color:var(--muted);}
+.steps li b{display:block;color:var(--ink);font-size:15px;margin-bottom:1px;}
+.steps svg{width:46px;height:46px;border-radius:13px;background:var(--row);color:var(--lake);}
+.subhead{margin:18px 0 10px;text-align:left;}
+
+/* chrome over the scene */
+.iconbtn{position:fixed;z-index:6;top:calc(env(safe-area-inset-top,0px) + 12px);right:calc(env(safe-area-inset-right,0px) + 12px);width:40px;height:40px;border-radius:12px;border:0;display:grid;place-items:center;background:rgba(8,22,30,.3);color:#fff;cursor:pointer;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+.iconbtn:focus-visible{outline:3px solid #fff;outline-offset:2px;}
+.iconbtn svg{width:20px;height:20px;}
+.toast{position:fixed;z-index:7;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);transform:translate(-50%,8px);background:rgba(10,24,30,.92);color:#fff;padding:11px 16px;border-radius:12px;font:600 14px var(--body);opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;}
+.toast.show{opacity:1;transform:translate(-50%,0);}
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 <canvas id="fx"></canvas>
 
-<div id="title" class="panel show">
-  <div class="brand">SKIP</div>
-  <div class="sub" id="lakeLabel">Lake #1</div>
-  <p>Tap while the stone skids on the water<br>(the yellow flash).</p>
-  <p class="hint">Later is flatter and faster. Too late, it sinks.<br>Tap early to drop short and hop high.<br>Streak good skips to get your speed and height back.</p>
-  <div class="legend">🪵 🦆 hop onto, never into &nbsp;·&nbsp; 🌿 stay low</div>
-  <div class="cta">Tap to throw</div>
-  <div class="btnrow"><button class="btn ghost sm board-open" type="button">🏆 Today's board</button></div>
+<button class="iconbtn" id="soundBtn" type="button" aria-label="Turn sound off" aria-pressed="false">
+  <svg id="soundOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+  <svg id="soundOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m22 9-6 6M16 9l6 6"/></svg>
+</button>
+
+<div id="title" class="panel show" role="dialog" aria-labelledby="logoWord">
+  <div class="logo">
+    <svg viewBox="0 0 220 46" aria-hidden="true">
+      <path d="M6 40 Q40 2 74 40 Q102 16 130 40 Q149 26 168 40" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="0.1 7.4"/>
+      <ellipse cx="74" cy="41" rx="12" ry="3" fill="none" stroke="currentColor" stroke-opacity=".4" stroke-width="2"/>
+      <ellipse cx="130" cy="41" rx="9" ry="2.4" fill="none" stroke="currentColor" stroke-opacity=".4" stroke-width="2"/>
+      <ellipse cx="168" cy="41" rx="8" ry="2.2" fill="none" stroke="#f2b705" stroke-width="2.4"/>
+      <g transform="rotate(-12 196 31)"><ellipse cx="196" cy="31" rx="14" ry="5.2" fill="#62676f"/><ellipse cx="193" cy="29.4" rx="7.5" ry="1.7" fill="#a9aeb6"/></g>
+    </svg>
+    <div class="logo-word" id="logoWord">SKIP</div>
+  </div>
+  <div class="tagline">One stone. One tap. See how far it goes.</div>
+  <div class="daychip" id="dayChip"><i></i><span id="dayName">Lake 1</span></div>
+  <div class="dayline" id="dayLine">A new lake every day, the same lake for everyone</div>
+  <div class="bestline" id="bestLine" hidden></div>
+  <div class="actions">
+    <button class="btn btn-primary" id="playBtn" type="button">Play</button>
+    <div class="pair">
+      <button class="btn board-open" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 20v-8M12 20V5M19 20v-5"/></svg>Leaderboard</button>
+      <button class="btn" id="howBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.6"/><path d="M12 17h.01"/></svg>How to play</button>
+    </div>
+  </div>
+  <div class="footnote">Tap anywhere or press Space to start</div>
 </div>
 
-<div id="result" class="panel">
-  <div class="record" id="rRecord" hidden>🎉 New record!</div>
-  <div class="big" id="rDist">0 m</div>
+<div id="howto" class="panel sheet" role="dialog" aria-labelledby="howTitle">
+  <div class="eyebrow">How to play</div>
+  <div class="sheet-title" id="howTitle">Skip it far</div>
+  <ol class="steps">
+    <li><svg viewBox="0 0 46 46" aria-hidden="true"><path d="M6 31h34" stroke="currentColor" stroke-opacity=".35" stroke-width="2" stroke-linecap="round"/><ellipse cx="23" cy="31" rx="13" ry="4.4" fill="#ffd84d" fill-opacity=".35" stroke="#f2b705" stroke-width="2.4"/><ellipse cx="23" cy="29" rx="7" ry="2.6" fill="#62676f"/><path d="M14 24l-3-4M32 24l3-4M23 22v-5" stroke="#f2b705" stroke-width="2.2" stroke-linecap="round"/></svg><span><b>Tap on the flash</b>The stone flashes yellow as it skids. Tap before the flash fades.</span></li>
+    <li><svg viewBox="0 0 46 46" aria-hidden="true"><path d="M6 34h34" stroke="currentColor" stroke-opacity=".35" stroke-width="2" stroke-linecap="round"/><path d="M6 34Q13 8 20 34" fill="none" stroke="currentColor" stroke-opacity=".4" stroke-width="2.4" stroke-dasharray="0.1 4.6" stroke-linecap="round"/><path d="M20 34Q30 22 40 34" fill="none" stroke="currentColor" stroke-width="2.8" stroke-dasharray="0.1 4.6" stroke-linecap="round"/></svg><span><b>Later is flatter</b>A late tap skims flat and fast. Wait too long and it sinks.</span></li>
+    <li><svg viewBox="0 0 46 46" aria-hidden="true"><path d="M6 36h34" stroke="currentColor" stroke-opacity=".35" stroke-width="2" stroke-linecap="round"/><path d="M5 36Q9 31 13 36Q19 26 25 36Q32 18 40 36" fill="none" stroke="currentColor" stroke-width="2.8" stroke-dasharray="0.1 4.6" stroke-linecap="round"/><circle cx="36" cy="12" r="6" fill="#ffd84d"/><path d="M33.6 12h4.8M36 9.6v4.8" stroke="#231d00" stroke-width="1.8" stroke-linecap="round"/></svg><span><b>Chain good skips</b>Every good tap in a row adds speed and height.</span></li>
+  </ol>
+  <div class="eyebrow subhead">Watch out for</div>
+  <ol class="steps">
+    <li><svg viewBox="0 0 46 46" aria-hidden="true"><path d="M4 34h38" stroke="currentColor" stroke-opacity=".35" stroke-width="2" stroke-linecap="round"/><rect x="7" y="27" width="22" height="7" rx="3.5" fill="#7a4d2e"/><ellipse cx="29" cy="30.5" rx="2" ry="3.5" fill="#c9a071"/><ellipse cx="36" cy="30" rx="5" ry="3" fill="#f7d148"/><circle cx="40" cy="25.5" r="2.6" fill="#f7d148"/><path d="M42 25.4l2.4.8-2.4.8z" fill="#f0892a"/><path d="M6 14Q13 10 18 27" fill="none" stroke="currentColor" stroke-width="2.4" stroke-dasharray="0.1 4.4" stroke-linecap="round"/></svg><span><b>Logs and ducks</b>Land on top, never fly into the side. Tap early to drop short.</span></li>
+    <li><svg viewBox="0 0 46 46" aria-hidden="true"><path d="M4 36h38" stroke="currentColor" stroke-opacity=".35" stroke-width="2" stroke-linecap="round"/><path d="M2 6Q20 4 44 10" stroke="#5a3a24" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M14 6v12M21 6v15M28 7v12M35 8v14" stroke="#4f8a3f" stroke-width="2" stroke-linecap="round"/><path d="M4 36Q22 26 42 36" fill="none" stroke="currentColor" stroke-width="2.6" stroke-dasharray="0.1 4.4" stroke-linecap="round"/></svg><span><b>Branches</b>Stay low and flat to slip underneath.</span></li>
+  </ol>
+  <div class="actions"><button class="btn btn-primary" id="howClose" type="button">Got it</button></div>
+</div>
+
+<div id="result" class="panel" role="dialog" aria-labelledby="rDist">
+  <div class="record" id="rRecord" hidden>New personal best</div>
+  <div class="eyebrow" id="rEyebrow">Lake 1</div>
+  <div class="distance" id="rDist">0<small>m</small></div>
   <div class="reason" id="rReason">Sank</div>
-  <div class="trail" id="rTrail"></div>
-  <div class="hint" style="font-size:12px;margin-top:-4px">each tile is 5 m · 💧 touched down · 🟦 flew over</div>
-  <div class="stats" id="rStats"></div>
+  <div class="statgrid">
+    <div class="stat"><b id="rSkips">0</b><span>Skips</span></div>
+    <div class="stat"><b id="rStreak">–</b><span>Best streak</span></div>
+    <div class="stat"><b id="rBest">0 m</b><span>Today's best</span></div>
+  </div>
+  <svg class="skipmap" id="rMap" viewBox="0 0 300 50" role="img" aria-label="Where the stone touched the water"></svg>
   <div class="rank" id="rRank"></div>
   <div class="namebox" id="nameBox">
-    <label for="nameInput">Name for the board</label>
+    <label for="nameInput">Your name for the leaderboard</label>
     <input id="nameInput" maxlength="12" autocomplete="nickname" placeholder="e.g. Hiro">
-    <button class="btn sm" id="nameSave" type="button">Save</button>
+    <button class="btn sm btn-primary" id="nameSave" type="button">Save</button>
   </div>
-  <div class="btnrow">
-    <button class="btn" id="shareBtn" type="button">Share result</button>
-    <button class="btn ghost board-open" type="button">🏆 Board</button>
+  <div class="actions">
+    <button class="btn btn-primary" id="againBtn" type="button">Play again</button>
+    <div class="pair">
+      <button class="btn" id="shareBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 13v6h14v-6"/></svg>Share</button>
+      <button class="btn board-open" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 20v-8M12 20V5M19 20v-5"/></svg>Leaderboard</button>
+    </div>
   </div>
-  <div class="again">Tap anywhere to skip again</div>
+  <div class="footnote">Tap anywhere or press Space to play again</div>
 </div>
 
-<div id="board" class="panel">
-  <div class="big small" id="bTitle">Lake #1 board</div>
-  <div class="sub" id="bScope">Loading…</div>
+<div id="board" class="panel sheet" role="dialog" aria-labelledby="bTitle">
+  <div class="eyebrow" id="bEyebrow">Lake 1</div>
+  <div class="sheet-title" id="bTitle">Today's leaderboard</div>
+  <div class="sheet-sub" id="bScope">Loading…</div>
   <ol class="rows" id="bRows"></ol>
-  <div class="stats" id="bStatus"></div>
-  <div class="btnrow"><button class="btn" id="bClose" type="button">Back</button></div>
+  <div class="status" id="bStatus"></div>
+  <div class="actions"><button class="btn" id="bClose" type="button">Close</button></div>
 </div>
 
 <div class="toast" id="toast">Copied</div>
@@ -224,9 +332,9 @@ function makeCourse(seed) {
 
 // ---------------- audio ----------------
 const Audio = (() => {
-  let ctx = null, noiseBuf = null;
+  let ctx = null, noiseBuf = null, muted = store.get('skip.muted') === true;
   function ensure() {
-    if (window.__skip && window.__skip.mute) return null;
+    if (muted || S.attract || (window.__skip && window.__skip.mute)) return null;
     if (!ctx) {
       const C = window.AudioContext || window.webkitAudioContext; if (!C) return null;
       ctx = new C();
@@ -255,6 +363,8 @@ const Audio = (() => {
   }
   return {
     ensure,
+    get muted() { return muted; },
+    setMuted(v) { muted = !!v; store.set('skip.muted', muted); },
     skip(q, combo) { if (!ensure()) return; const t = ctx.currentTime; const p = Math.pow(1.059, Math.min(combo, 14)); noise(t, 0.10 + 0.12 * (1 - q), 800 * p * (1 + 0.6 * q), 1.1, 0.22); tone(t, 'sine', 500 * p, 760 * p, 0.07, 0.10); },
     dip() { if (!ensure()) return; noise(ctx.currentTime, 0.05, 1400, 1.5, 0.08); },
     early() { if (!ensure()) return; tone(ctx.currentTime, 'square', 300, 240, 0.05, 0.03); },
@@ -313,15 +423,61 @@ function dipFx() {
 function toast(msg) { const el = $('toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove('show'), 1500); }
 
 // ---------------- game flow ----------------
+function hashParam(name) { const m = (location.hash || '').match(new RegExp('[#&]' + name + '=([^&]*)')); return m ? decodeURIComponent(m[1]) : null; }
 function init() {
   S.key = todayKey(); S.lake = lakeNo(); S.seed = hashStr('skip:' + S.key);
   S.course = makeCourse(S.seed);
   S.best = store.get('skip.best.' + S.key);
-  $('lakeLabel').textContent = 'Lake #' + S.lake + ' · ' + prettyDate() + (S.best ? ' · best ' + Math.floor(S.best.dist) + ' m' : '');
+  // each day's lake gets its own time of day; #pal=night etc. forces one (for screenshots)
+  const forced = (hashParam('pal') || '').toLowerCase().replace(/[^a-z]/g, '');
+  S.pal = PALETTES.find(p => p.id === forced) || PALETTES[hashStr('pal:' + S.key) % PALETTES.length];
+  makeSkyBits(S.seed);
+  $('dayName').textContent = 'Lake ' + S.lake + ' · ' + S.pal.name;
+  $('dayChip').style.setProperty('--swatch', S.pal.swatch);
+  $('dayLine').textContent = prettyDate() + ' · the same lake for everyone';
+  renderBestLine();
   S.camX = 0;
 }
+function lakeLabel() { return 'Lake ' + S.lake + ' · ' + S.pal.name; }
+function renderBestLine() {
+  const el = $('bestLine'); el.hidden = !S.best;
+  if (S.best) el.textContent = 'Your best today: ' + Math.floor(S.best.dist) + ' m';
+}
+
+// Opening screens and in-between sheets: one card shows at a time.
+const Sheets = {
+  open: null, under: null,
+  show(id) {
+    if (this.open) this.hide();
+    this.under = ['title', 'result'].find(k => $(k).classList.contains('show')) || null;
+    if (this.under) $(this.under).classList.remove('show');
+    $(id).classList.add('show'); this.open = id;
+    if (id === 'board') renderBoard();
+    const b = $(id).querySelector('.btn'); if (b) setTimeout(() => b.focus({ preventScroll: true }), 50);
+  },
+  hide() {
+    if (!this.open) return;
+    $(this.open).classList.remove('show');
+    if (this.under) $(this.under).classList.add('show');
+    this.open = null; this.under = null;
+  }
+};
+
+// The title screen plays a quiet demo run behind the card: the bot skips, nothing is scored.
+function startAttract() {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  S.attract = true; S.noObs = false; resetRun();
+  S.auto = { u: 0.92, jitter: 0.02, jitterNow: 0, rolled: false, plan: null, smart: true, mode: '' };
+}
+function stopAttract() { if (!S.attract) return; S.attract = false; S.auto = null; }
 
 function startRun() {
+  stopAttract(); Sheets.hide(); resetRun(); S.attempts++;
+  if (document.activeElement && document.activeElement !== document.body && document.activeElement.blur) document.activeElement.blur();
+  $('title').classList.remove('show'); $('result').classList.remove('show');
+  Audio.whoosh();
+}
+function resetRun() {
   S.mode = 'play'; S.t = 0; S.acc = 0; S.slow = 0; S.shake = 0;
   S.stone = { x: 0, y: 50, vx: 560, vy: 110, phase: 'air', px: 0, py: 50 };
   S.flight = { airtime: 0.48, earlyW: T.earlyMax };
@@ -329,9 +485,7 @@ function startRun() {
   S.endReason = ''; S.sprayT = 0; S.bubbleT = 0;
   S.particles.length = 0; S.ripples.length = 0; S.popups.length = 0; S.trail.length = 0;
   for (const o of S.course) { o.hitAt = 0; o.gone = false; }
-  S.camX = S.stone.x; S.attempts++;
-  $('title').classList.remove('show'); $('result').classList.remove('show');
-  Audio.whoosh();
+  S.camX = S.stone.x;
 }
 
 function predictContact(st) {
@@ -342,9 +496,12 @@ function predictContact(st) {
 }
 
 function tap() {
-  if (Board.open) { Board.show(false); return; }
-  if (S.mode === 'title') { startRun(); return; }
+  if (Sheets.open) { Sheets.hide(); return; }
+  if (S.attract || S.mode === 'title') { startRun(); return; }
   if (S.mode === 'result') { if (performance.now() - S.resultShownAt > 250) startRun(); return; }
+  gameTap();
+}
+function gameTap() {
   if (S.mode !== 'play') return;
   const st = S.stone;
   if (S.t - S.lastSkipT < 0.08) return;
@@ -549,7 +706,7 @@ function autoTick() {
     a.plan = a.planner ? a.planner() : a.smart ? autoPlan(a.mode === 'contact' ? null : a.u) : { type: 'ride', u: a.u };
   }
   const plan = a.plan || { type: 'ride', u: a.u }; const eW = S.flight.earlyW;
-  const fire = () => { a.rolled = false; a.plan = null; tap(); };
+  const fire = () => { a.rolled = false; a.plan = null; gameTap(); };
   if (plan.type === 'dive') {
     if (st.phase === 'air') { if (st.x + st.vx * diveTime(st) >= plan.x) fire(); }
     else fire();
@@ -578,6 +735,7 @@ function trailString() {
 }
 function shareText() { return 'Skip · Lake #' + S.lake + '\n' + trailString() + '\n' + Math.floor(S.dist) + ' m · ' + S.skips.length + (S.skips.length === 1 ? ' skip' : ' skips'); }
 function showResult() {
+  if (S.attract) { resetRun(); return; } // the title demo just loops
   S.mode = 'result'; S.resultShownAt = performance.now();
   const d = Math.floor(S.dist), n = S.skips.length;
   const hadBest = !!S.best;
@@ -586,12 +744,40 @@ function showResult() {
   $('rRecord').hidden = !record;
   if (record) celebrate();
   if (isBest) { S.best = { dist: S.dist, skips: n, trail: trailString() }; store.set('skip.best.' + S.key, S.best); Board.submit(S.best); }
-  $('rDist').textContent = d + ' m';
-  $('rReason').textContent = (REASON_TEXT[S.endReason] || 'Sank') + ' at ' + d + ' m';
-  $('rTrail').textContent = trailString();
-  $('rStats').textContent = n + (n === 1 ? ' skip' : ' skips') + (S.bestCombo >= 2 ? ' · best streak ×' + S.bestCombo : '') + (isBest ? ' · new best today' : ' · best today ' + Math.floor(S.best.dist) + ' m');
+  renderBestLine();
+  $('rEyebrow').textContent = lakeLabel();
+  const dn = $('rDist'); dn.textContent = String(d); const unit = document.createElement('small'); unit.textContent = 'm'; dn.appendChild(unit);
+  $('rReason').textContent = REASON_TEXT[S.endReason] || 'Sank';
+  $('rSkips').textContent = String(n);
+  $('rStreak').textContent = S.bestCombo >= 2 ? '×' + S.bestCombo : '–';
+  $('rBest').textContent = Math.floor(S.best.dist) + ' m';
+  $('rMap').innerHTML = skipMapSVG();
   renderRank();
   $('result').classList.add('show');
+}
+// A small drawing of the run: an arc for every hop, a ripple at every touchdown, and how it ended.
+function skipMapSVG() {
+  const W = 300, base = 32, x0 = 8, x1 = W - 22;
+  const total = Math.max(1, S.dist * METER);
+  const px = x => (x0 + (x1 - x0) * clamp(x / total, 0, 1)).toFixed(1);
+  const xs = S.skips.map(s => s.x).filter(x => x < total);
+  let d = 'M' + px(0) + ' ' + (base - 16);
+  let prev = 0;
+  for (const x of xs.concat([total])) {
+    const a = +px(prev), b = +px(x); const h = clamp((b - a) * 0.9, 2.5, 24);
+    const startY = prev === 0 ? base - 16 : base;
+    d += ' Q' + ((a + b) / 2).toFixed(1) + ' ' + (Math.min(startY, base) - h).toFixed(1) + ' ' + b.toFixed(1) + ' ' + base;
+    prev = x;
+  }
+  const hit = S.endReason === 'log' || S.endReason === 'duck' || S.endReason === 'branch';
+  let s = '<path d="M' + x0 + ' ' + base + 'H' + (W - 8) + '" stroke="currentColor" stroke-opacity=".22" stroke-width="1.5" stroke-linecap="round"/>';
+  s += '<path d="' + d + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="0.1 4"/>';
+  if (xs.length <= 80) for (const x of xs) s += '<ellipse cx="' + px(x) + '" cy="' + base + '" rx="3.4" ry="1.1" fill="none" stroke="currentColor" stroke-opacity=".55" stroke-width="1.2"/>';
+  const ex = px(total);
+  s += hit ? '<circle cx="' + ex + '" cy="' + (base - 3) + '" r="5" fill="#e2533f"/><path d="M' + (ex - 2.2) + ' ' + (base - 5.2) + 'l4.4 4.4M' + (+ex + 2.2) + ' ' + (base - 5.2) + 'l-4.4 4.4" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>'
+           : '<circle cx="' + ex + '" cy="' + (base + 3) + '" r="3" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="' + (+ex + 5) + '" cy="' + (base + 8) + '" r="2" fill="none" stroke="currentColor" stroke-width="1.2" stroke-opacity=".7"/>';
+  s += '<text x="' + x0 + '" y="47">0 m</text><text x="' + (W - 8) + '" y="47" text-anchor="end">' + Math.floor(S.dist) + ' m</text>';
+  return s;
 }
 
 // ---------------- leaderboard ----------------
@@ -632,7 +818,7 @@ const Board = {
   async submit(run) {
     if (!run) return;
     if (!this.name) { this.pending = run; renderRank(); return; }
-    const entry = { lake: S.lake, pid: this.pid, name: this.name, dist: Math.round(run.dist * 10) / 10, skips: run.skips, trail: run.trail, ts: Date.now() };
+    const entry = { lake: S.lake, pid: this.pid, name: this.name, dist: Math.floor(run.dist * 10) / 10, skips: run.skips, trail: run.trail, ts: Date.now() };
     const all = (store.get('skip.board.' + S.key) || []).filter(r => r && r.pid !== this.pid); all.push(entry);
     store.set('skip.board.' + S.key, all.sort((a, b) => b.dist - a.dist).slice(0, 50));
     if (this.shared) {
@@ -646,15 +832,16 @@ const Board = {
     renderBoard(); renderRank();
   },
   rank() { const i = this.rows.findIndex(r => r.pid === this.pid); return i < 0 ? null : i + 1; },
-  show(on) { this.open = on; $('board').classList.toggle('show', on); if (on) renderBoard(); }
+  get open() { return Sheets.open === 'board'; },
+  show(on) { if (on) Sheets.show('board'); else if (this.open) Sheets.hide(); }
 };
 function renderBoard() {
-  $('bTitle').textContent = 'Lake #' + S.lake + ' board';
-  $('bScope').textContent = Board.loading ? 'Loading…' : Board.shared ? 'Everyone with this page · best run today' : 'This device · best run today';
+  $('bEyebrow').textContent = lakeLabel();
+  $('bScope').textContent = Board.loading ? 'Loading…' : Board.shared ? 'Best run per player · everyone with this page' : 'Best run per player · on this device';
   const ol = $('bRows'); ol.textContent = '';
-  if (!Board.loading && Board.rows.length === 0) { const li = document.createElement('li'); li.className = 'empty'; li.textContent = Board.name ? 'No runs yet today. Yours will be first.' : 'No runs yet today. Finish a run and add your name to appear here.'; ol.appendChild(li); }
+  if (!Board.loading && Board.rows.length === 0) { const li = document.createElement('li'); li.className = 'empty'; li.textContent = Board.name ? 'No runs yet on this lake. Yours will be the first.' : 'No runs yet on this lake. Finish a run and add your name to take the top spot.'; ol.appendChild(li); }
   Board.rows.forEach((r, i) => {
-    const li = document.createElement('li'); li.className = 'row' + (r.pid === Board.pid ? ' me' : '');
+    const li = document.createElement('li'); li.className = 'row' + (i < 3 ? ' r' + (i + 1) : '') + (r.pid === Board.pid ? ' me' : '');
     const n = document.createElement('span'); n.className = 'n'; n.textContent = String(i + 1);
     const who = document.createElement('span'); who.className = 'who'; who.textContent = String(r.name || 'Someone').slice(0, 12) + (r.pid === Board.pid ? ' (you)' : '');
     const d = document.createElement('span'); d.className = 'd'; d.textContent = Math.floor(r.dist) + ' m';
@@ -665,14 +852,25 @@ function renderBoard() {
 }
 function renderRank() {
   const el = $('rRank'); if (!el) return;
-  if (!Board.name) { el.textContent = Board.shared ? 'Add your name to get on the board' : 'Add your name to keep a board on this device'; return; }
+  if (!Board.name) { el.textContent = Board.shared ? 'Add your name to join today’s leaderboard' : 'Add your name to rank on this device'; return; }
   const r = Board.rank();
-  el.textContent = r ? '#' + r + (Board.shared ? ' on today’s board' : ' on this device today') : (Board.shared && Board.status ? Board.status : '');
+  el.textContent = r ? '#' + r + (Board.shared ? ' on today’s leaderboard' : ' on this device today') : (Board.shared && Board.status ? Board.status : '');
 }
 $('nameSave').addEventListener('click', e => { e.stopPropagation(); if (Board.setName($('nameInput').value)) { toast('Saved as ' + Board.name); renderRank(); } else $('nameInput').focus(); });
 $('nameInput').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') { e.preventDefault(); $('nameSave').click(); } });
 for (const b of document.querySelectorAll('.board-open')) b.addEventListener('click', e => { e.stopPropagation(); Board.show(true); });
-$('bClose').addEventListener('click', e => { e.stopPropagation(); Board.show(false); });
+$('bClose').addEventListener('click', e => { e.stopPropagation(); Sheets.hide(); });
+$('howBtn').addEventListener('click', e => { e.stopPropagation(); Sheets.show('howto'); });
+$('howClose').addEventListener('click', e => { e.stopPropagation(); Sheets.hide(); });
+$('playBtn').addEventListener('click', e => { e.stopPropagation(); Audio.ensure(); startRun(); });
+$('againBtn').addEventListener('click', e => { e.stopPropagation(); Audio.ensure(); startRun(); });
+function renderSound() {
+  const m = Audio.muted; $('soundOn').toggleAttribute('hidden', m); $('soundOff').toggleAttribute('hidden', !m);
+  $('soundBtn').setAttribute('aria-pressed', String(m)); $('soundBtn').setAttribute('aria-label', m ? 'Turn sound on' : 'Turn sound off');
+}
+function toggleSound() { Audio.setMuted(!Audio.muted); renderSound(); toast(Audio.muted ? 'Sound off' : 'Sound on'); if (!Audio.muted) Audio.ensure(); }
+$('soundBtn').addEventListener('click', e => { e.stopPropagation(); toggleSound(); e.currentTarget.blur(); });
+renderSound();
 function fallbackCopy(text) {
   const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.focus(); ta.select();
   let ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
@@ -688,14 +886,17 @@ $('shareBtn').addEventListener('click', async e => {
 
 // ---------------- input ----------------
 function onPointer(e) {
-  if (e.target && e.target.closest && e.target.closest('.btn, input, label, .namebox, .rows')) return;
+  if (e.target && e.target.closest && e.target.closest('.btn, .iconbtn, input, label, .namebox, .sheet.show')) return;
   if (e.pointerType === 'mouse' && e.button !== 0) return;
   e.preventDefault(); Audio.ensure(); tap();
 }
 window.addEventListener('pointerdown', onPointer, { passive: false });
 window.addEventListener('keydown', e => {
   if (e.repeat) return;
-  if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON')) return;
+  if (e.target && e.target.tagName === 'INPUT') return;
+  if (e.code === 'Escape' && Sheets.open) { e.preventDefault(); Sheets.hide(); return; }
+  if (e.code === 'KeyM') { e.preventDefault(); toggleSound(); return; }
+  if (e.target && e.target.tagName === 'BUTTON' && e.target.closest('.panel.show') && (e.code === 'Enter' || e.code === 'Space')) return; // let the focused button on a visible card act
   if (e.code === 'Space' || e.code === 'Enter' || e.code === 'ArrowUp' || e.code === 'KeyW') { e.preventDefault(); Audio.ensure(); tap(); }
 });
 window.addEventListener('contextmenu', e => e.preventDefault());
@@ -703,16 +904,81 @@ window.addEventListener('contextmenu', e => e.preventDefault());
 // ---------------- render ----------------
 function roundRect(x, y, w, h, r) { r = Math.min(r, w / 2, h / 2); ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
 
+// Each day's lake has its own time of day.
+const PALETTES = [
+  { id: 'dawn', name: 'Dawn', swatch: '#e9a6a8', sky: ['#2f3d6e', '#7a6aa3', '#e9a6a8', '#ffd9b0'],
+    sun: { c: '#fff0e2', glow: 'rgba(255,214,200,', y: 0.07, r: 0.045 }, cloud: 'rgba(255,214,214,0.5)',
+    hills: ['#8b86b5', '#5f5f93', '#3d4a72'], trees: '#2c3a5e', water: ['#c9a9c4', '#5f6f9a', '#1d2747'], glint: 'rgba(255,222,210,0.6)', stars: 0.25 },
+  { id: 'morning', name: 'Morning', swatch: '#8fc2ee', sky: ['#4e98de', '#8fc2ee', '#d4eaf8', '#f4f6ee'],
+    sun: { c: '#ffffff', glow: 'rgba(255,255,240,', y: 0.3, r: 0.04 }, cloud: 'rgba(255,255,255,0.85)',
+    hills: ['#9cc0d6', '#6f9f8f', '#4c7f5f'], trees: '#355f45', water: ['#9fdbe2', '#3f9aa6', '#17485a'], glint: 'rgba(255,255,255,0.6)', stars: 0 },
+  { id: 'goldenhour', name: 'Golden hour', swatch: '#f7cba3', sky: ['#78b1e3', '#c9d9e8', '#f7cba3', '#ffb78d'],
+    sun: { c: '#fff3cf', glow: 'rgba(255,240,200,', y: 0.17, r: 0.05 }, cloud: 'rgba(255,238,224,0.7)',
+    hills: ['#8fb3cf', '#5d8d9a', '#3b6b66'], trees: '#2b544e', water: ['#8ad3da', '#3f8f9b', '#1b3a46'], glint: 'rgba(255,235,190,0.6)', stars: 0 },
+  { id: 'dusk', name: 'Dusk', swatch: '#d4607a', sky: ['#1f2b5c', '#5a3f7c', '#d4607a', '#f6a25e'],
+    sun: { c: '#ffd2a1', glow: 'rgba(255,150,110,', y: 0.045, r: 0.075 }, cloud: 'rgba(255,170,160,0.42)',
+    hills: ['#6b4a7e', '#4a3966', '#2d2a4d'], trees: '#221f3c', water: ['#d58a8f', '#5b4a7a', '#181a36'], glint: 'rgba(255,190,140,0.65)', stars: 0.35, shade: 0.85 },
+  { id: 'night', name: 'Night', swatch: '#3d5a8a', sky: ['#040a1c', '#0b1736', '#172a52', '#26406b'],
+    sun: { c: '#f4f1e3', glow: 'rgba(190,210,255,', y: 0.32, r: 0.034, moon: true }, cloud: 'rgba(120,140,190,0.16)',
+    hills: ['#1c2c4c', '#14223c', '#0d182c'], trees: '#0a1322', water: ['#2c4a6e', '#152a46', '#060d1c'], glint: 'rgba(220,230,255,0.5)', stars: 1, shade: 0.68 }
+];
+// Obstacle colours, darkened and cooled for the evening lakes (cheaper than a canvas filter).
+const shadeCache = new Map();
+function C(hex) {
+  const f = S.pal.shade || 1; if (f === 1) return hex;
+  const key = S.pal.id + hex; let v = shadeCache.get(key); if (v) return v;
+  const n = hex.length === 4 ? hex.slice(1).split('').map(c => parseInt(c + c, 16)) : [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
+  const [r, g, b] = n; const l = (r + g + b) / 3; const s = 0.82; // a little less saturated
+  const mix = c => Math.round(clamp((l + (c - l) * s) * f, 0, 255));
+  v = 'rgb(' + mix(r) + ',' + mix(g) + ',' + Math.round(clamp(mix(b) + 10 * (1 - f), 0, 255)) + ')';
+  shadeCache.set(key, v); return v;
+}
+function makeSkyBits(seed) {
+  const r = rng(seed ^ 0x51ab);
+  S.stars = []; for (let i = 0; i < 110; i++) S.stars.push({ x: r(), y: Math.pow(r(), 1.4) * 0.85, s: 0.5 + r() * 1.3, ph: r() * 6.28 });
+  S.clouds = []; for (let i = 0; i < 7; i++) {
+    const puffs = []; const n = 4 + Math.floor(r() * 3);
+    for (let k = 0; k < n; k++) puffs.push({ dx: (k - n / 2) * (18 + r() * 10), dy: -r() * 14, rx: 22 + r() * 22, ry: 9 + r() * 9 });
+    S.clouds.push({ x: r(), y: 0.12 + r() * 0.42, sc: 0.6 + r() * 0.8, v: 3 + r() * 6, puffs });
+  }
+}
 function drawSky() {
+  const P = S.pal;
   const g = ctx.createLinearGradient(0, 0, 0, WY);
-  g.addColorStop(0, '#78b1e3'); g.addColorStop(0.55, '#c9d9e8'); g.addColorStop(0.85, '#f7cba3'); g.addColorStop(1, '#ffb78d');
+  g.addColorStop(0, P.sky[0]); g.addColorStop(0.55, P.sky[1]); g.addColorStop(0.85, P.sky[2]); g.addColorStop(1, P.sky[3]);
   ctx.fillStyle = g; ctx.fillRect(0, 0, VW, WY + 2);
-  const sunX = VW * 0.74, sunY = WY - VH * 0.17, R = Math.max(18, VH * 0.05);
-  const gl = ctx.createRadialGradient(sunX, sunY, R * 0.5, sunX, sunY, R * 4);
-  gl.addColorStop(0, 'rgba(255,240,200,0.55)'); gl.addColorStop(1, 'rgba(255,240,200,0)');
+  if (P.stars > 0) { // stars, slowly twinkling, barely drifting with the camera
+    for (const st of S.stars) {
+      const x = ((st.x * (VW + 40) - S.camX * 0.01 * SC) % (VW + 40) + VW + 40) % (VW + 40) - 20;
+      const y = st.y * WY * 0.9; const tw = 0.55 + 0.45 * Math.sin(S.vt * 1.7 + st.ph);
+      ctx.globalAlpha = P.stars * tw * (1 - y / WY) * 0.9; ctx.fillStyle = '#fff';
+      ctx.fillRect(x, y, st.s, st.s);
+    }
+    ctx.globalAlpha = 1;
+  }
+  const sunX = VW * 0.74, sunY = WY - VH * P.sun.y, R = Math.max(16, VH * P.sun.r);
+  const gl = ctx.createRadialGradient(sunX, sunY, R * 0.5, sunX, sunY, R * (P.sun.moon ? 3 : 4));
+  gl.addColorStop(0, P.sun.glow + (P.sun.moon ? '0.35)' : '0.55)')); gl.addColorStop(1, P.sun.glow + '0)');
   ctx.fillStyle = gl; ctx.fillRect(0, 0, VW, WY);
-  ctx.fillStyle = '#fff3cf'; ctx.beginPath(); ctx.arc(sunX, sunY, R, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = P.sun.c; ctx.beginPath(); ctx.arc(sunX, sunY, R, 0, Math.PI * 2); ctx.fill();
+  if (P.sun.moon) { // a few soft maria on the moon
+    ctx.fillStyle = 'rgba(180,185,200,0.35)';
+    ctx.beginPath(); ctx.arc(sunX - R * 0.3, sunY - R * 0.2, R * 0.28, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(sunX + R * 0.25, sunY + R * 0.3, R * 0.18, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(sunX + R * 0.35, sunY - R * 0.35, R * 0.12, 0, Math.PI * 2); ctx.fill();
+  }
   S.sun = { x: sunX, y: sunY, r: R };
+  drawClouds();
+}
+function drawClouds() {
+  const P = S.pal, span = VW + 360; ctx.fillStyle = P.cloud;
+  for (const c of S.clouds) {
+    const x = ((c.x * span + S.vt * c.v - S.camX * 0.035 * SC) % span + span) % span - 180;
+    const y = c.y * WY * 0.8; const sc = c.sc * Math.max(0.7, SC);
+    ctx.beginPath();
+    for (const p of c.puffs) ctx.ellipse(x + p.dx * sc, y + p.dy * sc, p.rx * sc, p.ry * sc, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
 }
 function hillPath(par, base, amp, f1, f2, f3) {
   ctx.beginPath(); ctx.moveTo(-2, WY + 2);
@@ -724,10 +990,11 @@ function hillPath(par, base, amp, f1, f2, f3) {
   ctx.lineTo(VW + 2, WY + 2); ctx.closePath();
 }
 function drawHills() {
+  const H = S.pal.hills;
   const layers = [
-    [0.06, 80, 45, 0.0035, 0.009, 0.021, '#8fb3cf'],
-    [0.12, 46, 30, 0.005, 0.013, 0.03, '#5d8d9a'],
-    [0.2, 22, 14, 0.008, 0.02, 0.05, '#3b6b66']
+    [0.06, 80, 45, 0.0035, 0.009, 0.021, H[0]],
+    [0.12, 46, 30, 0.005, 0.013, 0.03, H[1]],
+    [0.2, 22, 14, 0.008, 0.02, 0.05, H[2]]
   ];
   for (const L of layers) { hillPath(L[0], L[1], L[2], L[3], L[4], L[5]); ctx.fillStyle = L[6]; ctx.fill(); }
   ctx.beginPath(); ctx.moveTo(-2, WY + 2);
@@ -737,17 +1004,18 @@ function drawHills() {
     const within = (wx - k * 14) / 14; const tri = hh * (1 - Math.abs(within * 2 - 1));
     ctx.lineTo(x, WY - (tri + 3) * SC);
   }
-  ctx.lineTo(VW + 2, WY + 2); ctx.closePath(); ctx.fillStyle = '#2b544e'; ctx.fill();
+  ctx.lineTo(VW + 2, WY + 2); ctx.closePath(); ctx.fillStyle = S.pal.trees; ctx.fill();
 }
 function drawWater() {
+  const W3 = S.pal.water;
   const g = ctx.createLinearGradient(0, WY, 0, VH);
-  g.addColorStop(0, '#8ad3da'); g.addColorStop(0.35, '#3f8f9b'); g.addColorStop(1, '#1b3a46');
+  g.addColorStop(0, W3[0]); g.addColorStop(0.35, W3[1]); g.addColorStop(1, W3[2]);
   ctx.fillStyle = g; ctx.fillRect(0, WY, VW, VH - WY);
   // reflections
   ctx.save(); ctx.beginPath(); ctx.rect(0, WY, VW, VH - WY); ctx.clip();
   ctx.translate(0, WY * 1.7); ctx.scale(1, -0.7); ctx.globalAlpha = 0.22; drawHills(); ctx.restore();
   // sun glint
-  ctx.fillStyle = 'rgba(255,235,190,0.6)';
+  ctx.fillStyle = S.pal.glint;
   for (let i = 0; i < 9; i++) {
     const yy = WY + 8 + i * ((VH - WY) / 9); const w = S.sun.r * (1.2 + i * 0.5);
     const wob = Math.sin(S.vt * 1.3 + i) * w * 0.3;
@@ -769,6 +1037,7 @@ function drawWater() {
   for (let i = S.ripples.length - 1; i >= 0; i--) {
     const r = S.ripples[i]; const p = (S.vt - r.t0) / r.life;
     if (p >= 1) { S.ripples.splice(i, 1); continue; }
+    if (p <= 0) continue;
     const rr = r.maxR * p * SC; const x = sx(r.x);
     ctx.strokeStyle = 'rgba(255,255,255,' + (0.7 * (1 - p)) + ')'; ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.ellipse(x, WY, rr, rr * 0.3, 0, 0, Math.PI * 2); ctx.stroke();
@@ -784,10 +1053,10 @@ function drawObstacles() {
     if (o.type === 'log') {
       const w = o.w * SC, top = sy(o.h), bot = sy(-7), h = bot - top;
       ctx.fillStyle = 'rgba(0,0,0,0.12)'; ctx.beginPath(); ctx.ellipse(x, WY + 4, w * 0.55, 5 * SC, 0, 0, Math.PI * 2); ctx.fill();
-      roundRect(x - w / 2, top, w, h, h * 0.45); ctx.fillStyle = '#6b452b'; ctx.fill();
-      roundRect(x - w / 2 + 2, top, w - 4, h * 0.4, h * 0.3); ctx.fillStyle = '#8f6240'; ctx.fill();
-      ctx.fillStyle = '#c9a071'; ctx.beginPath(); ctx.ellipse(x + w / 2, top + h / 2, h * 0.22, h / 2, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = '#8f6240'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(x + w / 2, top + h / 2, h * 0.11, h * 0.25, 0, 0, Math.PI * 2); ctx.stroke();
+      roundRect(x - w / 2, top, w, h, h * 0.45); ctx.fillStyle = C('#6b452b'); ctx.fill();
+      roundRect(x - w / 2 + 2, top, w - 4, h * 0.4, h * 0.3); ctx.fillStyle = C('#8f6240'); ctx.fill();
+      ctx.fillStyle = C('#c9a071'); ctx.beginPath(); ctx.ellipse(x + w / 2, top + h / 2, h * 0.22, h / 2, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = C('#8f6240'); ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(x + w / 2, top + h / 2, h * 0.11, h * 0.25, 0, 0, Math.PI * 2); ctx.stroke();
       ctx.fillStyle = 'rgba(120,200,210,0.45)'; ctx.fillRect(x - w / 2 - 2, WY, w + 4, bot - WY);
     } else if (o.type === 'duck') {
       const bob = Math.sin(S.vt * 2.2 + o.ph) * 1.5; const sc = SC;
@@ -795,25 +1064,25 @@ function drawObstacles() {
       if (flap >= 1) continue;
       const yy = sy(bob) - flap * flap * 260 * SC; const xx = x + flap * 60 * SC;
       if (!flap) { ctx.fillStyle = 'rgba(0,0,0,0.12)'; ctx.beginPath(); ctx.ellipse(x, WY + 3, 16 * sc, 4 * sc, 0, 0, Math.PI * 2); ctx.fill(); }
-      ctx.fillStyle = '#f7d148'; ctx.beginPath(); ctx.ellipse(xx - 2 * sc, yy - 7 * sc, 15 * sc, 8 * sc, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = C('#f7d148'); ctx.beginPath(); ctx.ellipse(xx - 2 * sc, yy - 7 * sc, 15 * sc, 8 * sc, 0, 0, Math.PI * 2); ctx.fill();
       const wingY = yy - 7 * sc + (flap ? Math.sin(S.vt * 40) * 5 * sc : 0);
-      ctx.fillStyle = '#e6b92e'; ctx.beginPath(); ctx.ellipse(xx - 5 * sc, wingY, 8 * sc, 4 * sc, -0.3, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#f7d148'; ctx.beginPath(); ctx.arc(xx + 9 * sc, yy - 17 * sc, 7 * sc, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#f0892a'; ctx.beginPath(); ctx.moveTo(xx + 14 * sc, yy - 18 * sc); ctx.lineTo(xx + 22 * sc, yy - 15.5 * sc); ctx.lineTo(xx + 14 * sc, yy - 13.5 * sc); ctx.closePath(); ctx.fill();
-      ctx.fillStyle = '#222'; ctx.beginPath(); ctx.arc(xx + 11 * sc, yy - 19 * sc, 1.4 * sc, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = C('#e6b92e'); ctx.beginPath(); ctx.ellipse(xx - 5 * sc, wingY, 8 * sc, 4 * sc, -0.3, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = C('#f7d148'); ctx.beginPath(); ctx.arc(xx + 9 * sc, yy - 17 * sc, 7 * sc, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = C('#f0892a'); ctx.beginPath(); ctx.moveTo(xx + 14 * sc, yy - 18 * sc); ctx.lineTo(xx + 22 * sc, yy - 15.5 * sc); ctx.lineTo(xx + 14 * sc, yy - 13.5 * sc); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = C('#222'); ctx.beginPath(); ctx.arc(xx + 11 * sc, yy - 19 * sc, 1.4 * sc, 0, Math.PI * 2); ctx.fill();
       if (!flap) { ctx.fillStyle = 'rgba(120,200,210,0.5)'; ctx.fillRect(x - 18 * sc, WY, 36 * sc, 4 * sc); }
     } else {
       const w = o.w * SC, bottom = sy(o.h), bough = sy(o.h + 34);
-      ctx.strokeStyle = '#5a3a24'; ctx.lineWidth = 6 * SC; ctx.lineCap = 'round';
+      ctx.strokeStyle = C('#5a3a24'); ctx.lineWidth = 6 * SC; ctx.lineCap = 'round';
       ctx.beginPath(); ctx.moveTo(x - w / 2 - 90 * SC, -20); ctx.quadraticCurveTo(x - w / 2 - 50 * SC, bough - 30 * SC, x + w / 2 + 6 * SC, bough); ctx.stroke();
       const n = Math.max(4, Math.round(w / (9 * SC)));
       for (let i = 0; i < n; i++) {
         const fx = x - w / 2 + (i + 0.5) * (w / n);
         const sway = Math.sin(S.vt * 1.6 + i * 0.9 + o.x * 0.01) * 3 * SC;
         const len = (bough - bottom) * (0.9 + 0.1 * fract(Math.sin(i * 7.3 + o.x) * 100));
-        ctx.strokeStyle = '#4f7f3f'; ctx.lineWidth = 1.5 * SC; ctx.beginPath(); ctx.moveTo(fx, bough); ctx.quadraticCurveTo(fx + sway, bough + len * 0.5, fx + sway * 1.4, bough + len); ctx.stroke();
+        ctx.strokeStyle = C('#4f7f3f'); ctx.lineWidth = 1.5 * SC; ctx.beginPath(); ctx.moveTo(fx, bough); ctx.quadraticCurveTo(fx + sway, bough + len * 0.5, fx + sway * 1.4, bough + len); ctx.stroke();
         for (let k = 1; k <= 3; k++) {
-          const ly = bough + len * k / 3; ctx.fillStyle = k % 2 ? '#62a04f' : '#4b8a44';
+          const ly = bough + len * k / 3; ctx.fillStyle = k % 2 ? C('#62a04f') : C('#4b8a44');
           ctx.beginPath(); ctx.ellipse(fx + sway * k / 3 + 2 * SC, ly, 4 * SC, 2 * SC, 0.6, 0, Math.PI * 2); ctx.fill();
         }
       }
@@ -835,7 +1104,7 @@ function landingBlocked(st, p, lx) {
   return false;
 }
 function drawMarker() {
-  if (S.mode !== 'play') return; const st = S.stone; if (st.phase !== 'air') return;
+  if (S.mode !== 'play' || S.attract) return; const st = S.stone; if (st.phase !== 'air') return;
   const p = predictContact(st); const lx = st.x + st.vx * p.tc;
   // plain landing marker: where the stone will touch down (red if that means a side hit)
   const danger = landingBlocked(st, p, lx);
@@ -845,8 +1114,9 @@ function drawMarker() {
   ctx.beginPath(); ctx.ellipse(x, WY, rr, rr * 0.32, 0, 0, Math.PI * 2); ctx.stroke();
   if (danger) { ctx.fillStyle = 'rgba(255,90,70,0.22)'; ctx.fill(); }
   if (danger && !S.pending) {
-    ctx.font = '700 13px -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
-    ctx.fillStyle = 'rgba(255,120,100,0.95)'; ctx.fillText('tap to drop short', x, WY - 10 * SC - 4);
+    ctx.font = '700 13px ' + FONT_B; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+    const label = 'Tap to drop short', lw = ctx.measureText(label).width;
+    ctx.fillStyle = 'rgba(255,120,100,0.95)'; ctx.fillText(label, clamp(x, lw / 2 + 10, VW - lw / 2 - 10), WY - 10 * SC - 4);
   }
 }
 function drawStone() {
@@ -878,8 +1148,8 @@ function drawStone() {
     ctx.fillStyle = gl; ctx.beginPath(); ctx.ellipse(x, WY, rx * 1.6, ry * 1.6, 0, 0, Math.PI * 2); ctx.fill();
     ctx.strokeStyle = 'rgba(255,' + Math.round(170 + 85 * rem) + ',' + Math.round(60 + 80 * rem) + ',0.95)'; ctx.lineWidth = 2.5;
     ctx.beginPath(); ctx.ellipse(x, WY, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
-    if (S.attempts <= 3) {
-      ctx.font = '900 16px -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+    if (S.attempts <= 3 && !S.attract) {
+      ctx.font = '800 14px ' + FONT_D; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
       ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(20,50,60,0.6)'; ctx.strokeText('TAP', x, y - 12 * SC); ctx.fillStyle = '#fff27a'; ctx.fillText('TAP', x, y - 12 * SC);
     }
   }
@@ -897,40 +1167,53 @@ function drawPopups() {
     const p = S.popups[i]; const k = (S.vt - p.t0) / p.life;
     if (k >= 1) { S.popups.splice(i, 1); continue; }
     const a = k < 0.65 ? 1 : (1 - k) / 0.35; const y = sy(p.y) - 34 * k; const x = sx(p.x);
-    ctx.globalAlpha = a; ctx.font = '800 ' + p.size + 'px -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+    ctx.globalAlpha = a; ctx.font = '800 ' + Math.round(p.size * 0.8) + 'px ' + FONT_D;
     ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(20,50,60,0.55)'; ctx.strokeText(p.text, x, y);
     ctx.fillStyle = p.color; ctx.fillText(p.text, x, y);
   }
   ctx.globalAlpha = 1;
 }
+const FONT_D = '"Unbounded", "Arial Black", system-ui, sans-serif';
+const FONT_B = '"Figtree", -apple-system, "Segoe UI", Roboto, sans-serif';
 function drawHUD() {
-  if (S.mode === 'title') return;
-  const font = '-apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
-  const d = Math.floor(S.dist);
-  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-  ctx.shadowColor = 'rgba(20,50,60,0.35)'; ctx.shadowBlur = 8;
-  ctx.font = '800 46px ' + font; ctx.fillStyle = 'rgba(255,255,255,0.95)'; ctx.fillText(d + ' m', VW / 2, 16 + SAFE_TOP);
-  ctx.font = '600 15px ' + font; ctx.fillStyle = 'rgba(255,255,255,0.85)';
-  let line = S.skips.length + (S.skips.length === 1 ? ' skip' : ' skips'); if (S.combo >= 2) line += '   ×' + S.combo + ' streak';
-  ctx.fillText(line, VW / 2, 68 + SAFE_TOP);
-  // speed bar: fills with speed, flashes yellow when a hit gains speed
+  if (S.mode === 'title' || S.attract) return;
+  const d = Math.floor(S.dist), top = 14 + SAFE_TOP;
+  ctx.textBaseline = 'top'; ctx.shadowColor = 'rgba(8,24,32,0.35)'; ctx.shadowBlur = 10;
+  // distance, centre
+  ctx.textAlign = 'center'; ctx.fillStyle = '#fff';
+  ctx.font = '800 44px ' + FONT_D; const numW = ctx.measureText(String(d)).width;
+  ctx.font = '600 18px ' + FONT_D; const unitW = ctx.measureText(' m').width;
+  ctx.font = '800 44px ' + FONT_D; ctx.textAlign = 'left'; ctx.fillText(String(d), VW / 2 - (numW + unitW) / 2, top);
+  ctx.font = '600 18px ' + FONT_D; ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.fillText(' m', VW / 2 - (numW + unitW) / 2 + numW, top + 21);
+  // speed bar with the streak beside it; it flashes yellow when a hit gains speed
   const sp = S.mode === 'play' ? Math.hypot(S.stone.vx, S.stone.vy) : S.speedShown;
   S.speedShown += (sp - S.speedShown) * 0.12;
-  const bw = 120, bh = 5, bx = VW / 2 - bw / 2, by = 92 + SAFE_TOP;
-  ctx.shadowBlur = 0; ctx.fillStyle = 'rgba(255,255,255,0.25)'; roundRect(bx, by, bw, bh, 3); ctx.fill();
-  ctx.fillStyle = S.speedFlash > 0 ? 'rgba(255,240,140,0.95)' : 'rgba(255,255,255,0.85)';
+  const bw = 112, bh = 6, bx = VW / 2 - bw / 2, by = top + 58;
+  ctx.shadowBlur = 0; ctx.fillStyle = 'rgba(255,255,255,0.28)'; roundRect(bx, by, bw, bh, 3); ctx.fill();
+  ctx.fillStyle = S.speedFlash > 0 ? '#ffd84d' : 'rgba(255,255,255,0.92)';
   roundRect(bx, by, Math.max(bh, bw * clamp(S.speedShown / T.maxSpeed, 0, 1)), bh, 3); ctx.fill();
-  ctx.shadowBlur = 8;
-  ctx.font = '600 13px ' + font; ctx.textAlign = 'left'; ctx.fillText('Lake #' + S.lake, 16, 16 + SAFE_TOP);
-  if (S.best) { ctx.textAlign = 'right'; ctx.fillText('best ' + Math.floor(S.best.dist) + ' m', VW - 16, 16 + SAFE_TOP); }
+  if (S.combo >= 2) {
+    const txt = '×' + S.combo; ctx.font = '800 12px ' + FONT_D; const tw = ctx.measureText(txt).width;
+    const cx = bx + bw + 10; ctx.fillStyle = '#ffd84d'; roundRect(cx, by - 7, tw + 14, 20, 10); ctx.fill();
+    ctx.fillStyle = '#231d00'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(txt, cx + 7, by + 3.5); ctx.textBaseline = 'top';
+  }
+  // lake and today's best, top left (the sound button sits top right)
+  ctx.shadowBlur = 8; ctx.textAlign = 'left'; ctx.fillStyle = 'rgba(255,255,255,0.95)';
+  ctx.font = '800 11px ' + FONT_D; ctx.fillText(('Lake ' + S.lake).toUpperCase(), 16, top + 4);
+  ctx.font = '600 13px ' + FONT_B; ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.fillText(S.best ? 'Best ' + Math.floor(S.best.dist) + ' m' : S.pal.name, 16, top + 22);
   ctx.shadowBlur = 0;
   if (S.attempts === 1 && S.mode === 'play') {
     let msg = null;
-    if (S.skips.length === 0) msg = 'tap during the yellow skid flash';
-    else if (S.skips.length < 4) msg = 'later = flatter & faster';
-    else if (S.skips.length < 7) msg = 'tap early to drop it short & hop high';
-    else if (S.skips.length < 10) msg = 'streak good skips to build speed & height';
-    if (msg) { ctx.textAlign = 'center'; ctx.font = '700 15px ' + font; ctx.fillStyle = 'rgba(255,255,255,0.95)'; ctx.shadowBlur = 6; ctx.fillText(msg, VW / 2, WY + (VH - WY) * 0.35); ctx.shadowBlur = 0; }
+    if (S.skips.length === 0) msg = 'Tap when the stone flashes yellow';
+    else if (S.skips.length < 4) msg = 'Later taps skim flatter and faster';
+    else if (S.skips.length < 7) msg = 'Tap early to drop short and hop high';
+    else if (S.skips.length < 10) msg = 'Chain good skips for speed and height';
+    if (msg) {
+      ctx.font = '700 15px ' + FONT_B; const mw = ctx.measureText(msg).width; const my = WY + (VH - WY) * 0.38;
+      ctx.fillStyle = 'rgba(8,22,30,0.42)'; roundRect(VW / 2 - mw / 2 - 16, my - 8, mw + 32, 34, 17); ctx.fill();
+      ctx.textAlign = 'center'; ctx.fillStyle = '#fff'; ctx.fillText(msg, VW / 2, my);
+    }
   }
   if (S.mode === 'play') {
     const st = S.stone;
@@ -953,7 +1236,9 @@ function render() {
   let shx = 0, shy = 0;
   if (S.shake > 0) { shx = (Math.random() - 0.5) * S.shake * 10; shy = (Math.random() - 0.5) * S.shake * 10; }
   ctx.translate(shx, shy);
-  drawSky(); drawHills(); drawWater(); drawObstacles(); drawMarker(); drawStone(); drawParticles(); drawStreaks(); drawPopups();
+  drawSky(); drawHills(); drawWater();
+  drawObstacles();
+  drawMarker(); drawStone(); drawParticles(); drawStreaks(); drawPopups();
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
   drawHUD();
 }
@@ -1020,7 +1305,9 @@ function updateFx(dt) {
 }
 let last = performance.now();
 function frame(now) {
-  let dt = (now - last) / 1000; last = now; if (dt > 0.1) dt = 0.1;
+  requestAnimationFrame(frame); // schedule first, so one bad frame can never stop the game
+  // a frame's timestamp can precede the clock read at load, so never step backwards
+  let dt = (now - last) / 1000; last = Math.max(last, now); if (dt < 0) dt = 0; if (dt > 0.1) dt = 0.1;
   S.vt += dt;
   if (S.mode === 'play' || S.mode === 'sinking') {
     let sdt = dt; if (S.slow > 0) { sdt *= 0.25; S.slow -= dt; }
@@ -1034,7 +1321,7 @@ function frame(now) {
   const k = Math.min(1, 2.5 * dt);
   S.zoom += (lerp(1, T.zoomOut, zt) - S.zoom) * k; S.anchor += (lerp(0.28, 0.2, zt) - S.anchor) * k;
   SC = BASE_SC * S.zoom; SX = Math.round(VW * S.anchor);
-  updateFx(dt); render(); drawConfetti(); requestAnimationFrame(frame);
+  updateFx(dt); render(); drawConfetti();
 }
 document.addEventListener('visibilitychange', () => { last = performance.now(); });
 
@@ -1046,11 +1333,25 @@ requestAnimationFrame(frame);
 window.__skip = {
   S, T, G, tap, step, start: startRun, predictContact, diveTime, mute: false,
   auto(u, opts) { S.auto = u == null ? null : Object.assign({ u, jitter: 0, jitterNow: 0, rolled: false, plan: null, smart: false, mode: '' }, opts || {}); },
-  sim(u, opts, noObs) { S.noObs = !!noObs; this.auto(u, opts); startRun(); let n = 0; while ((S.mode === 'play' || S.mode === 'sinking') && n++ < 240 * 400) step(STEP); const r = this.stats(); this.auto(null); return r; },
+  sim(u, opts, noObs) { S.attract = false; S.noObs = !!noObs; this.auto(u, opts); startRun(); let n = 0; while ((S.mode === 'play' || S.mode === 'sinking') && n++ < 240 * 400) step(STEP); const r = this.stats(); this.auto(null); return r; },
   noObs(v) { S.noObs = !!v; },
   stats() { return { mode: S.mode, dist: +S.dist.toFixed(1), skips: S.skips.length, t: +S.t.toFixed(2), reason: S.endReason, speed: Math.round(Math.hypot(S.stone.vx, S.stone.vy)), bestCombo: S.bestCombo }; },
   share: shareText
 };
+
+// Screenshot staging (used to make store screenshots): #shot=play runs a bot game with the HUD showing,
+// #shot=result finishes a bot run and shows its result card. Otherwise the title plays its quiet demo.
+const shot = hashParam('shot');
+if (shot === 'play') {
+  window.__skip.mute = true; S.noObs = false; resetRun(); S.attempts = 5; $('title').classList.remove('show');
+  S.auto = { u: 0.93, jitter: 0.015, jitterNow: 0, rolled: false, plan: null, smart: true, mode: '' };
+  const ff = Math.min(60, +hashParam('t') || 0); // fast-forward this many seconds into the run
+  for (let i = 0; i < ff * 240 && S.mode === 'play'; i++) step(STEP);
+  S.particles.length = 0; S.ripples.length = 0; S.popups.length = 0; S.zoom = 1;
+}
+else if (shot === 'result') { window.__skip.mute = true; window.__skip.sim(0.92, { smart: true, jitter: 0.02 }, false); }
+else startAttract();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (S.mode === 'result') $('rMap').innerHTML = skipMapSVG(); });
 })();
 </script>
 </body>
