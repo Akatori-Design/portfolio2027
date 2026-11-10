@@ -1072,20 +1072,7 @@ function drawObstacles() {
       ctx.fillStyle = C('#222'); ctx.beginPath(); ctx.arc(xx + 11 * sc, yy - 19 * sc, 1.4 * sc, 0, Math.PI * 2); ctx.fill();
       if (!flap) { ctx.fillStyle = 'rgba(120,200,210,0.5)'; ctx.fillRect(x - 18 * sc, WY, 36 * sc, 4 * sc); }
     } else {
-      const w = o.w * SC, bottom = sy(o.h), bough = sy(o.h + 34);
-      ctx.strokeStyle = C('#5a3a24'); ctx.lineWidth = 6 * SC; ctx.lineCap = 'round';
-      ctx.beginPath(); ctx.moveTo(x - w / 2 - 90 * SC, -20); ctx.quadraticCurveTo(x - w / 2 - 50 * SC, bough - 30 * SC, x + w / 2 + 6 * SC, bough); ctx.stroke();
-      const n = Math.max(4, Math.round(w / (9 * SC)));
-      for (let i = 0; i < n; i++) {
-        const fx = x - w / 2 + (i + 0.5) * (w / n);
-        const sway = Math.sin(S.vt * 1.6 + i * 0.9 + o.x * 0.01) * 3 * SC;
-        const len = (bough - bottom) * (0.9 + 0.1 * fract(Math.sin(i * 7.3 + o.x) * 100));
-        ctx.strokeStyle = C('#4f7f3f'); ctx.lineWidth = 1.5 * SC; ctx.beginPath(); ctx.moveTo(fx, bough); ctx.quadraticCurveTo(fx + sway, bough + len * 0.5, fx + sway * 1.4, bough + len); ctx.stroke();
-        for (let k = 1; k <= 3; k++) {
-          const ly = bough + len * k / 3; ctx.fillStyle = k % 2 ? C('#62a04f') : C('#4b8a44');
-          ctx.beginPath(); ctx.ellipse(fx + sway * k / 3 + 2 * SC, ly, 4 * SC, 2 * SC, 0.6, 0, Math.PI * 2); ctx.fill();
-        }
-      }
+      drawBranch(o, x);
     }
   }
 }
@@ -1102,6 +1089,97 @@ function landingBlocked(st, p, lx) {
     }
   }
   return false;
+}
+// A willow limb reaching over the lake from a tree up and off to the left: a thick, tapering
+// limb with bark and knots, leafy side twigs, a crown of leaves along the part over the water,
+// and a curtain of drooping fronds in two depth layers. The fronds' tips sit on the branch's
+// collision line (height o.h) across exactly its width, so what you see is what snags the stone.
+function drawBranch(o, x) {
+  const w = o.w * SC, lo = x - w / 2, hi = x + w / 2;
+  const hazard = sy(o.h), boughY = sy(o.h + 62);
+  const hr = k => fract(Math.sin(o.x * 0.0137 + k * 12.9898) * 43758.5453); // steady per-branch randomness
+  const leaf = (lx, ly, ang, len, wid) => { // a pointed leaf from its base at (lx, ly)
+    const cx = Math.cos(ang), cy = Math.sin(ang), nx = -cy * wid, ny = cx * wid, tx = lx + cx * len, ty = ly + cy * len;
+    ctx.moveTo(lx, ly); ctx.quadraticCurveTo(lx + cx * len * 0.45 + nx, ly + cy * len * 0.45 + ny, tx, ty); ctx.quadraticCurveTo(lx + cx * len * 0.45 - nx, ly + cy * len * 0.45 - ny, lx, ly);
+  };
+  const bez3 = (a, b, c, d, t) => { const u = 1 - t; return [u * u * u * a[0] + 3 * u * u * t * b[0] + 3 * u * t * t * c[0] + t * t * t * d[0], u * u * u * a[1] + 3 * u * u * t * b[1] + 3 * u * t * t * c[1] + t * t * t * d[1]]; };
+  // the limb's centre line: a long diagonal that sags and levels out over the span, lifting at the tip
+  const topY = Math.min(-24, boughY - 170 * SC), drop = boughY - topY;
+  const a0 = [lo - 50 * SC - drop * 0.9, topY], a1 = [lo - drop * 0.42, topY + drop * 0.62], a2 = [lo - 46 * SC, boughY - 3 * SC], a3 = [lo, boughY];
+  const P = [];
+  for (let i = 0; i <= 18; i++) P.push(bez3(a0, a1, a2, a3, i / 18));
+  const tip = [hi + 34 * SC, boughY - 8 * SC], mid = [(lo + tip[0]) / 2, boughY + 6 * SC];
+  for (let i = 1; i <= 12; i++) { const t = i / 12, u = 1 - t; P.push([u * u * a3[0] + 2 * u * t * mid[0] + t * t * tip[0], u * u * a3[1] + 2 * u * t * mid[1] + t * t * tip[1]]); }
+  const yAt = px => { for (let i = 1; i < P.length; i++) if (P[i][0] >= px) { const f = (px - P[i - 1][0]) / Math.max(0.001, P[i][0] - P[i - 1][0]); return P[i - 1][1] + (P[i][1] - P[i - 1][1]) * f; } return P[P.length - 1][1]; };
+  if (P[P.length - 1][0] < -40 || Math.max(a0[0], lo - 200) > VW + 40) return;
+  // fronds over the span, decided once per branch
+  const n = Math.max(7, Math.round(w / (6.5 * SC)) + 1), fronds = [];
+  for (let i = 0; i < n; i++) {
+    const fx = lo + 2 * SC + (w - 4 * SC) * clamp((i + (hr(i) - 0.5) * 0.6) / (n - 1), 0, 1);
+    fronds.push({ fx, back: i % 2 === 1, ph: hr(i + 20) * 6.28, curl: (hr(i + 40) - 0.5) * 8 * SC, reach: 0.97 + 0.03 * hr(i + 60), lean: (hr(i + 70) - 0.5) * 0.08 });
+  }
+  const drawFronds = back => {
+    for (const f of fronds) {
+      if (f.back !== back) continue;
+      const ay = yAt(f.fx) + 1.5 * SC, L = (hazard - ay) * f.reach; if (L <= 4) continue;
+      const swing = Math.sin(S.vt * 1.25 + f.ph) * 0.06 + 0.035 + f.lean; // a light breeze from the left
+      const tx = f.fx + L * swing, ty = ay + L, cxp = f.fx + f.curl + L * swing * 0.35, cyp = ay + L * 0.55;
+      ctx.strokeStyle = C(back ? '#355a2b' : '#476f36'); ctx.lineWidth = 1.1 * SC; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(f.fx, ay); ctx.quadraticCurveTo(cxp, cyp, tx, ty); ctx.stroke();
+      const count = Math.max(4, Math.round(L / (4.6 * SC)));
+      for (const tone of [0, 1]) {
+        ctx.fillStyle = C(back ? (tone ? '#3f6a32' : '#335a29') : (tone ? '#7ab45a' : '#5a9443'));
+        ctx.beginPath();
+        for (let k = 1; k <= count; k++) {
+          if ((k % 2) !== tone) continue;
+          const t = k / (count + 0.3), u = 1 - t;
+          const px = u * u * f.fx + 2 * u * t * cxp + t * t * tx, py = u * u * ay + 2 * u * t * cyp + t * t * ty;
+          const dx = 2 * u * (cxp - f.fx) + 2 * t * (tx - cxp), dy = 2 * u * (cyp - ay) + 2 * t * (ty - cyp);
+          const side = k % 2 ? 1 : -1, ang = Math.atan2(dy, dx) - side * 0.5;
+          const size = (1 - 0.35 * t) * (back ? 0.9 : 1);
+          leaf(px, py, ang, 9.5 * SC * size, 2.6 * SC * size);
+        }
+        if (tone === 0) leaf(tx, ty - 3 * SC, Math.atan2(ty - cyp, tx - cxp), 6 * SC, 1.9 * SC); // the frond's tip leaf
+        ctx.fill();
+      }
+    }
+  };
+  drawFronds(true);
+  // the limb: a tapered silhouette, a light edge along its top, a few knots
+  const thick = i => Math.pow(1 - i / (P.length - 1), 0.8) * 13 * SC + 1.6 * SC;
+  const top = [], bot = [];
+  for (let i = 0; i < P.length; i++) {
+    const p = P[i], q = P[Math.min(P.length - 1, i + 1)], r = P[Math.max(0, i - 1)];
+    let dx = q[0] - r[0], dy = q[1] - r[1]; const l = Math.hypot(dx, dy) || 1; dx /= l; dy /= l;
+    const hw = thick(i) / 2; top.push([p[0] + dy * hw, p[1] - dx * hw]); bot.push([p[0] - dy * hw, p[1] + dx * hw]);
+  }
+  ctx.fillStyle = C('#47301f'); ctx.beginPath(); ctx.moveTo(top[0][0], top[0][1]);
+  for (const p of top) ctx.lineTo(p[0], p[1]); for (let i = bot.length - 1; i >= 0; i--) ctx.lineTo(bot[i][0], bot[i][1]); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = C('#8a6142'); ctx.lineWidth = 1.4 * SC; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(top[1][0], top[1][1] + 1 * SC);
+  for (let i = 2; i < top.length - 4; i++) ctx.lineTo(top[i][0], top[i][1] + 1 * SC); ctx.stroke();
+  ctx.fillStyle = C('#2f1f14');
+  for (const k of [5, 10, 15]) { const p = P[k]; ctx.beginPath(); ctx.ellipse(p[0], p[1] + thick(k) * 0.08, thick(k) * 0.16, thick(k) * 0.24, 0.6, 0, Math.PI * 2); ctx.fill(); }
+  // side twigs on the diagonal, high above the water, each with a small drooping leaf spray
+  for (const [k, s] of [[7, 1], [12, 2]]) {
+    const b = P[k], ex = b[0] + (16 + 8 * hr(s + 80)) * SC, ey = b[1] - (10 + 6 * hr(s + 90)) * SC;
+    ctx.strokeStyle = C('#47301f'); ctx.lineWidth = 2 * SC; ctx.beginPath(); ctx.moveTo(b[0], b[1]); ctx.quadraticCurveTo(b[0] + 6 * SC, ey, ex, ey); ctx.stroke();
+    ctx.fillStyle = C('#5a9443'); ctx.beginPath();
+    for (let j = 0; j < 5; j++) { const lx = ex - j * 2.5 * SC, ly = ey + j * 3.2 * SC; leaf(lx, ly, 1.1 + j * 0.12, 9 * SC, 2.5 * SC); leaf(lx, ly, 2.2 - j * 0.1, 8 * SC, 2.3 * SC); }
+    leaf(ex, ey, -0.4, 9 * SC, 2.6 * SC); ctx.fill();
+  }
+  // a crown of leaves along the limb where it hangs over the water
+  for (const tone of [0, 1]) {
+    ctx.fillStyle = C(tone ? '#7ab45a' : '#4f8a3e'); ctx.beginPath();
+    const m = Math.round(w / (2.6 * SC)) + 8;
+    for (let j = 0; j < m; j++) {
+      if (j % 2 !== tone) continue;
+      const lx = lo - 16 * SC + (w + 40 * SC) * j / (m - 1), ly = yAt(lx) - 1 * SC;
+      const fan = (hr(j + 100) - 0.5) * 2.4; // leaves fan out both ways, like a small crown
+      leaf(lx, ly, -1.57 + fan, (6 + 6 * hr(j + 120)) * SC, 2.5 * SC);
+    }
+    ctx.fill();
+  }
+  drawFronds(false);
 }
 function drawMarker() {
   if (S.mode !== 'play' || S.attract) return; const st = S.stone; if (st.phase !== 'air') return;
@@ -1348,6 +1426,9 @@ if (shot === 'play') {
   const ff = Math.min(60, +hashParam('t') || 0); // fast-forward this many seconds into the run
   for (let i = 0; i < ff * 240 && S.mode === 'play'; i++) step(STEP);
   S.particles.length = 0; S.ripples.length = 0; S.popups.length = 0; S.zoom = 1;
+}
+else if (shot === 'branch') { // frame the first branch with no HUD, to check its drawing
+  window.__skip.mute = true; const b = S.course.find(o => o.type === 'branch'); S.mode = 'title'; S.camX = b.x - (+hashParam('dx') || 40); $('title').classList.remove('show');
 }
 else if (shot === 'result') { window.__skip.mute = true; window.__skip.sim(0.92, { smart: true, jitter: 0.02 }, false); }
 else startAttract();
