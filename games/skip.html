@@ -1245,6 +1245,26 @@ const Worlds = {
   setRainbow(v) { this.rainbowOn = !!v; store.set('skip.rainbow', this.rainbowOn); renderStones(); }
 };
 function nextWorld() { return WORLDS.find(w => !w.extra && !Worlds.have.has(w.id)) || null; }
+// ---------------- portfolio showcase (imhiro.xyz only) ----------------
+// On imhiro.xyz the whole Collection is open to try: every stone, splash, world and extra. It opens
+// only what is shown and used: the save keeps just what was really won, here and in the cloud, so
+// nothing opened here carries over to the game itself. On the first visit the extras (and the Long
+// glide, the turbo trail and the rainbow ducks) start switched off, so the lake first plays as designed.
+const SHOWCASE = true;
+if (SHOWCASE) {
+  const won = (set, id) => Set.prototype.has.call(set, id);   // really won, past the opening below
+  if (!store.get('skip.showcase')) {
+    for (const x of EXTRAS) if (!won(Extras.owned, x.key)) Extras.off.add(x.key);
+    store.set('skip.extrasOff', [...Extras.off]);
+    if (!Upgrades.owned && !Upgrades.gift) { Upgrades.on = false; store.set('skip.glideOn', false); }
+    if (!won(Worlds.have, 'turbo')) { Worlds.turboOn = false; store.set('skip.turbo', false); }
+    if (!won(Worlds.have, 'rainbowducks')) { Worlds.rainbowOn = false; store.set('skip.rainbow', false); }
+    store.set('skip.showcase', 1);
+  }
+  const openAll = (set, n) => { set.has = () => true; Object.defineProperty(set, 'size', { get: () => n }); };   // listing the set (for the save) still gives only what was won
+  openAll(Stones.have, STONES.length); openAll(Splashes.have, SPLASHES.length); openAll(Worlds.have, WORLDS.length); openAll(Extras.owned, EXTRAS.length);
+  Object.defineProperty(Upgrades, 'has', { get: () => true });
+}
 // A tiny picture of a world for the collection.
 function worldArt(canvas, w, locked) {
   const dpr = Math.min(3, window.devicePixelRatio || 1);
