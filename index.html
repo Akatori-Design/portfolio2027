@@ -78,7 +78,8 @@
   }
   .side-meta { margin-top: 40px; display: flex; gap: 22px; }
   .side-meta b { font-weight: 400; color: var(--muted); }
-  .side-note { margin-top: 14px; }
+  .side-note { margin-top: 14px; color: var(--muted); }
+  .side-note + .side-note { color: var(--dim); }
   .out { color: inherit; text-decoration: none; transition: color .2s; }
   .out:hover { color: #fff; }
   .out:focus-visible { outline: 1px solid #8a8a8a; outline-offset: 2px; }
@@ -420,11 +421,14 @@
   .body .split .shots { margin: 0; }
   .body .compare { margin: 2em 0 1.2em; display: grid; gap: 22px; }
   .body .compare .shots { margin: 0; gap: 10px; }
+  .body .gallery { margin: 1.2em 0 2.6em; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .body .gallery img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 3px; background: #1e1e1e; }
   .body .tag { justify-self: start; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: #bdbdbd; padding: 6px 8px; border-radius: 4px; background: rgba(255,255,255,.08); }
   .body .tag.on { color: var(--bg); background: var(--fg); }
   @media (max-width: 640px) {
     .body .steps, .body .rules, .body .split { grid-template-columns: minmax(0, 1fr); }
     .body .split .shots { max-width: 260px; }
+    .body .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
   .body blockquote {
     margin: 1.6em 0;
@@ -1868,7 +1872,7 @@ Designed with Misaine creative.
 const PAGES = [
   {
     id: "clients",
-    title: "Clients",
+    title: "Clients & Experience",
     dek: "Some of the teams I've designed with...",
     // h: logo height in px, tuned so wide wordmarks and square marks carry similar weight
     logos: [
@@ -1885,12 +1889,36 @@ const PAGES = [
   {
     id: "about",
     title: "About",
-    dek: "Hiro Matsui is an independent design agency that specializes in AI, design systems, UX/UI, branding, and motion design.",
+    dek: "I'm a freelance designer who builds UI architecture and design systems where beauty and efficiency follow the same rules.",
     body: `![Hiro Matsui](images/about.jpg)
 
-Hiro Matsui helps startups and enterprises build scalable brand and product design systems with AI. Drawing on 12 years of product design, with deep expertise in design systems and UI architecture, Hiro gives product teams the foundations to move quickly without losing consistency.
+Whatever I gain in life, I can't take it with me. So I think a life is measured not by what you have, but by what you leave behind. That's why I keep making things.
 
-Alongside running an independent design agency, Hiro builds AI design agents and guides companies through the shift to an AI-centric product design model, from the way teams work to the systems that support them at scale.`
+I create products, branding and motion, and I also enjoy painting and sketching. But professionally, I mostly give startups and companies UI architecture and design systems that are both beautiful and efficient.
+
+In my experience, chase beauty too far and a product fills up with one-off UI. Consistency and reuse wear thin, and the time goes into holding it all together and revising it. Chase efficiency too far and the opposite happens: the product's character and usability get compromised, and it loses its shine.
+
+To have beauty and efficiency at once, you have to deliberately give the two a shared language. That language is rules. I turn beauty and efficiency into rules, and make every design property follow them.
+
+I'm confident I've thought harder than anyone about how beauty and efficiency can work together, and I've supported many startups and companies with it.
+
+:::gallery
+![Car interior sketch](images/sketching/car-interior.jpg)
+![Car exterior and interior studies](images/sketching/car-studies.jpg)
+![Cup lid sketches](images/sketching/cup-lids.jpg)
+![Tumbler lid concept sketch](images/sketching/tumbler-lid.jpg)
+![Pencil portrait of a woman](images/sketching/portrait-pencil.jpg)
+![Pencil portrait of a boy](images/sketching/boy.jpg)
+![Drawing of a man at a market shelf](images/sketching/market.jpg)
+![Portrait in a sketchbook](images/sketching/sketchbook.jpg)
+![Painting of an interior with a window](images/painting/window.jpg)
+![Portrait of a woman in glasses](images/painting/glasses.jpg)
+![Portrait of a girl](images/painting/girl.jpg)
+![Painting of fields and a river from above](images/painting/fields.jpg)
+![Painted lettering on canvas](images/painting/canvas.jpg)
+![Painting of a red room](images/painting/red-room.jpg)
+![Watercolor of a masked guard](images/painting/watercolor.jpg)
+:::`
   },
 ];
 
@@ -2711,6 +2739,7 @@ function readTime(p) { return Math.max(1, Math.round(words(p) / 230)); }
      :::checks / :::plus   a short list with ✓ or + marks
      :::split    an image line, then text beside it
      :::compare  one "Label | ![alt](src)" per line
+     :::gallery  one image line each, shown as a square grid
    They're cut out before the markdown pass, so blank lines inside them survive. */
 function renderRich(kind, inner) {
   const img = line => {
@@ -2727,6 +2756,7 @@ function renderRich(kind, inner) {
     const [tag, pic] = l.split(" | ");
     return `<figure class="shots"><span class="tag${i === 0 ? " on" : ""}">${esc(tag)}</span>${img(pic)}</figure>`;
   }).join("")}</div>`;
+  if (kind === "gallery") return `<div class="gallery">${lines.map(img).join("")}</div>`;
   if (kind === "split") return `<div class="split"><div>${renderBody(lines.slice(1).join("\n"))}</div><figure class="shots">${img(lines[0])}</figure></div>`;
   if (kind === "rules") return `<ul class="rules">${inner.trim().split(/\n\s*\n/).map(card => {
     const ls = card.trim().split("\n"), label = ls.shift(), source = ls.pop(), quote = ls.shift();
