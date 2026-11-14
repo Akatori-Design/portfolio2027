@@ -1398,6 +1398,94 @@ const IMAGES = {
 const SITE = "https://hiromatsui.framer.website/projects/";
 const POSTS = [
   {
+    id: "metamask-design-systems", short: "MetaMask", cat: "Design systems", year: "2022–2025", role: "Lead Product Designer",
+    title: "Building the MetaMask Design Systems",
+    dek: "A shared design system foundation for MetaMask's web and mobile teams, built from the components they needed in flight, so adoption grew without slowing production.",
+    summary: "MetaMask's teams were shipping fast across web and mobile, but tokens and patterns were drifting apart. How do you bring design and code back into line without asking anyone to slow down?",
+    image: IMAGES["metamask-design-systems"],
+    body: `MetaMask's product teams were shipping fast across web and mobile, but UI patterns and tokens were drifting. I led the build-out of a shared design system foundation, starting from the components teams needed in flight, so adoption grew without slowing production. Consistency improved while teams stayed free to innovate.
+
+![MetaMask design system, image 1](images/metamask-design-systems/01.png)
+
+## Results
+
+- **40% faster delivery.** Accessibility and UI quality checks are built into the components, which cut repeated audits and rework each sprint.
+- **38% more quarterly library adoption.** Usage grew every quarter as teams moved onto the system.
+- **4.1 / 5 satisfaction.** Scored in the bi-annual feedback survey.
+- **Daily engagement.** Active use of the design system Slack channel and office hours.
+
+## Understanding the pain points
+
+Fast shipping without a shared design–code contract led to three issues: duplicated work through one-offs and rebuilds, pattern drift that created bugs and QA churn, and no clean contribution path, so new needs stayed one-offs instead of becoming reusable patterns.
+
+![Inconsistent UI across teams](images/metamask-design-systems/02.png)
+![Duplicated components](images/metamask-design-systems/03.png)
+![MetaMask design system, image 4](images/metamask-design-systems/04.png)
+
+## 1. Defining the contract
+
+The first lever was a contract that makes patterns predictable to build and hard to fork.
+
+- **Shared design variables.** Semantic tokens that map cleanly to code.
+- **Component APIs.** Figma variants aligned to real props and states, so engineers don't reinterpret designs.
+- **Flexibility by design.** Clear customisation lanes inside the system, so teams can ship without detaching.
+
+![Shared design variables](images/metamask-design-systems/05.png)
+![Component APIs](images/metamask-design-systems/06.png)
+![Flexibility by design](images/metamask-design-systems/07.png)
+
+## 2. Ship adoption like a product
+
+I built adoption on purpose: a clear contribution path to prevent one-offs, migration and upgrade steps so teams could adopt without slowing delivery, and an enablement loop of office hours, fast reviews and lightweight docs. I tracked leading signals such as Figma usage, detach trends, surveys, codebase adoption and office-hour demand, to make sure adoption was real and not just published.
+
+![MetaMask design system, image 8](images/metamask-design-systems/08.png)
+
+## 3. Measure and sustain
+
+The system ran like a product over time. Quarterly OKRs and lightweight health metrics (adoption, parity, NPS) caught drift early. Clear boundaries between global patterns and domain-owned needs kept the system from becoming a bottleneck. Docs, templates, migration guidance and fast support made the right path the easiest one, so reuse became the default.
+
+> Make the right path the easiest path, and reuse becomes the default.
+
+![MetaMask design system, image 9](images/metamask-design-systems/09.png)
+![MetaMask design system, image 10](images/metamask-design-systems/10.png)
+
+## The outcome
+
+Beyond efficiency, the system improved consistency and design–code parity as adoption spread across teams. It gave the product a stable foundation to rebrand quickly and keep evolving without the UI fracturing.
+
+![MetaMask design system, image 11](images/metamask-design-systems/11.png)
+![MetaMask design system, image 12](images/metamask-design-systems/12.png)
+![MetaMask design system, image 13](images/metamask-design-systems/13.png)
+![MetaMask design system, image 14](images/metamask-design-systems/14.png)`
+  },
+  {
+    id: "music-distribution-platform", short: "Music platform", cat: "Product & brand", year: "Startup", role: "Lead Designer",
+    title: "Music Distribution Platform",
+    dek: "A platform that helps independent artists get discovered, grow and get paid without needing a label to unlock distribution, audience or opportunity.",
+    summary: "Independent musicians juggle distribution, promotion and analytics across a dozen tools. What happens when all of that scattered hustle becomes one clear system?",
+    image: IMAGES["music-distribution-platform"],
+    body: `[EXD](https://akatori-design.github.io/EXD/) (you can log in to preview demo account) is a music distribution platform that helps independent artists get discovered, grow and get paid, without needing a label to unlock distribution, audience or opportunity. I designed it to turn scattered hustle into a clear system: publish your work, package your identity, understand what's performing, and build momentum from real signals rather than guesswork.
+
+## Owning the full stack
+
+As lead designer I owned the marketing site, the product UX/UI and the core brand identity. We helped musicians build a strong online presence, run simple marketing campaigns and track performance with clear analytics.
+
+> Real scale comes from a shared foundation, not from reinventing solutions every time.
+
+![Music distribution platform, image 2](images/music-distribution-platform/02.png)
+![Music distribution platform, image 3](images/music-distribution-platform/03.png)
+
+## Reducing cognitive load in release details
+
+- **Before.** The release form showed every metadata field at once, creating visual overload and slowing people down.
+- **After.** Progressive disclosure surfaces only the required fields first and collapses optional details into a "More" section, so people can focus on finishing without losing flexibility.
+
+## From locked order to flexible track management
+
+- **Before.** Track order was locked after the source files were uploaded, so a mistake meant re-uploading and re-entering details.
+- **After.** A lightweight table with sorting and modal editing lets people reorder tracks and manage details without losing progress.`
+  },
+  {
     id: "project-eleven", short: "Project Eleven", cat: "Product design & AI", year: "2026", role: "Lead Designer",
     link: "https://www.projecteleven.com/",
     title: "Designing post-quantum custody without Figma",
@@ -1526,67 +1614,6 @@ A count on each account of requests waiting on you
 :::`
   },
   {
-    id: "metamask-design-systems", short: "MetaMask", cat: "Design systems", year: "2022–2025", role: "Lead Product Designer",
-    title: "Building the MetaMask Design Systems",
-    dek: "A shared design system foundation for MetaMask's web and mobile teams, built from the components they needed in flight, so adoption grew without slowing production.",
-    summary: "MetaMask's teams were shipping fast across web and mobile, but tokens and patterns were drifting apart. How do you bring design and code back into line without asking anyone to slow down?",
-    image: IMAGES["metamask-design-systems"],
-    body: `MetaMask's product teams were shipping fast across web and mobile, but UI patterns and tokens were drifting. I led the build-out of a shared design system foundation, starting from the components teams needed in flight, so adoption grew without slowing production. Consistency improved while teams stayed free to innovate.
-
-![MetaMask design system, image 1](images/metamask-design-systems/01.png)
-
-## Results
-
-- **40% faster delivery.** Accessibility and UI quality checks are built into the components, which cut repeated audits and rework each sprint.
-- **38% more quarterly library adoption.** Usage grew every quarter as teams moved onto the system.
-- **4.1 / 5 satisfaction.** Scored in the bi-annual feedback survey.
-- **Daily engagement.** Active use of the design system Slack channel and office hours.
-
-## Understanding the pain points
-
-Fast shipping without a shared design–code contract led to three issues: duplicated work through one-offs and rebuilds, pattern drift that created bugs and QA churn, and no clean contribution path, so new needs stayed one-offs instead of becoming reusable patterns.
-
-![Inconsistent UI across teams](images/metamask-design-systems/02.png)
-![Duplicated components](images/metamask-design-systems/03.png)
-![MetaMask design system, image 4](images/metamask-design-systems/04.png)
-
-## 1. Defining the contract
-
-The first lever was a contract that makes patterns predictable to build and hard to fork.
-
-- **Shared design variables.** Semantic tokens that map cleanly to code.
-- **Component APIs.** Figma variants aligned to real props and states, so engineers don't reinterpret designs.
-- **Flexibility by design.** Clear customisation lanes inside the system, so teams can ship without detaching.
-
-![Shared design variables](images/metamask-design-systems/05.png)
-![Component APIs](images/metamask-design-systems/06.png)
-![Flexibility by design](images/metamask-design-systems/07.png)
-
-## 2. Ship adoption like a product
-
-I built adoption on purpose: a clear contribution path to prevent one-offs, migration and upgrade steps so teams could adopt without slowing delivery, and an enablement loop of office hours, fast reviews and lightweight docs. I tracked leading signals such as Figma usage, detach trends, surveys, codebase adoption and office-hour demand, to make sure adoption was real and not just published.
-
-![MetaMask design system, image 8](images/metamask-design-systems/08.png)
-
-## 3. Measure and sustain
-
-The system ran like a product over time. Quarterly OKRs and lightweight health metrics (adoption, parity, NPS) caught drift early. Clear boundaries between global patterns and domain-owned needs kept the system from becoming a bottleneck. Docs, templates, migration guidance and fast support made the right path the easiest one, so reuse became the default.
-
-> Make the right path the easiest path, and reuse becomes the default.
-
-![MetaMask design system, image 9](images/metamask-design-systems/09.png)
-![MetaMask design system, image 10](images/metamask-design-systems/10.png)
-
-## The outcome
-
-Beyond efficiency, the system improved consistency and design–code parity as adoption spread across teams. It gave the product a stable foundation to rebrand quickly and keep evolving without the UI fracturing.
-
-![MetaMask design system, image 11](images/metamask-design-systems/11.png)
-![MetaMask design system, image 12](images/metamask-design-systems/12.png)
-![MetaMask design system, image 13](images/metamask-design-systems/13.png)
-![MetaMask design system, image 14](images/metamask-design-systems/14.png)`
-  },
-  {
     id: "phenomenon", short: "Phenomenon", cat: "Creative coding", year: "2026", role: "Designer & Developer",
     link: "https://akatori-design.github.io/Phenomenon/",
     title: "Phenomenon",
@@ -1614,25 +1641,6 @@ Sunlight through a gap in an attic roof. Hundreds of thousands of dust specks dr
 Rain on Glass and Attic Light also ship as private, installable web components, generated from each page so they can be dropped into other sites.`
   },
   {
-    id: "hm-dos-webdesign", short: "HM-DOS", cat: "Web design", year: "Concept", role: "Web Designer",
-    link: "https://akatori-design.github.io/1d959b88/index.html",
-    title: "HM-DOS webdesign project",
-    dek: "An immersive concept for a research lab's blog, told through the eerie glow of an MS-DOS machine.",
-    summary: "What if reading a research blog felt like sitting down at a mad scientist's terminal? An immersive concept built on the look and feel of MS-DOS.",
-    image: IMAGES["hm-dos-webdesign"],
-    body: `[HM-DOS](https://akatori-design.github.io/1d959b88/index.html) is an immersive, conceptual web design for a research lab's blog. Built on the look and feel of MS-DOS-era software, it draws visitors into a dark and quietly unsettling atmosphere, as if they had sat down at a mad scientist's terminal.
-
-The site boots like an old PC, printing a line of system text before it opens on a text-mode menu.
-
-## A site you drive with the keyboard
-
-Visitors move between Articles, About and Get in touch with the arrow keys and Enter, as they would on a DOS menu. A status bar keeps the controls in view, along with a clock and a sound toggle.
-
-## Period details
-
-CRT scanlines, an 80 by 25 VGA text grid and a glitching colour bar give the screen its texture.`
-  },
-  {
     id: "ericsson-design-systems", short: "Ericsson", cat: "Design systems", year: "2021–2022", role: "Senior Product Designer",
     title: "Ericsson Design Systems",
     dek: "Scaling the design system for a domain product area with new components, patterns and white-label themes that stay true to Ericsson's visual DNA.",
@@ -1658,31 +1666,23 @@ We wrote clear documentation and lightweight workflows so teams could plug in an
 ![Ericsson design system, image 3](images/ericsson-design-systems/03.png)`
   },
   {
-    id: "music-distribution-platform", short: "Music platform", cat: "Product & brand", year: "Startup", role: "Lead Designer",
-    title: "Music Distribution Platform",
-    dek: "A platform that helps independent artists get discovered, grow and get paid without needing a label to unlock distribution, audience or opportunity.",
-    summary: "Independent musicians juggle distribution, promotion and analytics across a dozen tools. What happens when all of that scattered hustle becomes one clear system?",
-    image: IMAGES["music-distribution-platform"],
-    body: `I designed a platform to help independent artists get discovered, grow and get paid, without needing a label to unlock distribution, audience or opportunity. The product turned scattered hustle into a clear system: publish your work, package your identity, understand what's performing, and build momentum from real signals rather than guesswork.
+    id: "hm-dos-webdesign", short: "HM-DOS", cat: "Web design", year: "Concept", role: "Web Designer",
+    link: "https://akatori-design.github.io/1d959b88/index.html",
+    title: "HM-DOS webdesign project",
+    dek: "An immersive concept for a research lab's blog, told through the eerie glow of an MS-DOS machine.",
+    summary: "What if reading a research blog felt like sitting down at a mad scientist's terminal? An immersive concept built on the look and feel of MS-DOS.",
+    image: IMAGES["hm-dos-webdesign"],
+    body: `[HM-DOS](https://akatori-design.github.io/1d959b88/index.html) is an immersive, conceptual web design for a research lab's blog. Built on the look and feel of MS-DOS-era software, it draws visitors into a dark and quietly unsettling atmosphere, as if they had sat down at a mad scientist's terminal.
 
-## Owning the full stack
+The site boots like an old PC, printing a line of system text before it opens on a text-mode menu.
 
-As lead designer I owned the marketing site, the product UX/UI and the core brand identity. We helped musicians build a strong online presence, run simple marketing campaigns and track performance with clear analytics.
+## A site you drive with the keyboard
 
-> Real scale comes from a shared foundation, not from reinventing solutions every time.
+Visitors move between Articles, About and Get in touch with the arrow keys and Enter, as they would on a DOS menu. A status bar keeps the controls in view, along with a clock and a sound toggle.
 
-![Music distribution platform, image 2](images/music-distribution-platform/02.png)
-![Music distribution platform, image 3](images/music-distribution-platform/03.png)
+## Period details
 
-## Reducing cognitive load in release details
-
-- **Before.** The release form showed every metadata field at once, creating visual overload and slowing people down.
-- **After.** Progressive disclosure surfaces only the required fields first and collapses optional details into a "More" section, so people can focus on finishing without losing flexibility.
-
-## From locked order to flexible track management
-
-- **Before.** Track order was locked after the source files were uploaded, so a mistake meant re-uploading and re-entering details.
-- **After.** A lightweight table with sorting and modal editing lets people reorder tracks and manage details without losing progress.`
+CRT scanlines, an 80 by 25 VGA text grid and a glitching colour bar give the screen its texture.`
   },
   {
     id: "psychology-of-cancellation", short: "Cancellation", cat: "UX research", year: "Startup", role: "Lead Product Designer",
@@ -1797,7 +1797,7 @@ Designed with Misaine creative.
 ![Furniture Design](images/furniture-design/01.jpg)
 ![Furniture Design, image 2](images/furniture-design/02.jpg)
 ![Furniture Design, image 3](images/furniture-design/03.jpg)`
-  },
+  }
 ];
 
 
